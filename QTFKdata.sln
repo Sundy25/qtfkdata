@@ -5,6 +5,10 @@ VisualStudioVersion = 14.0.25420.1
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data", "QTFK.Data\QTFK.Data.csproj", "{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}"
 EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{01D1FDFA-2FF5-4F98-AEB2-5FDA33F2C7D0}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data.Tests", "Tests\QTFK.Data.Tests\QTFK.Data.Tests.csproj", "{AACBE225-E01A-4187-B770-944C6758A1A2}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -15,8 +19,15 @@ Global
 		{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}.Release|Any CPU.Build.0 = Release|Any CPU
+		{AACBE225-E01A-4187-B770-944C6758A1A2}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{AACBE225-E01A-4187-B770-944C6758A1A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{AACBE225-E01A-4187-B770-944C6758A1A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{AACBE225-E01A-4187-B770-944C6758A1A2}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(NestedProjects) = preSolution
+		{AACBE225-E01A-4187-B770-944C6758A1A2} = {01D1FDFA-2FF5-4F98-AEB2-5FDA33F2C7D0}
 	EndGlobalSection
 EndGlobal
