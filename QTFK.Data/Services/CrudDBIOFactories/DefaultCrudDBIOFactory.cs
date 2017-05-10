@@ -43,7 +43,7 @@ namespace QTFK.Services.CrudDBIOFactories
             throw new NotImplementedException();
         }
 
-        public void Register<T>(Func<T> builder, bool isDefault) where T : ICRUDDBIO
+        public ICrudDBIOFactory Register<T>(Func<T> builder, bool isDefault) where T : ICRUDDBIO
         {
             throw new NotImplementedException();
         }

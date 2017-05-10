@@ -11,6 +11,6 @@ namespace QTFK.Services
     {
         ICRUDDBIO GetDefault();
         ICRUDDBIO Get<T>() where T : ICRUDDBIO, IDBIO;
-        void Register<T>(Func<T> builder, bool isDefault) where T : ICRUDDBIO;
+        ICrudDBIOFactory Register<T>(Func<T> builder, bool isDefault) where T : ICRUDDBIO;
     }
 }

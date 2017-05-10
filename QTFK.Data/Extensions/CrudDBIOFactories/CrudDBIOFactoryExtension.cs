@@ -12,8 +12,7 @@ namespace QTFK.Extensions.CrudDBIOFactories
     {
         public static ICrudDBIOFactory Register<T>(this ICrudDBIOFactory factory, Func<T> builder) where T : ICRUDDBIO
         {
-            factory.Register(builder, false);
-            return factory;
+            return factory.Register(builder, false);
         }
     }
 }
