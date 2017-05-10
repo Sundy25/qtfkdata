@@ -10,7 +10,7 @@ namespace QTFK.Services
     public interface ICrudDBIOFactory
     {
         ICRUDDBIO GetDefault();
-        ICRUDDBIO Get<T>() where T : ICRUDDBIO, IDBIO;
+        ICRUDDBIO Get<T>() where T : IDBIO;
         ICrudDBIOFactory Register<T>(Func<T> builder, bool isDefault) where T : ICRUDDBIO;
     }
 }

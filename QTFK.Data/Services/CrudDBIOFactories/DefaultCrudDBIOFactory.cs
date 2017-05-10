@@ -18,7 +18,7 @@ namespace QTFK.Services.CrudDBIOFactories
             _providers = new Dictionary<ICRUDDBIO, Func<ICRUDDBIO>>();
         }
 
-        public ICRUDDBIO Get<T>() where T : ICRUDDBIO, IDBIO
+        public ICRUDDBIO Get<T>() where T : IDBIO
         {
             //string assemblyName = typeof(T).Assembly.FullName;
             //string typeName = typeof(T).FullName;
