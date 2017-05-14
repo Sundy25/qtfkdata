@@ -19,7 +19,7 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void TestMethod1()
         {
-
+            throw new NotImplementedException("Boooom! this test is under construction O__oU");
         }
 
         bool ConsumerExampleUsingQTFK(string id, string subID)
