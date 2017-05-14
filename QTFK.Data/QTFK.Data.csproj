@@ -52,11 +52,11 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Extensions\CrudDBIOFactories\CrudDBIOFactoryExtension.cs" />
     <Compile Include="Models\CrudRegistation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\CrudDBIOFactories\DefaultCrudDBIOFactory.cs" />
-    <Compile Include="Services\ICrudDBIOFactory.cs" />
+    <Compile Include="Services\Factories\CRUDFactory.cs" />
+    <Compile Include="Services\Factories\DefaultFactory.cs" />
+    <Compile Include="Services\IFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

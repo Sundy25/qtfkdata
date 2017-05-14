@@ -2,14 +2,14 @@
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using System.Data;
 using System.Data.SqlClient;
-using QTFK.Services.CrudDBIOFactories;
 using QTFK.Services.DBIO;
-using QTFK.Extensions.CrudDBIOFactories;
 using QTFK.Services;
 using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.DBIO;
 using System.Linq;
 using System.Collections.Generic;
+using QTFK.Services.Factories;
+using QTFK.Extensions.DBIO.CRUDFactory;
 
 namespace QTFK.Data.Tests
 {
@@ -24,36 +24,29 @@ namespace QTFK.Data.Tests
 
         bool ConsumerExampleUsingQTFK(string id, string subID)
         {
-            ICrudDBIOFactory factory = new DefaultCrudDBIOFactory()
-                .Register<SQLServerCrudDBIO>(() => new SQLServerCrudDBIO("to SQL Server connection string"))
-                .Register<OleDBCrudDBIO>(() => new OleDBCrudDBIO("to access file connection string"))
+            var factory = new CRUDFactory()
+                .Register<ISQLServer>(() => new SqlServerCrudFactory(new SQLServerDBIO("")), true)
+                .Register<IOleDB>(() => new OleDBCrudFactory(new OleDBIO("")), false)
                 ;
 
             var dbio = factory.Get<ISQLServer>();
 
             //this select is independent of SQL engine
-            var select = dbio.NewSelect()
+            var actuaciones = dbio.Select<Actuacion>(q => q
                 .Select("vActuaciones", c => c.Column("IdFDTT").Column("IdPS").Column("RevisadaPor"))
-                .SetWhere($@" IdFDTT='{id}' AND IdPS='{subID}' ")
+                .SetWhere($@" IdFDTT='{id}' AND IdPS='{subID}' "))
+                .ToList()
                 ;
-
-            var actuaciones = dbio
-                .Get<Actuacion>(select)
-                .ToList();
 
             if (!actuaciones.Any())
                 return true;
             else
             {
-                var update = dbio.NewUpdate()
+                dbio.Update(q => q
                     .Set("Actuaciones", c => c.Column("EstadoTablaActuaciones", "APROBADO"))
-                    .SetWhere($" IdFDTT = {id} AND IdPS = {subID}");
-
-                dbio.Set(update);
+                    .SetWhere($" IdFDTT = {id} AND IdPS = {subID}"));
                 return false;
             }
-
-
         }
 
         bool ConsumerExampleMethod(string id, string subID)
