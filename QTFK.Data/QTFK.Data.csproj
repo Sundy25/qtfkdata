@@ -55,7 +55,9 @@
     <Compile Include="Models\CrudRegistation.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Factories\CRUDFactory.cs" />
+    <Compile Include="Services\Factories\DefaultAbstractEntityFactory.cs" />
     <Compile Include="Services\Factories\DefaultFactory.cs" />
+    <Compile Include="Services\IAbstractEntityFactory.cs" />
     <Compile Include="Services\IFactory.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
