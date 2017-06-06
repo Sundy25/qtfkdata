@@ -4,16 +4,10 @@ using QTFK.Services;
 using QTFK.Services.Factories;
 using QTFK.Services.DBIO;
 using System.Collections.Generic;
+using QTFK.Data.Tests.Models;
 
 namespace QTFK.Data.Tests
 {
-    public class SampleClass
-    {
-        public int ID { get; set; }
-        public string Name { get; set; }
-        public decimal WalletCash { get; set; }
-    }
-
     public interface ISampleClassRepository : ICRUDRepository<int, SampleClass>
     {
         IEnumerable<SampleClass> GetByWalletCash(decimal walletCash);
