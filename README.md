@@ -1,7 +1,5 @@
 # QTFKdata
 
-**Warning:** This project is under construction!
-
 ## Synopsis
 
 The purpose of this library is to save time coding the data access layer of your application.
@@ -12,11 +10,35 @@ This library will generate your CRUD classes...
 
 ## Motivation
 
-The data access is a common layer in many applications. Like in [QTFK libraries](https://github.com/hossmi/qtfk "Quick Tools for Funny Koding"), the main motivation of this library, is to help developers, avoiding to employ so much time in the construction of this layer.
+The data access is a common layer in many applications. Like in [QTFK libraries](https://github.com/hossmi/qtfk "Quick Tools for Funny Koding"), the main motivation of this library, it is to help developers, avoiding to invest so much time on the construction of this layer.
+
+## What this library offers
+
+This library allows you to get a CRUD repository only specifying an interface class. 
+Only writing the next interface... 
+
+```csharp
+	public interface IProductRepository : ICRUDRepository<Product> 
+	{
+	}
+```
+
+...we will get the implementation for it:
+
+```csharp
+	// ...
+	public SomeClassConstructor(IProductRepository repo) // <==== provided by D.I.
+	{
+		// ...
+		_productRepository = repo;
+		// ...
+	}
+	// ...
+```
 
 ## Code Example
 
-Let's generate a Product repository. Supose we have the next Product class:
+Let's generate a Product repository. Suppose we have the next Product class:
 ```csharp
 	//Product class
 	public class Product
@@ -40,7 +62,7 @@ We can create an interface that inherits from **ICRUDRepository<T>**. This base 
 	}
 ```
 
-At dependency injection engine setup, like AutoFac or OWin, we need to call the repositories factory for to build types for those interfaces that inherits from **ICRUDRepository<T>**. There is no need for mantaining this code fragment. Paste it and forget it!
+At dependency injection engine setup, like AutoFac or OWin, we need to call the repositories factory for to build types for those interfaces that inherits from **ICRUDRepository<T>**. There is no need for maintaining this code fragment.
 ```csharp
 	//...
 	IDBIO db = new SQLServerDBIO("some connection string");
@@ -80,12 +102,12 @@ Finally, dependency injection engine will provide instances of your repositories
 ## Installation
 
 _Initial version not yet released._
-Just download the zip with the laste release, unzip into your projects and reference it.
-_The intention is to build a nuget packet for a easiest installation._
+Just download the zip with the latest release, unzip it into your projects and reference it.
+_The intention it is to build a nuget package for an easier installation._
 
 ## Tests
 
-The solution includes a MS Test project for testing each feature. You will need to provide a connection string to data bases.
+The solution includes a MS Test project for testing each feature. You will need to provide a connection string to the data base.
 
 ## Contributors
 
