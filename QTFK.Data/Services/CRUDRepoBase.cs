@@ -12,6 +12,7 @@ using QTFK.Extensions.DBIO.QueryFactory;
 
 namespace QTFK.Services
 {
+    [Obsolete("It will be removed and/or recoded in other classes")]
     public abstract class CRUDRepoBase<T> : ICRUDRepo<T> where T : class, new()
     {
         private readonly IQueryFactory _crudFactory;
