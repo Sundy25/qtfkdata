@@ -30,16 +30,20 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="QTFK.Core">
+    <Reference Include="QTFK.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Extensions">
+    <Reference Include="QTFK.Extensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Services.DBIO.OleDB">
+    <Reference Include="QTFK.Services.DBIO.OleDB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Services.DBIO.OleDB.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Services.DBIO.SQLServer">
+    <Reference Include="QTFK.Services.DBIO.SQLServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -52,18 +56,29 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Models\CrudRegistation.cs" />
-    <Compile Include="MyTypeBuilder.cs" />
+    <Compile Include="Attributes\KeyAttribute.cs" />
+    <Compile Include="Attributes\UniqueAttribute.cs" />
+    <Compile Include="Extensions\Getters\RepositoryGetExtension.cs" />
+    <Compile Include="Extensions\Setter\RepositorySetExtension.cs" />
+    <Compile Include="Models\MetaDataInfo.cs" />
+    <Compile Include="Models\RepositoryOperationResult.cs" />
+    <Compile Include="Services\CRUDRepositoryBuilders\MyTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\CRUDRepoBase.cs" />
-    <Compile Include="Services\Factories\CRUDFactory.cs" />
-    <Compile Include="Services\Factories\DefaultAbstractEntityFactory.cs" />
-    <Compile Include="Services\Factories\DefaultFactory.cs" />
-    <Compile Include="Services\IAbstractEntityFactory.cs" />
+    <Compile Include="Services\CRUDRepositoryBuilders\DefaultCRUDRepositoryBuilder.cs" />
+    <Compile Include="Services\IQueryFactory.cs" />
     <Compile Include="Services\ICRUDRepo.cs" />
-    <Compile Include="Services\IFactory.cs" />
+    <Compile Include="Services\ICRUDRepositoryBuilder.cs" />
+    <Compile Include="Services\IDependency.cs" />
     <Compile Include="Services\IMetaDataProvider.cs" />
+    <Compile Include="Services\IRepository.cs" />
+    <Compile Include="Services\ITypeBuilder.cs" />
     <Compile Include="Services\MetaDataProviders\DefaultMetaDataProvider.cs" />
+    <Compile Include="Services\Typebuilders\DefaultTypeBuilder.cs" />
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="Services\Factories\" />
+    <Folder Include="Services\Repositories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 

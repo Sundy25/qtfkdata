@@ -8,16 +8,16 @@ using QTFK.Extensions.DBIO;
 using QTFK.Extensions.Collections.Strings;
 using QTFK.Extensions.Objects.DictionaryConverter;
 using QTFK.Extensions.DBCommand;
-using QTFK.Extensions.DBIO.CRUDFactory;
+using QTFK.Extensions.DBIO.QueryFactory;
 
 namespace QTFK.Services
 {
     public abstract class CRUDRepoBase<T> : ICRUDRepo<T> where T : class, new()
     {
-        private readonly ICRUDQueryFactory _crudFactory;
+        private readonly IQueryFactory _crudFactory;
         private readonly IMetaDataProvider _metadataProvider;
 
-        public CRUDRepoBase(ICRUDQueryFactory crudFactory, IMetaDataProvider metadataProvider)
+        public CRUDRepoBase(IQueryFactory crudFactory, IMetaDataProvider metadataProvider)
         {
             _crudFactory = crudFactory;
             _metadataProvider = metadataProvider;
@@ -37,7 +37,8 @@ namespace QTFK.Services
 
             var keys = _metadataProvider.GetKeys(t);
 
-            q.SetWhere(keys.Stringify(i => $" {i} = @{i}", " AND "));
+            throw new NotImplementedException();
+            //q.SetWhere(keys.Stringify(i => $" {i} = @{i}", " AND "));
             foreach (var key in keys)
                 q.SetParam($"@{key}", dt[key]);
 

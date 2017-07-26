@@ -4,25 +4,32 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Reflection;
 using System.Reflection.Emit;
+using System.Text;
+using System.Threading.Tasks;
 
-namespace QTFK
+namespace QTFK.Services.Typebuilders
 {
-    public static class MyTypeBuilder
+    public class DefaultTypeBuilder : ITypeBuilder
     {
-        public static void CreateNewObject()
+        public Type BuildForInterface(Type parentInterface, string name, Module module, Type baseClass)
         {
-            var myType = CompileResultType("MyDynamicType", DictionaryExtension
-                .New<Type>()
-                .Set("Age", typeof(int))
-                .Set("Name", typeof(string))
-                );
-            var myObject = Activator.CreateInstance(myType);
+            return CompileResultType(name, module.Name, baseClass);
         }
-        public static Type CompileResultType(string typeSignature, IDictionary<string, Type> properties)
-        {
-            TypeBuilder tb = GetTypeBuilder(typeSignature);
-            ConstructorBuilder constructor = tb.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
 
+        //public void CreateNewObject()
+        //{
+        //    var myType = CompileResultType("MyDynamicType", DictionaryExtension
+        //        .New<Type>()
+        //        .Set("Age", typeof(int))
+        //        .Set("Name", typeof(string))
+        //        );
+        //    var myObject = Activator.CreateInstance(myType);
+        //}
+        public Type CompileResultType(string typeSignature, string moduleName, Type parent = null, IDictionary<string, Type> properties = null)
+        {
+            TypeBuilder tb = GetTypeBuilder(typeSignature, moduleName, parent);
+            ConstructorBuilder constructor = tb.DefineDefaultConstructor(MethodAttributes.Public | MethodAttributes.SpecialName | MethodAttributes.RTSpecialName);
+            properties = properties ?? DictionaryExtension.New<Type>();
             // NOTE: assuming your list contains Field objects with fields FieldName(string) and FieldType(Type)
             foreach (var field in properties)
                 CreateProperty(tb, field.Key, field.Value);
@@ -31,11 +38,11 @@ namespace QTFK
             return objectType;
         }
 
-        private static TypeBuilder GetTypeBuilder(string typeSignature)
+        private TypeBuilder GetTypeBuilder(string typeSignature, string moduleName, Type parent = null)
         {
             var an = new AssemblyName(typeSignature);
             AssemblyBuilder assemblyBuilder = AppDomain.CurrentDomain.DefineDynamicAssembly(an, AssemblyBuilderAccess.Run);
-            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule("MainModule");
+            ModuleBuilder moduleBuilder = assemblyBuilder.DefineDynamicModule(moduleName);
             TypeBuilder tb = moduleBuilder.DefineType(typeSignature,
                     TypeAttributes.Public |
                     TypeAttributes.Class |
@@ -43,11 +50,11 @@ namespace QTFK
                     TypeAttributes.AnsiClass |
                     TypeAttributes.BeforeFieldInit |
                     TypeAttributes.AutoLayout,
-                    null);
+                    parent);
             return tb;
         }
 
-        private static void CreateProperty(TypeBuilder tb, string propertyName, Type propertyType)
+        private void CreateProperty(TypeBuilder tb, string propertyName, Type propertyType)
         {
             FieldBuilder fieldBuilder = tb.DefineField("_" + propertyName, propertyType, FieldAttributes.Private);
 

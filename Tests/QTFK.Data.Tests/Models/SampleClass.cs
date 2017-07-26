@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QTFK.Attributes;
+using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Text;
@@ -8,8 +9,12 @@ namespace QTFK.Data.Tests.Models
 {
     public class SampleClass
     {
-        public int ID { get; set; }
+        [Key]
+        public int? ID { get; set; }
+
+        [Unique]
         public string Name { get; set; }
+
         public decimal WalletCash { get; set; }
     }
 }

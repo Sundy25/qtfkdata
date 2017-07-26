@@ -8,8 +8,7 @@ using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.DBIO;
 using System.Linq;
 using System.Collections.Generic;
-using QTFK.Services.Factories;
-using QTFK.Extensions.DBIO.CRUDFactory;
+using QTFK.Extensions.DBIO.QueryFactory;
 
 namespace QTFK.Data.Tests
 {
@@ -24,29 +23,30 @@ namespace QTFK.Data.Tests
 
         bool ConsumerExampleUsingQTFK(string id, string subID)
         {
-            var factory = new CRUDFactory()
-                .Register<ISQLServer>(() => new SqlServerCrudFactory(new SQLServerDBIO("")), true)
-                .Register<IOleDB>(() => new OleDBCrudFactory(new OleDBIO("")), false)
-                ;
+            throw new NotImplementedException("Boooom! this test is under construction O__oU");
+            //var factory = new CRUDFactory()
+            //    .Register<ISQLServer>(() => new SqlServerCrudFactory(new SQLServerDBIO("")), true)
+            //    .Register<IOleDB>(() => new OleDBCrudFactory(new OleDBIO("")), false)
+            //    ;
 
-            var dbio = factory.Get<ISQLServer>();
+            //var dbio = factory.Get<ISQLServer>();
 
-            //this select is independent of SQL engine
-            var actuaciones = dbio.Select<Actuacion>(q => q
-                .Select("vActuaciones", c => c.Column("IdFDTT").Column("IdPS").Column("RevisadaPor"))
-                .SetWhere($@" IdFDTT='{id}' AND IdPS='{subID}' "))
-                .ToList()
-                ;
+            ////this select is independent of SQL engine
+            //var actuaciones = dbio.Select<Actuacion>(q => q
+            //    .Select("vActuaciones", c => c.Column("IdFDTT").Column("IdPS").Column("RevisadaPor"))
+            //    .SetWhere($@" IdFDTT='{id}' AND IdPS='{subID}' "))
+            //    .ToList()
+            //    ;
 
-            if (!actuaciones.Any())
-                return true;
-            else
-            {
-                dbio.Update(q => q
-                    .Set("Actuaciones", c => c.Column("EstadoTablaActuaciones", "APROBADO"))
-                    .SetWhere($" IdFDTT = {id} AND IdPS = {subID}"));
-                return false;
-            }
+            //if (!actuaciones.Any())
+            //    return true;
+            //else
+            //{
+            //    dbio.Update(q => q
+            //        .Set("Actuaciones", c => c.Column("EstadoTablaActuaciones", "APROBADO"))
+            //        .SetWhere($" IdFDTT = {id} AND IdPS = {subID}"));
+            //    return false;
+            //}
         }
 
         bool ConsumerExampleMethod(string id, string subID)
