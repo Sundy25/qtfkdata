@@ -4,8 +4,8 @@ using QTFK.Data.Tests.Models;
 using QTFK.Models;
 using System.Linq;
 using QTFK.Extensions;
-using QTFK.Extensions.Getters;
-using QTFK.Extensions.Setter;
+using QTFK.Services.Factories;
+using QTFK.Services.DBIO;
 
 namespace QTFK.Data.Tests
 {
@@ -15,13 +15,19 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            var repo = new SampleRepository();
+            //By Dependency Injection Engine
+            var db = new QTFK.Services.DBIO.OleDBIO("booooooom");
+            var lowLevelqueryFactory = new OleDBQueryFactory(db);
+            var filters = new IQueryFilter[]
+            {
+                new QTFK.Models.DBIO.Filters.OleDBByParamEqualsFilter(),
+            };
+            var queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory,filters);
+            ISampleRepository repo = /* FROM Dependency Injection Engine */ new SampleRepository(queryFactory);
 
             RepositoryOperationResult result;
 
-            var items = repo
-                .GetAll()
-                ;
+            var items = repo.Get();
 
             Assert.IsFalse(items.Any());
 
@@ -39,23 +45,17 @@ namespace QTFK.Data.Tests
             result = repo.Set(item);
             Assert.AreEqual(RepositoryOperationResult.Updated, result);
 
-            //var item2 = repo
-            //    .Get()
-            //    .Where(i => i.ID)
-            //    .IsEqualTo(item.ID)
-            //    .Items
-            //    .Single()
-            //    ;
-
             var item2 = repo
-                .GetByID(item.ID)
+                .Get()
+                .Where(i => i.ID == item.ID)
+                .Single()
                 ;
 
             Assert.AreNotSame(item, item2);
             Assert.AreEqual(666m, item2.WalletCash);
 
             var itemsBetween = repo
-                .GetBetween(i => i.WalletCash, 500m, 1000m)
+                .GetByWalletCashBetween(500m, 1000m)
                 .ToArray()
                 ;
 

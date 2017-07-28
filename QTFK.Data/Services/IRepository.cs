@@ -8,9 +8,8 @@ namespace QTFK.Services
 {
     public interface IRepository<T> where T : new()
     {
-        IQueryFactory<T> QueryFactory { get; }
-        MetaDataInfo Entity { get; }
-        //RepositoryOperationResult Set(T item);
-        //IEnumerable<T> Get(Expression<Func<T, bool>> filter);
+        IEnumerable<T> Get();
+        RepositoryOperationResult Set(T item);
+        RepositoryOperationResult Delete(T item);
     }
 }
