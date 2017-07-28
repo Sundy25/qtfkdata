@@ -4,7 +4,7 @@ using QTFK.Models;
 
 namespace QTFK.Services.Repositories
 {
-    public class BaseRepository<T> : IRepository<T> where T : new()
+    public abstract class BaseRepository<T> : IRepository<T> where T : new()
     {
         protected readonly IQueryFactory<T> _queryFactory;
 

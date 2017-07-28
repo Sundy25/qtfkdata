@@ -12,18 +12,22 @@ namespace QTFK.Data.Tests
     [TestClass]
     public class NewTest
     {
-        [TestMethod]
-        public void TestMethod1()
+        ISampleRepository DependencyInjectionFake_Build()
         {
-            //By Dependency Injection Engine
             var db = new QTFK.Services.DBIO.OleDBIO("booooooom");
             var lowLevelqueryFactory = new OleDBQueryFactory(db);
             var filters = new IQueryFilter[]
             {
                 new QTFK.Models.DBIO.Filters.OleDBByParamEqualsFilter(),
             };
-            var queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory,filters);
-            ISampleRepository repo = /* FROM Dependency Injection Engine */ new SampleRepository(queryFactory);
+            var queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filters);
+            return new SampleRepository(queryFactory);
+        }
+
+        [TestMethod]
+        public void TestMethod1()
+        {
+            ISampleRepository repo = DependencyInjectionFake_Build();
 
             RepositoryOperationResult result;
 
