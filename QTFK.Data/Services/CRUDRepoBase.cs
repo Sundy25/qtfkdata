@@ -12,7 +12,7 @@ using QTFK.Extensions.DBIO.QueryFactory;
 
 namespace QTFK.Services
 {
-    [Obsolete("It will be removed and/or recoded in other classes")]
+    [Obsolete("This class will be phagocyte by other better not yet designed classes ^__^")]
     public abstract class CRUDRepoBase<T> : ICRUDRepo<T> where T : class, new()
     {
         private readonly IQueryFactory _crudFactory;
