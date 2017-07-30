@@ -6,6 +6,8 @@ using System.Linq;
 using QTFK.Extensions;
 using QTFK.Services.Factories;
 using QTFK.Services.DBIO;
+using QTFK.Services;
+using QTFK.Services.DBIO.QueryFilterFactories;
 
 namespace QTFK.Data.Tests
 {
@@ -16,9 +18,9 @@ namespace QTFK.Data.Tests
         {
             var db = new QTFK.Services.DBIO.OleDBIO("booooooom");
             var lowLevelqueryFactory = new OleDBQueryFactory(db);
-            var filters = new IQueryFilter[]
+            var filters = new IQueryFilterFactory[]
             {
-                new QTFK.Models.DBIO.Filters.OleDBByParamEqualsFilter(),
+                new OleDBDefaultFilterFactory(),
             };
             var queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filters);
             return new SampleRepository(queryFactory);
