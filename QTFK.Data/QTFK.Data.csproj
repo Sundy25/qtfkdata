@@ -38,14 +38,6 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Services.DBIO.OleDB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\qtfk.1.5.0\QTFK.Services.DBIO.OleDB.dll</HintPath>
-    </Reference>
-    <Reference Include="QTFK.Services.DBIO.SQLServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\qtfk.1.5.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -59,6 +51,7 @@
     <Compile Include="Attributes\KeyAttribute.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
     <Compile Include="Models\MetaDataInfo.cs" />
+    <Compile Include="Models\QueryFilterNotFoundException.cs" />
     <Compile Include="Models\RepositoryOperationResult.cs" />
     <Compile Include="Services\CRUDRepositoryBuilders\MyTypeBuilder.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
@@ -70,6 +63,7 @@
     <Compile Include="Services\ICRUDRepositoryBuilder.cs" />
     <Compile Include="Services\IDependency.cs" />
     <Compile Include="Services\IMetaDataProvider.cs" />
+    <Compile Include="Services\IQueryFilterFactory.cs" />
     <Compile Include="Services\IRepository.cs" />
     <Compile Include="Services\ITypeBuilder.cs" />
     <Compile Include="Services\MetaDataProviders\DefaultMetaDataProvider.cs" />

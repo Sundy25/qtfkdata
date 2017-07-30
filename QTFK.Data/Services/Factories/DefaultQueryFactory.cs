@@ -1,28 +1,33 @@
 ﻿using System;
 using QTFK.Models;
 using System.Collections.Generic;
+using System.Reflection;
+using System.Linq;
 
 namespace QTFK.Services.Factories
 {
     public class DefaultQueryFactory<T> : IQueryFactory<T> where T: new()
     {
-        private readonly IEnumerable<IQueryFilter> _filters;
+        private readonly IEnumerable<IQueryFilterFactory> _filterFactories;
         private readonly IQueryFactory _queryFactory;
 
         public DefaultQueryFactory(
             IQueryFactory queryFactory
-            , IEnumerable<IQueryFilter> filters
+            , IEnumerable<IQueryFilterFactory> filterFactories
             )
         {
-            _filters = filters;
+            _filterFactories = filterFactories;
             _queryFactory = queryFactory;
         }
 
         public IDBIO DB => _queryFactory.DB;
 
-        public IQueryFilter GetFilterForMethodName(string methodName, params object[] args)
+        public IQueryFilter GetFilter(MethodBase method)
         {
-            throw new NotImplementedException();
+            return _filterFactories
+                .Select(f => f.Build(method, typeof(T)))
+                .SingleOrDefault()
+                ;
         }
 
         public IDBQueryDelete NewDelete()
