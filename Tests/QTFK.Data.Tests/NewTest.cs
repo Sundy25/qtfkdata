@@ -57,8 +57,16 @@ namespace QTFK.Data.Tests
                 .Single()
                 ;
 
+            var item3 = repo
+                .GetByName("pepe")
+                ;
+
             Assert.AreNotSame(item, item2);
             Assert.AreEqual(666m, item2.WalletCash);
+
+            Assert.AreNotSame(item, item3);
+            Assert.AreEqual(666m, item2.WalletCash);
+            Assert.AreSame(item.ID, item3.ID);
 
             var itemsBetween = repo
                 .GetByWalletCashBetween(500m, 1000m)
