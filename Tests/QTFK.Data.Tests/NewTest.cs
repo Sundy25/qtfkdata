@@ -16,7 +16,7 @@ namespace QTFK.Data.Tests
     {
         ISampleRepository DependencyInjectionFake_Build()
         {
-            var db = new QTFK.Services.DBIO.OleDBIO("booooooom");
+            var db = new OleDBIO("booooooom");
             var lowLevelqueryFactory = new OleDBQueryFactory(db);
             var filters = new IQueryFilterFactory[]
             {
