@@ -39,13 +39,16 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Extensions">
+    <Reference Include="QTFK.Extensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Services.DBIO.OleDB">
+    <Reference Include="QTFK.Services.DBIO.OleDB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Services.DBIO.OleDB.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Services.DBIO.SQLServer">
+    <Reference Include="QTFK.Services.DBIO.SQLServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
       <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -68,10 +71,17 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
-    <Compile Include="FactoryTests.cs" />
+    <Compile Include="Models\ISampleRepository.cs" />
+    <Compile Include="Models\SampleClass.cs" />
+    <Compile Include="Models\SampleRepository.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="NewTest.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\QTFK.Data.OleDB\QTFK.Data.OleDB.csproj">
+      <Project>{9460B402-6692-4E38-87A8-A3E1DA4B8C66}</Project>
+      <Name>QTFK.Data.OleDB</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QTFK.Data\QTFK.Data.csproj">
       <Project>{a78ecf12-d6e8-4c49-b315-ffb4b3fb11cc}</Project>
       <Name>QTFK.Data</Name>

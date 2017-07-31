@@ -1,14 +1,14 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</ProjectGuid>
+    <ProjectGuid>{9460B402-6692-4E38-87A8-A3E1DA4B8C66}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QTFK</RootNamespace>
-    <AssemblyName>QTFK.Data</AssemblyName>
+    <AssemblyName>QTFK.Data.OleDB</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
   </PropertyGroup>
@@ -30,12 +30,10 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="QTFK.Core, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="QTFK.Core">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Extensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
+    <Reference Include="QTFK.Extensions">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
     </Reference>
     <Reference Include="System" />
@@ -48,27 +46,14 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Attributes\KeyAttribute.cs" />
-    <Compile Include="Attributes\UniqueAttribute.cs" />
-    <Compile Include="Models\QueryFilterNotFoundException.cs" />
-    <Compile Include="Models\RepositoryOperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\Factories\DefaultQueryFactory.cs" />
-    <Compile Include="Services\IQueryFactory.cs" />
-    <Compile Include="Services\IDependency.cs" />
-    <Compile Include="Services\IQueryFilterFactory.cs" />
-    <Compile Include="Services\IRepository.cs" />
-    <Compile Include="Services\Repositories\BaseRepository.cs" />
+    <Compile Include="Services\DBIO\QueryFilterFactories\OleDBDefaultFilterFactory.cs" />
   </ItemGroup>
   <ItemGroup>
-    <Folder Include="Extensions\DBIO\" />
+    <ProjectReference Include="..\QTFK.Data\QTFK.Data.csproj">
+      <Project>{a78ecf12-d6e8-4c49-b315-ffb4b3fb11cc}</Project>
+      <Name>QTFK.Data</Name>
+    </ProjectReference>
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
