@@ -50,7 +50,6 @@
   <ItemGroup>
     <Compile Include="Attributes\KeyAttribute.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
-    <Compile Include="Models\MetaDataInfo.cs" />
     <Compile Include="Models\QueryFilterNotFoundException.cs" />
     <Compile Include="Models\RepositoryOperationResult.cs" />
     <Compile Include="Services\CRUDRepositoryBuilders\MyTypeBuilder.cs" />
