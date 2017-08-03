@@ -4,6 +4,8 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using QTFK.Extensions.DBIO.DBQueries;
+using QTFK.Extensions.Objects.Manipulator;
+using QTFK.Attributes;
 
 namespace QTFK.Services.Factories
 {
@@ -11,6 +13,8 @@ namespace QTFK.Services.Factories
     {
         private readonly IEnumerable<IQueryFilterFactory> _filterFactories;
         private readonly IQueryFactory _queryFactory;
+        private readonly IEnumerable<string> _typeFields;
+        private readonly string _typeName;
 
         public DefaultQueryFactory(
             IQueryFactory queryFactory
@@ -19,6 +23,29 @@ namespace QTFK.Services.Factories
         {
             _filterFactories = filterFactories;
             _queryFactory = queryFactory;
+
+            _typeFields = typeof(T)
+                .GetProperties()
+                .Where(p => p.CanRead && p.CanWrite)
+                .Select(p =>
+                {
+                    var alias = p.GetCustomAttribute<AliasAttribute>();
+                    if (alias != null && !string.IsNullOrWhiteSpace(alias.Name))
+                        return alias.Name;
+
+                    return p.Name;
+                })
+                .ToList()
+                ;
+
+            {
+                var alias = typeof(T).GetCustomAttribute<AliasAttribute>();
+
+                _typeName = alias != null && !string.IsNullOrWhiteSpace(alias.Name)
+                    ? alias.Name
+                    : typeof(T).Name
+                    ;
+            }
         }
 
         public IDBIO DB => _queryFactory.DB;
@@ -37,32 +64,47 @@ namespace QTFK.Services.Factories
         {
             return _queryFactory
                 .NewDelete()
-                .SetTable(typeof(T).Name)
+                .SetTable(_typeName)
                 ;
         }
 
         public IDBQueryInsert NewInsert()
         {
-            return _queryFactory
+            var q = _queryFactory
                 .NewInsert()
-                .SetTable(typeof(T).Name)
+                .SetTable(_typeName)
                 ;
+
+            foreach (var field in _typeFields)
+                q.SetColumn(field, null);
+
+            return q;
         }
 
         public IDBQuerySelect NewSelect()
         {
-            return _queryFactory
+            var q = _queryFactory
                 .NewSelect()
-                .SetTable(typeof(T).Name)
+                .SetTable(_typeName)
                 ;
+
+            foreach (var field in _typeFields)
+                q.AddColumn(field, null);
+
+            return q;
         }
 
         public IDBQueryUpdate NewUpdate()
         {
-            return _queryFactory
+            var q = _queryFactory
                 .NewUpdate()
-                .SetTable(typeof(T).Name)
+                .SetTable(_typeName)
                 ;
+
+            foreach (var field in _typeFields)
+                q.SetColumn(field, null);
+
+            return q;
         }
     }
 }
