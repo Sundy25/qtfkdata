@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 
 namespace QTFK.Data.Tests.Models
 {
+    [Alias("person")]
     public class SampleClass
     {
         [Key]
@@ -15,6 +16,7 @@ namespace QTFK.Data.Tests.Models
 
         public string Name { get; set; }
 
+        [Alias("wallet_cash")]
         public decimal WalletCash { get; set; }
     }
 }
