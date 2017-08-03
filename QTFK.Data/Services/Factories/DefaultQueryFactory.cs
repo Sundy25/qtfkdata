@@ -3,6 +3,7 @@ using QTFK.Models;
 using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
+using QTFK.Extensions.DBIO.DBQueries;
 
 namespace QTFK.Services.Factories
 {
@@ -22,6 +23,8 @@ namespace QTFK.Services.Factories
 
         public IDBIO DB => _queryFactory.DB;
 
+        public string Prefix { get => _queryFactory.Prefix; set => _queryFactory.Prefix = value; }
+
         public IQueryFilter GetFilter(MethodBase method)
         {
             return _filterFactories
@@ -32,27 +35,34 @@ namespace QTFK.Services.Factories
 
         public IDBQueryDelete NewDelete()
         {
-            var q = _queryFactory.NewDelete();
-
-            throw new NotImplementedException();
+            return _queryFactory
+                .NewDelete()
+                .SetTable(typeof(T).Name)
+                ;
         }
 
         public IDBQueryInsert NewInsert()
         {
-            var q = _queryFactory.NewInsert();
-            throw new NotImplementedException();
+            return _queryFactory
+                .NewInsert()
+                .SetTable(typeof(T).Name)
+                ;
         }
 
         public IDBQuerySelect NewSelect()
         {
-            var q = _queryFactory.NewSelect();
-            throw new NotImplementedException();
+            return _queryFactory
+                .NewSelect()
+                .SetTable(typeof(T).Name)
+                ;
         }
 
         public IDBQueryUpdate NewUpdate()
         {
-            var q = _queryFactory.NewUpdate();
-            throw new NotImplementedException();
+            return _queryFactory
+                .NewUpdate()
+                .SetTable(typeof(T).Name)
+                ;
         }
     }
 }

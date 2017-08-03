@@ -1,4 +1,5 @@
 ﻿using QTFK.Attributes;
+using QTFK.Services;
 using System;
 using System.Collections.Generic;
 using System.Linq;
@@ -12,7 +13,6 @@ namespace QTFK.Data.Tests.Models
         [Key]
         public int? ID { get; set; }
 
-        [Unique]
         public string Name { get; set; }
 
         public decimal WalletCash { get; set; }
