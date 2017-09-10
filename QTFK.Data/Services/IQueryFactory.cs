@@ -8,8 +8,14 @@ using System.Reflection;
 
 namespace QTFK.Services
 {
-    public interface IQueryFactory<T> : IQueryFactory where T : new()
+    public interface IQueryFactory<T> : 
+        ISelectQueryFactory
+        , IInsertQueryFactory
+        , IUpdateQueryFactory
+        , IDeleteQueryFactory
+        , IQueryFilterFactoryCollection
+        where T : new()
     {
-        IQueryFilter GetFilter(MethodBase method);
+        EntityDescription EntityDescription { get; }
     }
 }

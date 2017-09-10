@@ -9,73 +9,81 @@ using QTFK.Attributes;
 
 namespace QTFK.Services.Factories
 {
-    public class DefaultQueryFactory<T> : IQueryFactory<T> where T: new()
+    public class DefaultQueryFactory<T> : IQueryFactory<T> where T : new()
     {
+        private readonly ISelectQueryFactory _selectQueryFactory;
+        private readonly IInsertQueryFactory _insertQueryFactory;
+        private readonly IUpdateQueryFactory _updateQueryFactory;
+        private readonly IDeleteQueryFactory _deleteQueryFactory;
+        private readonly IDBIO _db;
         private readonly IEnumerable<IQueryFilterFactory> _filterFactories;
-        private readonly IQueryFactory _queryFactory;
-        private readonly IEnumerable<string> _typeFields;
-        private readonly string _typeName;
 
         public DefaultQueryFactory(
-            IQueryFactory queryFactory
+            ISelectQueryFactory selectQueryFactory
+            , IInsertQueryFactory insertQueryFactory
+            , IUpdateQueryFactory updateQueryFactory
+            , IDeleteQueryFactory deleteQueryFactory
             , IEnumerable<IQueryFilterFactory> filterFactories
             )
         {
+            _selectQueryFactory = selectQueryFactory;
+            _insertQueryFactory = insertQueryFactory;
+            _updateQueryFactory = updateQueryFactory;
+            _deleteQueryFactory = deleteQueryFactory;
+            _db = _selectQueryFactory.DB;
             _filterFactories = filterFactories;
-            _queryFactory = queryFactory;
 
-            _typeFields = typeof(T)
+            EntityDescription = BuildEntityDescription();
+        }
+
+        private EntityDescription BuildEntityDescription()
+        {
+            var fields = typeof(T)
                 .GetProperties()
                 .Where(p => p.CanRead && p.CanWrite)
                 .Select(p =>
                 {
-                    var alias = p.GetCustomAttribute<AliasAttribute>();
-                    if (alias != null && !string.IsNullOrWhiteSpace(alias.Name))
-                        return alias.Name;
+                    var fieldAlias = p.GetCustomAttribute<AliasAttribute>();
+                    if (fieldAlias != null && !string.IsNullOrWhiteSpace(fieldAlias.Name))
+                        return fieldAlias.Name;
 
                     return p.Name;
                 })
                 .ToList()
                 ;
 
-            {
-                var alias = typeof(T).GetCustomAttribute<AliasAttribute>();
+            var alias = typeof(T).GetCustomAttribute<AliasAttribute>();
 
-                _typeName = alias != null && !string.IsNullOrWhiteSpace(alias.Name)
-                    ? alias.Name
-                    : typeof(T).Name
-                    ;
-            }
-        }
-
-        public IDBIO DB => _queryFactory.DB;
-
-        public string Prefix { get => _queryFactory.Prefix; set => _queryFactory.Prefix = value; }
-
-        public IQueryFilter GetFilter(MethodBase method)
-        {
-            return _filterFactories
-                .Select(f => f.Build(method, typeof(T)))
-                .SingleOrDefault()
+            var name = alias != null && !string.IsNullOrWhiteSpace(alias.Name)
+                ? alias.Name
+                : typeof(T).Name
                 ;
+
+            return new EntityDescription(name, fields);
         }
+
+        public IDBIO DB { get { return _db; } }
+
+        public string Prefix { get; set; }
+
+        public EntityDescription EntityDescription { get; }
 
         public IDBQueryDelete NewDelete()
         {
-            return _queryFactory
+            return _deleteQueryFactory
                 .NewDelete()
-                .SetTable(_typeName)
+                .SetTable(EntityDescription.Name)
                 ;
         }
 
         public IDBQueryInsert NewInsert()
         {
-            var q = _queryFactory
+            var q = _insertQueryFactory
                 .NewInsert()
-                .SetTable(_typeName)
+                .SetTable(EntityDescription.Name)
                 ;
 
-            foreach (var field in _typeFields)
+            foreach (var field in EntityDescription.Fields)
                 q.SetColumn(field, null);
 
             return q;
@@ -83,12 +91,12 @@ namespace QTFK.Services.Factories
 
         public IDBQuerySelect NewSelect()
         {
-            var q = _queryFactory
+            var q = _selectQueryFactory
                 .NewSelect()
-                .SetTable(_typeName)
+                .SetTable(EntityDescription.Name)
                 ;
 
-            foreach (var field in _typeFields)
+            foreach (var field in EntityDescription.Fields)
                 q.AddColumn(field, null);
 
             return q;
@@ -96,15 +104,26 @@ namespace QTFK.Services.Factories
 
         public IDBQueryUpdate NewUpdate()
         {
-            var q = _queryFactory
+            var q = _updateQueryFactory
                 .NewUpdate()
-                .SetTable(_typeName)
+                .SetTable(EntityDescription.Name)
                 ;
 
-            foreach (var field in _typeFields)
+            foreach (var field in EntityDescription.Fields)
                 q.SetColumn(field, null);
 
             return q;
+        }
+
+        public TFilter Build<TFilter>() where TFilter : class, IQueryFilterFactory
+        {
+            var t = typeof(TFilter);
+            foreach (var factory in _filterFactories)
+            {
+                if (factory.GetType().IsAssignableFrom(t))
+                    return (TFilter)factory;
+            }
+            return null;
         }
     }
 }

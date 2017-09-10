@@ -52,19 +52,22 @@
     <Compile Include="Attributes\KeyAttribute.cs" />
     <Compile Include="Attributes\Prefix.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
+    <Compile Include="Extensions\DBIO\QueryFactory\QueryFactoryDataExtension.cs" />
+    <Compile Include="Models\EntityDescription.cs" />
     <Compile Include="Models\QueryFilterNotFoundException.cs" />
     <Compile Include="Models\RepositoryOperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\Factories\DefaultQueryFactory.cs" />
+    <Compile Include="Services\FilterParsers\ByParamBetweenFilterParser.cs" />
+    <Compile Include="Services\FilterParsers\ByParamEqualsFilterParser.cs" />
     <Compile Include="Services\IQueryFactory.cs" />
     <Compile Include="Services\IDependency.cs" />
-    <Compile Include="Services\IQueryFilterFactory.cs" />
+    <Compile Include="Services\IMethodParser.cs" />
+    <Compile Include="Services\IQueryFilterFactoryCollection.cs" />
     <Compile Include="Services\IRepository.cs" />
     <Compile Include="Services\Repositories\BaseRepository.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Extensions\DBIO\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.
