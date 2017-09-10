@@ -16,10 +16,19 @@ namespace QTFK.Services.FilterParsers
         {
             string pattern = "GetBy{0}Between";
             string methodName = method.Name;
-            if (entityDescription.Fields.Any(f => string.Format(pattern, f) == methodName))
+            foreach (var field in entityDescription.Fields)
             {
-                var factory = filterFactoryCollection.Build<IByParamBetweenFilterFactory>();
-                return factory?.NewByParamBetweenFilter<T1>();
+                if(string.Format(pattern, field) == methodName)
+                {
+                    var factory = filterFactoryCollection.Build<IByParamBetweenFilterFactory>();
+                    if (factory != null)
+                    {
+                        var filter = factory.NewByParamBetweenFilter<T1>();
+                        filter.Field = field;
+                        return filter;
+                    }
+                    return null;
+                }
             }
             return null;
         }
