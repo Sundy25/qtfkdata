@@ -4,5 +4,8 @@
     {
         Added,
         Updated,
+        NonUpdated,
+        Deleted,
+        NonDeleted,
     }
 }

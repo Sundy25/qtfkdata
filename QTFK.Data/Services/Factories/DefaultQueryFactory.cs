@@ -38,16 +38,30 @@ namespace QTFK.Services.Factories
 
         private EntityDescription BuildEntityDescription()
         {
+            string key = null;
+            PropertyInfo keyProp = null;
+
             var fields = typeof(T)
                 .GetProperties()
                 .Where(p => p.CanRead && p.CanWrite)
                 .Select(p =>
                 {
+                    bool isKey = p.GetCustomAttribute<KeyAttribute>() != null;
+
+                    string fieldName;
                     var fieldAlias = p.GetCustomAttribute<AliasAttribute>();
                     if (fieldAlias != null && !string.IsNullOrWhiteSpace(fieldAlias.Name))
-                        return fieldAlias.Name;
+                        fieldName = fieldAlias.Name;
+                    else
+                        fieldName = p.Name;
 
-                    return p.Name;
+                    if (isKey)
+                    {
+                        key = fieldName;
+                        keyProp = p;
+                    }
+
+                    return fieldName;
                 })
                 .ToList()
                 ;
@@ -59,7 +73,10 @@ namespace QTFK.Services.Factories
                 : typeof(T).Name
                 ;
 
-            return new EntityDescription(name, fields);
+            if (string.IsNullOrWhiteSpace(key))
+                throw new ArgumentException($"Type {typeof(T).FullName} has no property with Key Attribute.");
+
+            return new EntityDescription(key, keyProp, name, fields);
         }
 
         public IDBIO DB { get { return _db; } }
@@ -84,7 +101,7 @@ namespace QTFK.Services.Factories
                 ;
 
             foreach (var field in EntityDescription.Fields)
-                q.SetColumn(field, null);
+                q.SetColumn(field, null, $"@{field}");
 
             return q;
         }
@@ -110,7 +127,7 @@ namespace QTFK.Services.Factories
                 ;
 
             foreach (var field in EntityDescription.Fields)
-                q.SetColumn(field, null);
+                q.SetColumn(field, null, $"@{field}");
 
             return q;
         }
