@@ -7,6 +7,7 @@ using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.DBIO.QueryFactory;
 using QTFK.Services.Repositories;
 using System.Reflection;
+using QTFK.Extensions.DBIO;
 
 namespace QTFK.Data.Tests.Models
 {
@@ -15,22 +16,24 @@ namespace QTFK.Data.Tests.Models
         private IQueryFilter _GetByWalletCashBetweenFilter;
         private IQueryFilter _GetByNameFilter;
 
-        public SampleRepository(IQueryFactory<SampleClass> queryFactory) : base(queryFactory)
+        public SampleRepository(
+            IQueryFactory<SampleClass> queryFactory
+            , IEnumerable<IMethodParser> methodParsers
+            ) : base(queryFactory, methodParsers)
         {
         }
 
         public SampleClass GetByName(string name)
         {
             _GetByNameFilter = _GetByNameFilter
-                ?? _queryFactory.GetFilter(MethodBase.GetCurrentMethod())
+                ?? GetFilter(MethodBase.GetCurrentMethod())
                 ?? throw new QueryFilterNotFoundException($"No suitable IQueryFilter found for method '{MethodBase.GetCurrentMethod().Name}'")
                 ;
-
 
             _GetByNameFilter.SetValues(name);
 
             return _queryFactory
-                .Select<SampleClass>(q => q.SetFilter(_GetByNameFilter))
+                .Select(q => q.SetFilter(_GetByNameFilter))
                 .Single()
                 ;
         }
@@ -38,14 +41,14 @@ namespace QTFK.Data.Tests.Models
         public IEnumerable<SampleClass> GetByWalletCashBetween(decimal min, decimal max)
         {
             _GetByWalletCashBetweenFilter = _GetByWalletCashBetweenFilter 
-                ?? _queryFactory.GetFilter(MethodBase.GetCurrentMethod())
+                ?? GetFilter<decimal>(MethodBase.GetCurrentMethod())
                 ?? throw new QueryFilterNotFoundException($"No suitable IQueryFilter found for method '{MethodBase.GetCurrentMethod().Name}'")
                 ;
 
             _GetByWalletCashBetweenFilter.SetValues(min, max);
 
             return _queryFactory
-                .Select<SampleClass>(q => q.SetFilter(_GetByWalletCashBetweenFilter))
+                .Select(q => q.SetFilter(_GetByWalletCashBetweenFilter))
                 ;
         }
     }

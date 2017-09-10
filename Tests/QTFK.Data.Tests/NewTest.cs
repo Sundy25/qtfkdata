@@ -1,13 +1,11 @@
-﻿using System;
-using Microsoft.VisualStudio.TestTools.UnitTesting;
+﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QTFK.Data.Tests.Models;
 using QTFK.Models;
 using System.Linq;
-using QTFK.Extensions;
 using QTFK.Services.Factories;
 using QTFK.Services.DBIO;
 using QTFK.Services;
-using QTFK.Services.DBIO.QueryFilterFactories;
+using QTFK.Services.FilterParsers;
 
 namespace QTFK.Data.Tests
 {
@@ -18,12 +16,24 @@ namespace QTFK.Data.Tests
         {
             var db = new OleDBIO("booooooom");
             var lowLevelqueryFactory = new OleDBQueryFactory(db);
-            var filters = new IQueryFilterFactory[]
+
+            var methodParsers = new IMethodParser[]
             {
-                new OleDBDefaultFilterFactory(),
+                new ByParamEqualsFilterParser(),
+                new ByParamBetweenFilterParser(),
             };
-            var queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filters);
-            return new SampleRepository(queryFactory);
+
+            var filterFactories = new IQueryFilterFactory[]
+            {
+                lowLevelqueryFactory
+            };
+
+            var queryFactory = new DefaultQueryFactory<SampleClass>(
+                lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory
+                , filterFactories
+                );
+
+            return new SampleRepository(queryFactory, methodParsers);
         }
 
         [TestMethod]
