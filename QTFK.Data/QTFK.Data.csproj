@@ -38,6 +38,9 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="QTFK.Reflection">
+      <HintPath>..\libs\qtfk.1.5.0\QTFK.Reflection.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -66,7 +69,10 @@
     <Compile Include="Services\IMethodParser.cs" />
     <Compile Include="Services\IQueryFilterFactoryCollection.cs" />
     <Compile Include="Services\IRepository.cs" />
+    <Compile Include="Services\IRepositoryBuilder.cs" />
+    <Compile Include="Services\IRepositoryExplorer.cs" />
     <Compile Include="Services\Repositories\BaseRepository.cs" />
+    <Compile Include="Services\RepositoryBuilders\DefaultRepositoryBuilder.cs" />
   </ItemGroup>
   <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
