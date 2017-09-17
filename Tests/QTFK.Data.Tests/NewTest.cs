@@ -6,6 +6,11 @@ using QTFK.Services.Factories;
 using QTFK.Services.DBIO;
 using QTFK.Services;
 using QTFK.Services.FilterParsers;
+using System.Reflection;
+using QTFK.Data.Tests.Services;
+using QTFK.Services.RepositoryBuilders;
+using System.Collections.Generic;
+using System;
 
 namespace QTFK.Data.Tests
 {
@@ -33,7 +38,19 @@ namespace QTFK.Data.Tests
                 , filterFactories
                 );
 
+            IRepositoryBuilder repositoryBuilder = new DefaultRepositoryBuilder();
+            IRepositoryExplorer repositoryExplorer = new FakeRepositoryExplorer();
+
+            Type sampleRepositoryInterface = repositoryExplorer
+                .GetInterfaceTypes()
+                .FirstOrDefault()
+                //.FirstOrDefault(t => t.FullName == typeof(ISampleRepository).FullName)
+                ;
+
+            Assembly repoAssembly = repositoryBuilder.Build(sampleRepositoryInterface, queryFactory, methodParsers);
+            //var repo = repoAssembly.CreateInstance()
             return new SampleRepository(queryFactory, methodParsers);
+            //return repo;
         }
 
         [TestMethod]
