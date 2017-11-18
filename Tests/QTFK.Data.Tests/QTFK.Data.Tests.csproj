@@ -74,6 +74,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Models\IMinimalRepository.cs" />
     <Compile Include="Models\ISampleRepository.cs" />
     <Compile Include="Models\SampleClass.cs" />
     <Compile Include="Models\SampleRepository.cs" />
