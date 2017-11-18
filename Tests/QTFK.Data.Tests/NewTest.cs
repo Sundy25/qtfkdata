@@ -13,6 +13,8 @@ using System.Collections.Generic;
 using System;
 using QTFK.Extensions.Assemblies;
 using QTFK.Services.CompilerWrappers;
+using SampleLibrary.Services;
+using SampleLibrary.Models;
 
 namespace QTFK.Data.Tests
 {

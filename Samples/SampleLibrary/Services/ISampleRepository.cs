@@ -1,11 +1,8 @@
 ﻿using QTFK.Services;
-using System;
+using SampleLibrary.Models;
 using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace QTFK.Data.Tests.Models
+namespace SampleLibrary.Services
 {
     public interface ISampleRepository : IRepository<SampleClass>
     {

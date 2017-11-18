@@ -1,7 +1,7 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26430.16
+VisualStudioVersion = 15.0.26730.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data", "QTFK.Data\QTFK.Data.csproj", "{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}"
 EndProject
@@ -10,6 +10,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data.Tests", "Tests\QTFK.Data.Tests\QTFK.Data.Tests.csproj", "{AACBE225-E01A-4187-B770-944C6758A1A2}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data.OleDB", "QTFK.Data.OleDB\QTFK.Data.OleDB.csproj", "{9460B402-6692-4E38-87A8-A3E1DA4B8C66}"
+EndProject
+Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Samples", "Samples", "{521914C7-7E3D-4E71-80A5-A93F86C14A1D}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SampleLibrary", "Samples\SampleLibrary\SampleLibrary.csproj", "{CA2AA41A-1717-47CA-B528-B67A646B1AFA}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -29,11 +33,19 @@ Global
 		{9460B402-6692-4E38-87A8-A3E1DA4B8C66}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{9460B402-6692-4E38-87A8-A3E1DA4B8C66}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{9460B402-6692-4E38-87A8-A3E1DA4B8C66}.Release|Any CPU.Build.0 = Release|Any CPU
+		{CA2AA41A-1717-47CA-B528-B67A646B1AFA}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{CA2AA41A-1717-47CA-B528-B67A646B1AFA}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{CA2AA41A-1717-47CA-B528-B67A646B1AFA}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{CA2AA41A-1717-47CA-B528-B67A646B1AFA}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AACBE225-E01A-4187-B770-944C6758A1A2} = {01D1FDFA-2FF5-4F98-AEB2-5FDA33F2C7D0}
+		{CA2AA41A-1717-47CA-B528-B67A646B1AFA} = {521914C7-7E3D-4E71-80A5-A93F86C14A1D}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {137C7BF7-FAB9-4982-A948-19A3E46FB96F}
 	EndGlobalSection
 EndGlobal

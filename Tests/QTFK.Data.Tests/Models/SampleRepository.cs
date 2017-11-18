@@ -6,6 +6,8 @@ using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.DBIO.QueryFactory;
 using QTFK.Services.Repositories;
 using System.Reflection;
+using SampleLibrary.Models;
+using SampleLibrary.Services;
 
 namespace QTFK.Data.Tests.Models
 {

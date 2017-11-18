@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using QTFK.Services;
 using QTFK.Data.Tests.Models;
+using SampleLibrary.Services;
 
 namespace QTFK.Data.Tests.Services
 {
