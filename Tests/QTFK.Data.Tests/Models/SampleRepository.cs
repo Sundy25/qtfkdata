@@ -1,5 +1,4 @@
-﻿using System;
-using QTFK.Services;
+﻿using QTFK.Services;
 using QTFK.Models;
 using System.Collections.Generic;
 using System.Linq;
@@ -7,7 +6,6 @@ using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.DBIO.QueryFactory;
 using QTFK.Services.Repositories;
 using System.Reflection;
-using QTFK.Extensions.DBIO;
 
 namespace QTFK.Data.Tests.Models
 {
