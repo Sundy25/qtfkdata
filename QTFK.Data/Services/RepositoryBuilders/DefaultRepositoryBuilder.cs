@@ -40,7 +40,7 @@ namespace QTFK.Services.RepositoryBuilders
                 "System.dll",
                 "System.Data.dll",
                 "System.Core.dll",
-                "QTFK.Data.Tests",
+                "SampleLibrary.dll",
             };
 
             repositoryNamespace = "QTFK";
@@ -92,7 +92,8 @@ namespace {repositoryNamespace}
 
         private void _compilerWrapper_CompilationResult(System.CodeDom.Compiler.CompilerResults results)
         {
-            throw new NotImplementedException();
+            if(results.Errors.HasErrors)
+                throw new Exception();
         }
 
     }
