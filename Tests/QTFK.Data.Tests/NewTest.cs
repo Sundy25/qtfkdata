@@ -12,6 +12,7 @@ using QTFK.Services.RepositoryBuilders;
 using System.Collections.Generic;
 using System;
 using QTFK.Extensions.Assemblies;
+using QTFK.Services.CompilerWrappers;
 
 namespace QTFK.Data.Tests
 {
@@ -20,6 +21,8 @@ namespace QTFK.Data.Tests
     {
         private ISampleRepository dependencyInjectionFake_Build()
         {
+            ICompilerWrapper compilerWrapper;
+
             var db = new OleDBIO("booooooom");
             var lowLevelqueryFactory = new OleDBQueryFactory(db);
 
@@ -39,7 +42,8 @@ namespace QTFK.Data.Tests
                 , filterFactories
                 );
 
-            IRepositoryBuilder repositoryBuilder = new DefaultRepositoryBuilder();
+            compilerWrapper = new CompilerWrapper();
+            IRepositoryBuilder repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
             IRepositoryExplorer repositoryExplorer = new FakeRepositoryExplorer();
 
             Type sampleRepositoryInterface = repositoryExplorer
@@ -57,11 +61,13 @@ namespace QTFK.Data.Tests
         private IMinimalRepository builderForMinimalReporitory()
         {
             IRepositoryBuilder repositoryBuilder;
+            ICompilerWrapper compilerWrapper;
             IMinimalRepository repository;
             Assembly assembly;
             Type interfaceType;
 
-            repositoryBuilder = new DefaultRepositoryBuilder();
+            compilerWrapper = new CompilerWrapper();
+            repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
 
             interfaceType = typeof(IMinimalRepository);
             assembly = repositoryBuilder.Build(interfaceType);
