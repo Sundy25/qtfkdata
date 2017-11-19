@@ -65,15 +65,36 @@ namespace QTFK.Data.Tests
             IRepositoryBuilder repositoryBuilder;
             ICompilerWrapper compilerWrapper;
             IMinimalRepository repository;
+            IQueryFactory<SampleClass> queryFactory;
             Assembly assembly;
             Type interfaceType;
+            IDBIO db;
+            IEnumerable<IQueryFilterFactory> filterFactories;
+            IEnumerable<IMethodParser> methodParsers;
+            object[] constructorParameters;
 
             compilerWrapper = new CompilerWrapper();
             repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
 
+            db = new OleDBIO("booooooom");
+            var lowLevelqueryFactory = new OleDBQueryFactory(db);
+            filterFactories = new IQueryFilterFactory[] { lowLevelqueryFactory };
+
+            queryFactory = new DefaultQueryFactory<SampleClass>(
+                lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory
+                , filterFactories
+                );
+
+            methodParsers = new IMethodParser[]
+            {
+                new ByParamEqualsFilterParser(),
+                new ByParamBetweenFilterParser(),
+            };
+
             interfaceType = typeof(IMinimalRepository);
             assembly = repositoryBuilder.Build(interfaceType);
-            repository = assembly.CreateInstance(interfaceType) as IMinimalRepository;
+            constructorParameters = new object[] { queryFactory, methodParsers };
+            repository = assembly.CreateAssignableInstance(interfaceType, constructorParameters) as IMinimalRepository;
 
             return repository;
         }

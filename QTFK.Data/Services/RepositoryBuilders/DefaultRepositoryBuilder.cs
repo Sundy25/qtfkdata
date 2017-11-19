@@ -7,14 +7,14 @@ namespace QTFK.Services.RepositoryBuilders
 {
     public class DefaultRepositoryBuilder : IRepositoryBuilder
     {
-        private readonly ICompilerWrapper _compilerWrapper;
+        private readonly ICompilerWrapper compilerWrapper;
 
         public DefaultRepositoryBuilder(
             ICompilerWrapper compilerWrapper
             )
         {
-            _compilerWrapper = compilerWrapper;
-            _compilerWrapper.CompilationResult += _compilerWrapper_CompilationResult;
+            this.compilerWrapper = compilerWrapper;
+            this.compilerWrapper.CompilationResult += checkCompilationResult;
         }
 
         public Assembly Build(Type interfaceType)
@@ -46,7 +46,7 @@ namespace QTFK.Services.RepositoryBuilders
             repositoryNamespace = "QTFK";
             code = getCodeForRepository(repositoryNamespace, entityType, interfaceType);
 
-            compiledAssembly = _compilerWrapper.Build(code, referencedAssemblies, s =>
+            compiledAssembly = this.compilerWrapper.Build(code, referencedAssemblies, s =>
             {
                 s.GenerateInMemory = true;
                 s.GenerateExecutable = false;
@@ -90,7 +90,7 @@ namespace {repositoryNamespace}
             return code;
         }
 
-        private void _compilerWrapper_CompilationResult(System.CodeDom.Compiler.CompilerResults results)
+        private void checkCompilationResult(System.CodeDom.Compiler.CompilerResults results)
         {
             if(results.Errors.HasErrors)
                 throw new Exception();
