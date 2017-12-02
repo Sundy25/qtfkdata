@@ -4,44 +4,32 @@ using System.Collections.Generic;
 using System.Reflection;
 using System.Linq;
 using QTFK.Extensions.DBIO.DBQueries;
-using QTFK.Extensions.Objects.Manipulator;
 using QTFK.Attributes;
 
 namespace QTFK.Services.Factories
 {
     public class DefaultQueryFactory<T> : IQueryFactory<T> where T : new()
     {
-        private readonly ISelectQueryFactory _selectQueryFactory;
-        private readonly IInsertQueryFactory _insertQueryFactory;
-        private readonly IUpdateQueryFactory _updateQueryFactory;
-        private readonly IDeleteQueryFactory _deleteQueryFactory;
-        private readonly IDBIO _db;
-        private readonly IEnumerable<IQueryFilterFactory> _filterFactories;
+        private readonly IQueryFactory queryFactory;
+        private readonly IDBIO db;
+        private readonly IEnumerable<IQueryFilterFactory> filterFactories;
 
-        public DefaultQueryFactory(
-            ISelectQueryFactory selectQueryFactory
-            , IInsertQueryFactory insertQueryFactory
-            , IUpdateQueryFactory updateQueryFactory
-            , IDeleteQueryFactory deleteQueryFactory
-            , IEnumerable<IQueryFilterFactory> filterFactories
+        public DefaultQueryFactory(IQueryFactory queryFactory, IEnumerable<IQueryFilterFactory> filterFactories
             )
         {
-            _selectQueryFactory = selectQueryFactory;
-            _insertQueryFactory = insertQueryFactory;
-            _updateQueryFactory = updateQueryFactory;
-            _deleteQueryFactory = deleteQueryFactory;
-            _db = _selectQueryFactory.DB;
-            _filterFactories = filterFactories;
+            this.queryFactory = queryFactory;
+            this.db = this.queryFactory.DB;
+            this.filterFactories = filterFactories;
 
-            EntityDescription = BuildEntityDescription();
+            EntityDescription = prv_buildEntityDescription(typeof(T));
         }
 
-        private EntityDescription BuildEntityDescription()
+        private static EntityDescription prv_buildEntityDescription(Type type)
         {
             string key = null;
             PropertyInfo keyProp = null;
 
-            var fields = typeof(T)
+            var fields = type
                 .GetProperties()
                 .Where(p => p.CanRead && p.CanWrite)
                 .Select(p =>
@@ -79,7 +67,7 @@ namespace QTFK.Services.Factories
             return new EntityDescription(key, keyProp, name, fields);
         }
 
-        public IDBIO DB { get { return _db; } }
+        public IDBIO DB { get { return this.db; } }
 
         public string Prefix { get; set; }
 
@@ -87,7 +75,7 @@ namespace QTFK.Services.Factories
 
         public IDBQueryDelete NewDelete()
         {
-            return _deleteQueryFactory
+            return this.queryFactory
                 .NewDelete()
                 .SetTable(EntityDescription.Name)
                 ;
@@ -95,7 +83,7 @@ namespace QTFK.Services.Factories
 
         public IDBQueryInsert NewInsert()
         {
-            var q = _insertQueryFactory
+            var q = this.queryFactory
                 .NewInsert()
                 .SetTable(EntityDescription.Name)
                 ;
@@ -108,7 +96,7 @@ namespace QTFK.Services.Factories
 
         public IDBQuerySelect NewSelect()
         {
-            var q = _selectQueryFactory
+            var q = this.queryFactory
                 .NewSelect()
                 .SetTable(EntityDescription.Name)
                 ;
@@ -121,7 +109,7 @@ namespace QTFK.Services.Factories
 
         public IDBQueryUpdate NewUpdate()
         {
-            var q = _updateQueryFactory
+            var q = this.queryFactory
                 .NewUpdate()
                 .SetTable(EntityDescription.Name)
                 ;
@@ -135,7 +123,7 @@ namespace QTFK.Services.Factories
         public TFilter Build<TFilter>() where TFilter : class, IQueryFilterFactory
         {
             var t = typeof(TFilter);
-            foreach (var factory in _filterFactories)
+            foreach (var factory in this.filterFactories)
             {
                 if (factory.GetType().IsAssignableFrom(t))
                     return (TFilter)factory;

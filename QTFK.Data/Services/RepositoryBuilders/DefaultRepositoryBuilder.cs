@@ -14,14 +14,14 @@ namespace QTFK.Services.RepositoryBuilders
             )
         {
             this.compilerWrapper = compilerWrapper;
-            this.compilerWrapper.CompilationResult += checkCompilationResult;
+            this.compilerWrapper.CompilationResult += prv_checkCompilationResult;
         }
 
         public Assembly Build(Type interfaceType)
         {
-            Asserts.IsInstance(interfaceType, $"'{nameof(interfaceType)}' cannot be null.");
-            Asserts.Check(interfaceType.IsInterface, $"Type '{interfaceType.FullName}' is not an interface.");
-            Asserts.Check(interfaceType.ContainsGenericParameters == false, $"Type '{interfaceType.FullName}' cannot have generic parameters.");
+            Asserts.isSomething(interfaceType, $"'{nameof(interfaceType)}' cannot be null.");
+            Asserts.check(interfaceType.IsInterface, $"Type '{interfaceType.FullName}' is not an interface.");
+            Asserts.check(interfaceType.ContainsGenericParameters == false, $"Type '{interfaceType.FullName}' cannot have generic parameters.");
 
             Type repositoryType, entityType;
             string code, repositoryNamespace;
@@ -29,7 +29,7 @@ namespace QTFK.Services.RepositoryBuilders
             Assembly compiledAssembly;
 
             repositoryType = interfaceType.GetInterface(typeof(IRepository<>).FullName);
-            Asserts.IsInstance(repositoryType, $"Type '{interfaceType.FullName}' does not inherits from '{typeof(IRepository<>).FullName}'");
+            Asserts.isSomething(repositoryType, $"Type '{interfaceType.FullName}' does not inherits from '{typeof(IRepository<>).FullName}'");
 
             entityType = repositoryType.GenericTypeArguments.First();
             referencedAssemblies = new string[]
@@ -44,9 +44,9 @@ namespace QTFK.Services.RepositoryBuilders
             };
 
             repositoryNamespace = "QTFK";
-            code = getCodeForRepository(repositoryNamespace, entityType, interfaceType);
+            code = prv_getCodeForRepository(repositoryNamespace, entityType, interfaceType);
 
-            compiledAssembly = this.compilerWrapper.Build(code, referencedAssemblies, s =>
+            compiledAssembly = this.compilerWrapper.build(code, referencedAssemblies, s =>
             {
                 s.GenerateInMemory = true;
                 s.GenerateExecutable = false;
@@ -56,7 +56,7 @@ namespace QTFK.Services.RepositoryBuilders
             return compiledAssembly;
         }
 
-        private string getCodeForRepository(string repositoryNamespace, Type entityType, Type interfaceType)
+        private string prv_getCodeForRepository(string repositoryNamespace, Type entityType, Type interfaceType)
         {
             string code, className, entityClassName;
 
@@ -90,7 +90,7 @@ namespace {repositoryNamespace}
             return code;
         }
 
-        private void checkCompilationResult(System.CodeDom.Compiler.CompilerResults results)
+        private void prv_checkCompilationResult(System.CodeDom.Compiler.CompilerResults results)
         {
             if(results.Errors.HasErrors)
                 throw new Exception();

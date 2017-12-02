@@ -34,9 +34,8 @@
       <SpecificVersion>False</SpecificVersion>
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Extensions, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
+    <Reference Include="QTFK.DB">
+      <HintPath>..\libs\qtfk.1.5.0\QTFK.DB.dll</HintPath>
     </Reference>
     <Reference Include="QTFK.Reflection">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Reflection.dll</HintPath>

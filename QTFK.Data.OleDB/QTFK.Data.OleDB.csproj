@@ -33,9 +33,6 @@
     <Reference Include="QTFK.Core">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Extensions">
-      <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />

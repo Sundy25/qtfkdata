@@ -11,44 +11,50 @@ using QTFK.Data.Tests.Services;
 using QTFK.Services.RepositoryBuilders;
 using System.Collections.Generic;
 using System;
-using QTFK.Extensions.Assemblies;
 using QTFK.Services.CompilerWrappers;
 using SampleLibrary.Services;
 using SampleLibrary.Models;
+using QTFK.Extensions.Collections.Casting;
+using QTFK.Extensions.Assemblies;
 
 namespace QTFK.Data.Tests
 {
     [TestClass]
     public class NewTest
     {
-        private ISampleRepository dependencyInjectionFake_Build()
+        private ISampleRepository prv_dependencyInjectionFake_Build()
         {
             ICompilerWrapper compilerWrapper;
+            IQueryFactory lowLevelqueryFactory;
+            IQueryFactory<SampleClass> queryFactory;
+            IEnumerable<IMethodParser> methodParsers;
+            IEnumerable<IQueryFilterFactory> filterFactories;
+            IDBIO db;
+            IRepositoryBuilder repositoryBuilder;
+            IRepositoryExplorer repositoryExplorer;
+            Type sampleRepositoryInterface;
 
-            var db = new OleDBIO("booooooom");
-            var lowLevelqueryFactory = new OleDBQueryFactory(db);
+            db = new OleDBIO("booooooom");
+            lowLevelqueryFactory = new OleDBQueryFactory(db);
 
-            var methodParsers = new IMethodParser[]
+            methodParsers = new IMethodParser[]
             {
                 new ByParamEqualsFilterParser(),
                 new ByParamBetweenFilterParser(),
             };
 
-            var filterFactories = new IQueryFilterFactory[]
+            filterFactories = new IQueryFilterFactory[]
             {
-                lowLevelqueryFactory
+                lowLevelqueryFactory.As<IQueryFilterFactory>()
             };
 
-            var queryFactory = new DefaultQueryFactory<SampleClass>(
-                lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory
-                , filterFactories
-                );
+            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
 
             compilerWrapper = new CompilerWrapper();
-            IRepositoryBuilder repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
-            IRepositoryExplorer repositoryExplorer = new FakeRepositoryExplorer();
+            repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
+            repositoryExplorer = new FakeRepositoryExplorer();
 
-            Type sampleRepositoryInterface = repositoryExplorer
+            sampleRepositoryInterface = repositoryExplorer
                 .GetInterfaceTypes()
                 .FirstOrDefault()
                 //.FirstOrDefault(t => t.FullName == typeof(ISampleRepository).FullName)
@@ -65,6 +71,7 @@ namespace QTFK.Data.Tests
             IRepositoryBuilder repositoryBuilder;
             ICompilerWrapper compilerWrapper;
             IMinimalRepository repository;
+            IQueryFactory lowLevelqueryFactory;
             IQueryFactory<SampleClass> queryFactory;
             Assembly assembly;
             Type interfaceType;
@@ -77,13 +84,10 @@ namespace QTFK.Data.Tests
             repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
 
             db = new OleDBIO("booooooom");
-            var lowLevelqueryFactory = new OleDBQueryFactory(db);
-            filterFactories = new IQueryFilterFactory[] { lowLevelqueryFactory };
+            lowLevelqueryFactory = new OleDBQueryFactory(db);
+            filterFactories = new IQueryFilterFactory[] { lowLevelqueryFactory.As<IQueryFilterFactory>() };
 
-            queryFactory = new DefaultQueryFactory<SampleClass>(
-                lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory, lowLevelqueryFactory
-                , filterFactories
-                );
+            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
 
             methodParsers = new IMethodParser[]
             {
@@ -94,7 +98,7 @@ namespace QTFK.Data.Tests
             interfaceType = typeof(IMinimalRepository);
             assembly = repositoryBuilder.Build(interfaceType);
             constructorParameters = new object[] { queryFactory, methodParsers };
-            repository = assembly.CreateAssignableInstance(interfaceType, constructorParameters) as IMinimalRepository;
+            repository = assembly.createAssignableInstance(interfaceType, constructorParameters) as IMinimalRepository;
 
             return repository;
         }
@@ -102,7 +106,7 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void TestMethod1()
         {
-            ISampleRepository repo = dependencyInjectionFake_Build();
+            ISampleRepository repo = prv_dependencyInjectionFake_Build();
 
             RepositoryOperationResult result;
 
