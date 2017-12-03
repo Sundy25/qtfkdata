@@ -4,13 +4,14 @@
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{9460B402-6692-4E38-87A8-A3E1DA4B8C66}</ProjectGuid>
+    <ProjectGuid>{CA2AA41A-1717-47CA-B528-B67A646B1AFA}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QTFK</RootNamespace>
-    <AssemblyName>QTFK.Data.OleDB</AssemblyName>
+    <RootNamespace>SampleLibrary</RootNamespace>
+    <AssemblyName>SampleLibrary</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -30,9 +31,6 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="QTFK.Core">
-      <HintPath>..\libs\qtfk.1.5.0\QTFK.Core.dll</HintPath>
-    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,16 +41,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Services\IMinimalRepository.cs" />
+    <Compile Include="Services\ISampleRepository.cs" />
+    <Compile Include="Models\SampleClass.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\QTFK.Data\QTFK.Data.csproj">
-      <Project>{a78ecf12-d6e8-4c49-b315-ffb4b3fb11cc}</Project>
+    <ProjectReference Include="..\..\QTFK.Data\QTFK.Data.csproj">
+      <Project>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</Project>
       <Name>QTFK.Data</Name>
     </ProjectReference>
-  </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Services\DBIO\QueryFilterFactories\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

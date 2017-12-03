@@ -1,20 +1,20 @@
-﻿using System;
-using QTFK.Services;
+﻿using QTFK.Services;
 using QTFK.Models;
 using System.Collections.Generic;
 using System.Linq;
-using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.DBIO.QueryFactory;
 using QTFK.Services.Repositories;
 using System.Reflection;
-using QTFK.Extensions.DBIO;
+using SampleLibrary.Models;
+using SampleLibrary.Services;
+using QTFK.Extensions.DBIO.DBQueries;
 
 namespace QTFK.Data.Tests.Models
 {
     public class SampleRepository : BaseRepository<SampleClass>, ISampleRepository
     {
-        private IQueryFilter _GetByWalletCashBetweenFilter;
-        private IQueryFilter _GetByNameFilter;
+        private IQueryFilter getByWalletCashBetweenFilter;
+        private IQueryFilter getByNameFilter;
 
         public SampleRepository(
             IQueryFactory<SampleClass> queryFactory
@@ -25,30 +25,30 @@ namespace QTFK.Data.Tests.Models
 
         public SampleClass GetByName(string name)
         {
-            _GetByNameFilter = _GetByNameFilter
+            this.getByNameFilter = this.getByNameFilter
                 ?? GetFilter(MethodBase.GetCurrentMethod())
                 ?? throw new QueryFilterNotFoundException($"No suitable IQueryFilter found for method '{MethodBase.GetCurrentMethod().Name}'")
                 ;
 
-            _GetByNameFilter.SetValues(name);
+            this.getByNameFilter.SetValues(name);
 
-            return _queryFactory
-                .Select(q => q.SetFilter(_GetByNameFilter))
+            return this.queryFactory
+                .Select(q => q.SetFilter(this.getByNameFilter))
                 .Single()
                 ;
         }
 
         public IEnumerable<SampleClass> GetByWalletCashBetween(decimal min, decimal max)
         {
-            _GetByWalletCashBetweenFilter = _GetByWalletCashBetweenFilter 
+            this.getByWalletCashBetweenFilter = this.getByWalletCashBetweenFilter 
                 ?? GetFilter<decimal>(MethodBase.GetCurrentMethod())
                 ?? throw new QueryFilterNotFoundException($"No suitable IQueryFilter found for method '{MethodBase.GetCurrentMethod().Name}'")
                 ;
 
-            _GetByWalletCashBetweenFilter.SetValues(min, max);
+            this.getByWalletCashBetweenFilter.SetValues(min, max);
 
-            return _queryFactory
-                .Select(q => q.SetFilter(_GetByWalletCashBetweenFilter))
+            return this.queryFactory
+                .Select(q => q.SetFilter(this.getByWalletCashBetweenFilter))
                 ;
         }
     }

@@ -1,19 +1,8 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using QTFK.Models;
-using System.Reflection;
+﻿using QTFK.Models;
 
 namespace QTFK.Services
 {
-    public interface IQueryFactory<T> : 
-        ISelectQueryFactory
-        , IInsertQueryFactory
-        , IUpdateQueryFactory
-        , IDeleteQueryFactory
-        , IQueryFilterFactoryCollection
+    public interface IQueryFactory<T> : IQueryFactory, IQueryFilterFactoryCollection
         where T : new()
     {
         EntityDescription EntityDescription { get; }

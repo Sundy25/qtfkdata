@@ -1,12 +1,6 @@
 ﻿using QTFK.Attributes;
-using QTFK.Services;
-using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
-namespace QTFK.Data.Tests.Models
+namespace SampleLibrary.Models
 {
     [Alias("person")]
     public class SampleClass
