@@ -22,87 +22,6 @@ namespace QTFK.Data.Tests
     [TestClass]
     public class NewTest
     {
-        private ISampleRepository prv_dependencyInjectionFake_Build()
-        {
-            ICompilerWrapper compilerWrapper;
-            IQueryFactory lowLevelqueryFactory;
-            IQueryFactory<SampleClass> queryFactory;
-            IEnumerable<IMethodParser> methodParsers;
-            IEnumerable<IQueryFilterFactory> filterFactories;
-            IDBIO db;
-            IRepositoryBuilder repositoryBuilder;
-            IRepositoryExplorer repositoryExplorer;
-            Type sampleRepositoryInterface;
-
-            db = new OleDBIO("booooooom");
-            lowLevelqueryFactory = new OleDBQueryFactory(db);
-
-            methodParsers = new IMethodParser[]
-            {
-                new ByParamEqualsFilterParser(),
-                new ByParamBetweenFilterParser(),
-            };
-
-            filterFactories = new IQueryFilterFactory[]
-            {
-                lowLevelqueryFactory.As<IQueryFilterFactory>()
-            };
-
-            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
-
-            compilerWrapper = new CompilerWrapper();
-            repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
-            repositoryExplorer = new FakeRepositoryExplorer();
-
-            sampleRepositoryInterface = repositoryExplorer
-                .GetInterfaceTypes()
-                .FirstOrDefault()
-                //.FirstOrDefault(t => t.FullName == typeof(ISampleRepository).FullName)
-                ;
-
-            //Assembly repoAssembly = repositoryBuilder.Build(sampleRepositoryInterface, queryFactory, methodParsers);
-            //var repo = repoAssembly.CreateInstance()
-            return new SampleRepository(queryFactory, methodParsers);
-            //return repo;
-        }
-
-        private IMinimalRepository builderForMinimalReporitory()
-        {
-            IRepositoryBuilder repositoryBuilder;
-            ICompilerWrapper compilerWrapper;
-            IMinimalRepository repository;
-            IQueryFactory lowLevelqueryFactory;
-            IQueryFactory<SampleClass> queryFactory;
-            Assembly assembly;
-            Type interfaceType;
-            IDBIO db;
-            IEnumerable<IQueryFilterFactory> filterFactories;
-            IEnumerable<IMethodParser> methodParsers;
-            object[] constructorParameters;
-
-            compilerWrapper = new CompilerWrapper();
-            repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
-
-            db = new OleDBIO("booooooom");
-            lowLevelqueryFactory = new OleDBQueryFactory(db);
-            filterFactories = new IQueryFilterFactory[] { lowLevelqueryFactory.As<IQueryFilterFactory>() };
-
-            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
-
-            methodParsers = new IMethodParser[]
-            {
-                new ByParamEqualsFilterParser(),
-                new ByParamBetweenFilterParser(),
-            };
-
-            interfaceType = typeof(IMinimalRepository);
-            assembly = repositoryBuilder.Build(interfaceType);
-            constructorParameters = new object[] { queryFactory, methodParsers };
-            repository = assembly.createAssignableInstance(interfaceType, constructorParameters) as IMinimalRepository;
-
-            return repository;
-        }
-
         [TestMethod]
         public void TestMethod1()
         {
@@ -156,7 +75,7 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void MinimalRepository_test()
         {
-            IMinimalRepository repo = builderForMinimalReporitory();
+            IMinimalRepository repo = prv_builderForMinimalReporitory();
 
             RepositoryOperationResult result;
 
@@ -188,5 +107,114 @@ namespace QTFK.Data.Tests
             Assert.AreEqual(666m, item2.WalletCash);
         }
 
+        [TestMethod]
+        public void Another_approach_for_repository_building_test()
+        {
+            IMinimalRepository repo = prv_builder<IMinimalRepository>();
+        }
+
+        private ISampleRepository prv_dependencyInjectionFake_Build()
+        {
+            ICompilerWrapper compilerWrapper;
+            IQueryFactory lowLevelqueryFactory;
+            IQueryFactory<SampleClass> queryFactory;
+            IEnumerable<IMethodParser> methodParsers;
+            IEnumerable<IQueryFilterFactory> filterFactories;
+            IDBIO db;
+            IRepositoryBuilder repositoryBuilder;
+            IRepositoryExplorer repositoryExplorer;
+            Type sampleRepositoryInterface;
+
+            db = new OleDBIO("booooooom");
+            lowLevelqueryFactory = new OleDBQueryFactory(db);
+
+            methodParsers = new IMethodParser[]
+            {
+                new ByParamEqualsFilterParser(),
+                new ByParamBetweenFilterParser(),
+            };
+
+            filterFactories = new IQueryFilterFactory[]
+            {
+                lowLevelqueryFactory.As<IQueryFilterFactory>()
+            };
+
+            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
+
+            compilerWrapper = new CompilerWrapper();
+            repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
+            repositoryExplorer = new FakeRepositoryExplorer();
+
+            sampleRepositoryInterface = repositoryExplorer
+                .GetInterfaceTypes()
+                .FirstOrDefault()
+                //.FirstOrDefault(t => t.FullName == typeof(ISampleRepository).FullName)
+                ;
+
+            //Assembly repoAssembly = repositoryBuilder.Build(sampleRepositoryInterface, queryFactory, methodParsers);
+            //var repo = repoAssembly.CreateInstance()
+            return new SampleRepository(queryFactory, methodParsers);
+            //return repo;
+        }
+
+        private IMinimalRepository prv_builderForMinimalReporitory()
+        {
+            IRepositoryBuilder repositoryBuilder;
+            ICompilerWrapper compilerWrapper;
+            IMinimalRepository repository;
+            IQueryFactory lowLevelqueryFactory;
+            IQueryFactory<SampleClass> queryFactory;
+            Assembly assembly;
+            Type interfaceType;
+            IDBIO db;
+            IEnumerable<IQueryFilterFactory> filterFactories;
+            IEnumerable<IMethodParser> methodParsers;
+            object[] constructorParameters;
+
+            compilerWrapper = new CompilerWrapper();
+            repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
+
+            db = new OleDBIO("booooooom");
+            lowLevelqueryFactory = new OleDBQueryFactory(db);
+            filterFactories = new IQueryFilterFactory[] { lowLevelqueryFactory.As<IQueryFilterFactory>() };
+
+            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
+
+            methodParsers = new IMethodParser[]
+            {
+                new ByParamEqualsFilterParser(),
+                new ByParamBetweenFilterParser(),
+            };
+
+            interfaceType = typeof(IMinimalRepository);
+            assembly = repositoryBuilder.buildAssembly(interfaceType);
+            constructorParameters = new object[] { queryFactory, methodParsers };
+            repository = assembly.createAssignableInstance(interfaceType, constructorParameters) as IMinimalRepository;
+
+            return repository;
+        }
+
+        private static T prv_builder<T>() where T : IRepository
+        {
+            return (T)prv_builder(typeof(T));
+        }
+
+        private static IRepository prv_builder(Type inheritingFromIRepositoryInterfaceType)
+        {
+            IRepositoryBuilder builder;
+            ICompilerWrapper compilerWrapper;
+
+            Assembly newAssembly;
+            IRepository newRepository;
+
+            compilerWrapper = new CompilerWrapper();
+            builder = new DefaultRepositoryBuilder(compilerWrapper);
+
+            newAssembly = builder.buildAssembly(inheritingFromIRepositoryInterfaceType);
+            newRepository = builder.getRepositoryInstance(newAssembly, inheritingFromIRepositoryInterfaceType);
+            //newRepository = (IRepository)newAssembly.createAssignableInstance(inheritingFromIRepositoryInterfaceType);
+
+            return newRepository;
+        }
     }
 }

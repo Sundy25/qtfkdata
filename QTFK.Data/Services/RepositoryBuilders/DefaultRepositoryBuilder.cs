@@ -17,30 +17,25 @@ namespace QTFK.Services.RepositoryBuilders
             this.compilerWrapper.CompilationResult += prv_checkCompilationResult;
         }
 
-        public Assembly Build(Type interfaceType)
+        public Assembly buildAssembly(Type interfaceType)
         {
-            Asserts.isSomething(interfaceType, $"'{nameof(interfaceType)}' cannot be null.");
-            Asserts.check(interfaceType.IsInterface, $"Type '{interfaceType.FullName}' is not an interface.");
-            Asserts.check(interfaceType.ContainsGenericParameters == false, $"Type '{interfaceType.FullName}' cannot have generic parameters.");
-
-            Type repositoryType, entityType;
-            string code, repositoryNamespace;
+            Type entityType;
+            string code, repositoryNamespace, entityAssemblyFullname;
             IEnumerable<string> referencedAssemblies;
-            Assembly compiledAssembly;
+            Assembly compiledAssembly, entityAssembly;
 
-            repositoryType = interfaceType.GetInterface(typeof(IRepository<>).FullName);
-            Asserts.isSomething(repositoryType, $"Type '{interfaceType.FullName}' does not inherits from '{typeof(IRepository<>).FullName}'");
+            entityType = prv_getEntityType(interfaceType);
+            entityAssembly = entityType.Assembly;
+            entityAssemblyFullname = entityAssembly.FullName;
 
-            entityType = repositoryType.GenericTypeArguments.First();
             referencedAssemblies = new string[]
             {
                 "QTFK.Core.dll",
                 "QTFK.Data.dll",
-                "QTFK.Extensions.dll",
                 "System.dll",
                 "System.Data.dll",
                 "System.Core.dll",
-                "SampleLibrary.dll",
+                entityAssemblyFullname, // "SampleLibrary.dll",
             };
 
             repositoryNamespace = "QTFK";
@@ -54,6 +49,31 @@ namespace QTFK.Services.RepositoryBuilders
             });
 
             return compiledAssembly;
+        }
+
+        public IRepository getRepositoryInstance(Assembly assembly, Type interfaceType)
+        {
+            Type entityType;
+
+            entityType = prv_getEntityType(interfaceType);
+
+            throw new NotImplementedException();
+        }
+
+        private static Type prv_getEntityType(Type interfaceType)
+        {
+            Type repositoryType, entityType;
+
+            Asserts.isSomething(interfaceType, $"'{nameof(interfaceType)}' cannot be null.");
+            Asserts.check(interfaceType.IsInterface, $"Type '{interfaceType.FullName}' is not an interface.");
+            Asserts.check(interfaceType.ContainsGenericParameters == false, $"Type '{interfaceType.FullName}' cannot have generic parameters.");
+
+            repositoryType = interfaceType.GetInterface(typeof(IRepository<>).FullName);
+            Asserts.isSomething(repositoryType, $"Type '{interfaceType.FullName}' does not inherits from '{typeof(IRepository<>).FullName}'");
+
+            entityType = repositoryType.GenericTypeArguments.First();
+
+            return entityType;
         }
 
         private string prv_getCodeForRepository(string repositoryNamespace, Type entityType, Type interfaceType)
@@ -95,6 +115,5 @@ namespace {repositoryNamespace}
             if(results.Errors.HasErrors)
                 throw new Exception();
         }
-
     }
 }

@@ -6,7 +6,13 @@ using System.Linq.Expressions;
 
 namespace QTFK.Services
 {
-    public interface IRepository<T> where T : new()
+    public interface IRepository
+    {
+    }
+
+    public interface IRepository<T> 
+        : IRepository 
+        where T : new()
     {
         IEnumerable<T> Get();
         RepositoryOperationResult Set(T item);
