@@ -10,35 +10,39 @@ namespace QTFK.Extensions.DBIO.QueryFactory
 {
     public static class QueryFactoryDataExtension
     {
-        public static IEnumerable<T> Select<T>(this IQueryFactory<T> factory) where T : new()
+        public static IEnumerable<T> Select<T>(this IEntityQueryFactory factory) where T : new()
         {
-            return Select<T>(factory, q => { });
+            return prv_select<T>(factory, null);
         }
 
-        public static IEnumerable<T> Select<T>(this IQueryFactory<T> factory, Action<IDBQuerySelect> queryBuild) where T : new()
+        public static IEnumerable<T> Select<T>(this IEntityQueryFactory factory, Action<IDBQuerySelect> queryBuild) where T : new()
         {
-            var query = factory.NewSelect();
-            queryBuild(query);
+            return prv_select<T>(factory, queryBuild);
+        }
+        private static IEnumerable<T> prv_select<T>(IEntityQueryFactory factory, Action<IDBQuerySelect> queryBuild) where T : new()
+        {
+            var query = factory.newSelect();
+            queryBuild?.Invoke(query);
             return factory.DB.Get<T>(query);
         }
 
-        public static int Insert<T>(this IQueryFactory<T> factory, Action<IDBQueryInsert> queryBuild) where T : new()
+        public static int Insert<T>(this IEntityQueryFactory factory, Action<IDBQueryInsert> queryBuild) where T : new()
         {
-            var query = factory.NewInsert();
+            var query = factory.newInsert();
             queryBuild(query);
             return factory.DB.Set(query);
         }
 
-        public static int Update<T>(this IQueryFactory<T> factory, Action<IDBQueryUpdate> queryBuild) where T : new()
+        public static int Update<T>(this IEntityQueryFactory factory, Action<IDBQueryUpdate> queryBuild) where T : new()
         {
-            var query = factory.NewUpdate();
+            var query = factory.newUpdate();
             queryBuild(query);
             return factory.DB.Set(query);
         }
 
-        public static int Delete<T>(this IQueryFactory<T> factory, Action<IDBQueryDelete> queryBuild) where T : new()
+        public static int Delete<T>(this IEntityQueryFactory factory, Action<IDBQueryDelete> queryBuild) where T : new()
         {
-            var query = factory.NewDelete();
+            var query = factory.newDelete();
             queryBuild(query);
             return factory.DB.Set(query);
         }

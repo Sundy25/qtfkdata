@@ -48,7 +48,7 @@ namespace QTFK.Data.Tests
                 lowLevelqueryFactory.As<IQueryFilterFactory>()
             };
 
-            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
+            queryFactory = new EntityQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
 
             compilerWrapper = new CompilerWrapper();
             repositoryBuilder = new DefaultRepositoryBuilder(compilerWrapper);
@@ -87,7 +87,7 @@ namespace QTFK.Data.Tests
             lowLevelqueryFactory = new OleDBQueryFactory(db);
             filterFactories = new IQueryFilterFactory[] { lowLevelqueryFactory.As<IQueryFilterFactory>() };
 
-            queryFactory = new DefaultQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
+            queryFactory = new EntityQueryFactory<SampleClass>(lowLevelqueryFactory, filterFactories);
 
             methodParsers = new IMethodParser[]
             {
