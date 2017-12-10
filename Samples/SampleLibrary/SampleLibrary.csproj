@@ -41,6 +41,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\Employee.cs" />
     <Compile Include="Services\IMinimalRepository.cs" />
     <Compile Include="Services\ISampleRepository.cs" />
     <Compile Include="Models\SampleClass.cs" />
