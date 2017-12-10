@@ -19,12 +19,6 @@ namespace QTFK.Extensions.DBIO.QueryFactory
         {
             return prv_select<T>(factory, queryBuild);
         }
-        private static IEnumerable<T> prv_select<T>(IEntityQueryFactory factory, Action<IDBQuerySelect> queryBuild) where T : new()
-        {
-            var query = factory.newSelect();
-            queryBuild?.Invoke(query);
-            return factory.DB.Get<T>(query);
-        }
 
         public static int Insert<T>(this IEntityQueryFactory factory, Action<IDBQueryInsert> queryBuild) where T : new()
         {
@@ -45,6 +39,15 @@ namespace QTFK.Extensions.DBIO.QueryFactory
             var query = factory.newDelete();
             queryBuild(query);
             return factory.DB.Set(query);
+        }
+
+        private static IEnumerable<T> prv_select<T>(IEntityQueryFactory factory, Action<IDBQuerySelect> queryBuild) where T : new()
+        {
+            Asserts.isSomething(factory, $"Parameter '{nameof(factory)}' cannot be null.");
+
+            var query = factory.newSelect();
+            queryBuild?.Invoke(query);
+            return factory.DB.Get<T>(query);
         }
     }
 }
