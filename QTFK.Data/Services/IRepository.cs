@@ -8,8 +8,7 @@ namespace QTFK.Services
 {
     public interface IRepository<T> where T : new()
     {
-        IDBIO DB { get; set; }
-        IQueryFactory QueryFactory { get; set; }
+        void setDB(IDBIO db, IQueryFactory queryFactory);
 
         IEnumerable<T> Get();
         RepositoryOperationResult Set(T item);
