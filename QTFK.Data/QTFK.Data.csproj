@@ -55,6 +55,7 @@
     <Compile Include="Attributes\PrefixAttribute.cs" />
     <Compile Include="Attributes\UniqueAttribute.cs" />
     <Compile Include="Extensions\DBIO\QueryFactory\QueryFactoryDataExtension.cs" />
+    <Compile Include="Extensions\EntityDescriptions\EntityDescriptionExtensions.cs" />
     <Compile Include="Models\EntityDescription.cs" />
     <Compile Include="Models\QueryFilterNotFoundException.cs" />
     <Compile Include="Models\RepositoryInsertException.cs" />
@@ -71,6 +72,7 @@
     <Compile Include="Services\IRepositoryBuilder.cs" />
     <Compile Include="Services\IRepositoryExplorer.cs" />
     <Compile Include="Services\Repositories\BaseRepository.cs" />
+    <Compile Include="Services\Repositories\Repository.cs" />
     <Compile Include="Services\RepositoryBuilders\DefaultRepositoryBuilder.cs" />
   </ItemGroup>
   <ItemGroup />
