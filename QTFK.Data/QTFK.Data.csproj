@@ -64,6 +64,7 @@
     <Compile Include="Services\Factories\EntityQueryFactory.cs" />
     <Compile Include="Services\FilterParsers\ByParamBetweenFilterParser.cs" />
     <Compile Include="Services\FilterParsers\ByParamEqualsFilterParser.cs" />
+    <Compile Include="Services\IEntityDescriber.cs" />
     <Compile Include="Services\IEntityQueryFactory.cs" />
     <Compile Include="Services\IDependency.cs" />
     <Compile Include="Services\IMethodParser.cs" />
