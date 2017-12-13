@@ -7,6 +7,7 @@ using QTFK.Extensions.DBIO;
 using QTFK.Extensions.DBCommand;
 using QTFK.Extensions.Objects.DictionaryConverter;
 using QTFK.Services.Factories;
+using QTFK.Extensions.DBIO.EngineAttribute;
 
 namespace QTFK.Services.Repositories
 {
@@ -158,7 +159,7 @@ namespace QTFK.Services.Repositories
         {
             Asserts.isSomething(DB, $"Property '{nameof(DB)}' not established");
             Asserts.isSomething(QueryFactory, $"Property '{nameof(QueryFactory)}' not established");
-
+            Asserts.check(DB.getDBEngine() == QueryFactory.getDBEngine(), $"Database engine missmatch for '{DB.GetType().FullName}' and '{QueryFactory.GetType().FullName}'.");
 
             if (this.entityQueryFactory == null)
                 this.entityQueryFactory = new EntityQueryFactory()

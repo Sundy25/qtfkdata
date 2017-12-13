@@ -6,7 +6,7 @@ namespace QTFK.Attributes
     {
         public AliasAttribute(string name)
         {
-            Asserts.isSomething(name, "Parameter 'name' cannot be empty.");
+            Asserts.isFilled(name, "Parameter 'name' cannot be empty.");
             Name = name;
         }
 
