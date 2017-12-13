@@ -9,9 +9,6 @@ namespace QTFK.Services
 {
     public interface IEntityDescriber
     {
-        EntityDescription getDescription(Type entityType);
-        //string getName(Type entity);
-        //IEnumerable<string> getFields(Type entity);
-        //IEnumerable<string> getId(Type entity);
+        IEntityDescription describe(Type entityType);
     }
 }

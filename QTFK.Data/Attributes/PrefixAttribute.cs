@@ -7,6 +7,9 @@ namespace QTFK.Attributes
     {
         public PrefixAttribute(Type dbEngine, string prefix)
         {
+            Asserts.isSomething(dbEngine, "Parameter 'dbEngine' cannot be empty.");
+            Asserts.isSomething(prefix, "Parameter 'prefix' cannot be empty.");
+
             DBEngine = dbEngine;
             Prefix = prefix;
         }

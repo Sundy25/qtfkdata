@@ -1,22 +1,21 @@
 ﻿using System.Collections.Generic;
 using System.Reflection;
 using QTFK.Models;
-using System.Linq;
 using QTFK.Extensions.DBIO.QueryFactory;
 using QTFK.Attributes;
 using QTFK.Extensions.DBIO;
 using QTFK.Extensions.DBCommand;
 using QTFK.Extensions.Objects.DictionaryConverter;
-using System;
 using QTFK.Services.Factories;
-using QTFK.Extensions.EntityDescriptions;
 
 namespace QTFK.Services.Repositories
 {
     public abstract class BaseRepository<T> : IRepository<T> where T : new()
     {
-        //private readonly IEnumerable<IMethodParser> methodParsers;
+        private readonly IEntityDescription entityDescription;
         private IEntityQueryFactory entityQueryFactory;
+
+        //private readonly IEnumerable<IMethodParser> methodParsers;
 
         public BaseRepository(
             //IEnumerable<IMethodParser> methodParsers
@@ -25,10 +24,15 @@ namespace QTFK.Services.Repositories
             //this.methodParsers = methodParsers;
         }
 
-        public BaseRepository(IDBIO db, IQueryFactory queryFactory)
+        public BaseRepository(IEntityDescriber entityDescriber)
         {
-            prv_setDB(db, queryFactory);
+            Asserts.isSomething(entityDescriber, $"Parameter '{nameof(entityDescriber)}' cannot be null.");
+
+            this.entityDescription = entityDescriber.describe(typeof(T));
         }
+
+        public IDBIO DB { get; set; }
+        public IQueryFactory QueryFactory { get; set; }
 
         public RepositoryOperationResult Delete(T item)
         {
@@ -36,9 +40,10 @@ namespace QTFK.Services.Repositories
             int result;
             IDBQueryDelete deleteQuery;
 
+            prv_assertEngine();
             deleteQuery = this.entityQueryFactory.newDelete();
             prv_setFilter(deleteQuery, item);
-            result = this.entityQueryFactory.DB.Set(deleteQuery);
+            result = this.DB.Set(deleteQuery);
             operationResult = result == 1
                 ? RepositoryOperationResult.Deleted
                 : RepositoryOperationResult.NonDeleted
@@ -49,9 +54,14 @@ namespace QTFK.Services.Repositories
 
         public IEnumerable<T> Get()
         {
-            Asserts.isSomething(this.entityQueryFactory, $"Repository not initialized. Call '{nameof(setDB)}' first.");
+            IEnumerable<T> items;
+            IDBQuerySelect selectQuery;
+            
+            prv_assertEngine();
+            selectQuery = this.entityQueryFactory.newSelect();
+            items = this.DB.Get<T>(selectQuery);
 
-            return this.entityQueryFactory.Select<T>();
+            return items;
         }
 
         public RepositoryOperationResult Set(T item)
@@ -76,7 +86,7 @@ namespace QTFK.Services.Repositories
                     insertQuery.Parameters[$"@{f.Key}"] = f.Value;
 
                 newId = null;
-                this.entityQueryFactory.DB.Set(cmd =>
+                this.DB.Set(cmd =>
                 {
                     int affected = cmd
                         .SetCommandText(insertQuery.Compile())
@@ -87,7 +97,7 @@ namespace QTFK.Services.Repositories
                     if (affected <= 1)
                         throw new RepositoryInsertException(insertQuery);
 
-                    newId = this.entityQueryFactory.DB.GetLastID(cmd);
+                    newId = this.DB.GetLastID(cmd);
                     return affected;
                 });
 
@@ -101,7 +111,7 @@ namespace QTFK.Services.Repositories
                     updateQuery.Parameters[$"@{f.Key}"] = f.Value;
 
                 prv_setFilter(updateQuery, item);
-                affectedRows = this.entityQueryFactory.DB.Set(updateQuery);
+                affectedRows = this.DB.Set(updateQuery);
                 operationResult = affectedRows == 1
                     ? RepositoryOperationResult.Updated
                     : RepositoryOperationResult.NonUpdated
@@ -109,11 +119,6 @@ namespace QTFK.Services.Repositories
             }
 
             return operationResult;
-        }
-
-        public void setDB(IDBIO db, IQueryFactory queryFactory)
-        {
-            prv_setDB(db, queryFactory);
         }
 
         //protected IQueryFilter GetFilter(MethodBase method)
@@ -132,29 +137,14 @@ namespace QTFK.Services.Repositories
         //        ;
         //}
 
-        private void prv_setDB(IDBIO db, IQueryFactory queryFactory)
-        {
-            Asserts.isSomething(db, $"Parameter {nameof(db)} cannot be null!");
-            Asserts.isSomething(queryFactory, $"Parameter {nameof(queryFactory)} cannot be null!");
-
-            if (this.entityQueryFactory == null)
-            {
-                this.entityQueryFactory = new EntityQueryFactory();
-                this.entityQueryFactory.Entity = typeof(T);
-            }
-
-            this.entityQueryFactory.DB = db;
-            this.entityQueryFactory.QueryFactory = queryFactory;
-        }
-
         private void prv_setFilter(IDBQueryFilterable query, T item)
         {
             IByParamEqualsFilter filter;
             string param;
 
             filter = this.entityQueryFactory.buildFilter<IByParamEqualsFilter>();
-            filter.Field = this.entityQueryFactory.EntityDescription.Id;
-            param = $"@{this.entityQueryFactory.EntityDescription.Id}";
+            filter.Field = this.entityDescription.Keys;
+            param = $"@{this.entityQueryFactory.EntityDescription.Keys}";
             filter.Parameter = param;
             query.Parameters[param] = this.entityQueryFactory
                 .EntityDescription
@@ -163,5 +153,21 @@ namespace QTFK.Services.Repositories
 
             query.Filter = filter;
         }
+
+        private void prv_assertEngine()
+        {
+            Asserts.isSomething(DB, $"Property '{nameof(DB)}' not established");
+            Asserts.isSomething(QueryFactory, $"Property '{nameof(QueryFactory)}' not established");
+
+
+            if (this.entityQueryFactory == null)
+                this.entityQueryFactory = new EntityQueryFactory()
+                {
+                    EntityDescription = this.entityDescription,
+                    QueryFactory = this.QueryFactory,
+                    Prefix = this.QueryFactory.Prefix,
+                };
+        }
+
     }
 }
