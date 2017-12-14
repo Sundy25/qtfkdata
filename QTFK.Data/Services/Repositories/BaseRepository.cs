@@ -8,6 +8,10 @@ using QTFK.Extensions.DBCommand;
 using QTFK.Extensions.Objects.DictionaryConverter;
 using QTFK.Services.Factories;
 using QTFK.Extensions.DBIO.EngineAttribute;
+using System.Data;
+using System.Linq;
+using QTFK.Extensions.TypeInfo;
+using QTFK.Extensions.EntityDescription;
 
 namespace QTFK.Services.Repositories
 {
@@ -41,7 +45,7 @@ namespace QTFK.Services.Repositories
             int result;
             IDBQueryDelete deleteQuery;
 
-            prv_assertEngine();
+            prv_prepareEngine();
             deleteQuery = this.entityQueryFactory.newDelete();
             prv_setFilter(deleteQuery, item);
             result = this.DB.Set(deleteQuery);
@@ -57,10 +61,10 @@ namespace QTFK.Services.Repositories
         {
             IEnumerable<T> items;
             IDBQuerySelect selectQuery;
-            
-            prv_assertEngine();
+
+            prv_prepareEngine();
             selectQuery = this.entityQueryFactory.newSelect();
-            items = this.DB.Get<T>(selectQuery);
+            items = this.DB.Get<T>(selectQuery, prv_map);
 
             return items;
         }
@@ -73,6 +77,8 @@ namespace QTFK.Services.Repositories
             IDBQueryUpdate updateQuery;
             IDictionary<string, object> values;
             int affectedRows;
+
+            prv_prepareEngine();
 
             id = this.entityQueryFactory
                     .EntityDescription
@@ -155,7 +161,7 @@ namespace QTFK.Services.Repositories
             query.Filter = filter;
         }
 
-        private void prv_assertEngine()
+        private void prv_prepareEngine()
         {
             Asserts.isSomething(DB, $"Property '{nameof(DB)}' not established");
             Asserts.isSomething(QueryFactory, $"Property '{nameof(QueryFactory)}' not established");
@@ -165,9 +171,31 @@ namespace QTFK.Services.Repositories
                 this.entityQueryFactory = new EntityQueryFactory()
                 {
                     EntityDescription = this.entityDescription,
-                    QueryFactory = this.QueryFactory,
-                    Prefix = this.QueryFactory.Prefix,
                 };
+            this.entityQueryFactory.QueryFactory = this.QueryFactory;
+            this.entityQueryFactory.Prefix = this.QueryFactory.Prefix;
+        }
+
+        private T prv_map(IDataRecord record)
+        {
+            T item = new T();
+
+            foreach (var field in this.entityDescription.getKeysAndFields())
+            {
+                int fieldIndex;
+                object value;
+                string fieldName;
+                PropertyInfo fieldProperty;
+
+                fieldName = field.Key;
+                fieldProperty = field.Value;
+                fieldIndex = record.GetOrdinal(fieldName);
+                Asserts.check(fieldIndex >= 0, $"Returned field index below zero '{fieldIndex}' from '{record.GetType().FullName}'.");
+                value = record[fieldIndex];
+                fieldProperty.SetValue(item, value);
+            }
+
+            return item;
         }
 
     }

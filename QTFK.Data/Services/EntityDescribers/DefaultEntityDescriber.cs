@@ -7,6 +7,7 @@ using QTFK.Models;
 using System.Reflection;
 using QTFK.Attributes;
 using QTFK.Extensions.TypeInfo;
+using System.Collections.ObjectModel;
 
 namespace QTFK.Services.EntityDescribers
 {
@@ -35,64 +36,47 @@ namespace QTFK.Services.EntityDescribers
 
                 fieldName = field.getNameOrAlias();
                 if (field.isKey())
-                    entityDescription.addKey(fieldName);
+                    entityDescription.Keys.Add(fieldName, field);
                 else
-                    entityDescription.addField(fieldName);
+                    entityDescription.Fields.Add(fieldName, field);
             }
             if(entityDescription.Keys.Count == 0)
             {
-                string idKey;
+                KeyValuePair<string, PropertyInfo> id;
+                StringComparer comparer;
 
-                idKey = entityDescription.Fields.FirstOrDefault(prv_fieldIsId);
+                comparer = StringComparer.InvariantCultureIgnoreCase;
+                id = entityDescription.Fields.FirstOrDefault(pair => comparer.Equals(pair.Key,DEFAULT_ID_FIELD));
 
-                if (idKey != null)
+                if (id.Key != null)
                 {
-                    entityDescription.addKey(idKey);
-                    entityDescription.removeField(idKey);
+                    entityDescription.Keys.Add(id);
+                    entityDescription.Fields.Remove(id);
                 }
             }
 
-            Asserts.check(entityDescription.Keys.Count > 0, $"Parameter '{nameof(entityType)}' has no property with '{typeof(KeyAttribute).FullName}' attribute neither a property with Id name.");
+            Asserts.check(entityDescription.Keys.Count > 0, $"Type '{entityType.FullName}' has no property tagged with '{typeof(KeyAttribute).FullName}' neither a '{DEFAULT_ID_FIELD}' named property.");
             return entityDescription;
-        }
-
-        private static bool prv_fieldIsId(string field)
-        {
-            return StringComparer
-                .InvariantCultureIgnoreCase
-                .Compare(field, DEFAULT_ID_FIELD) == 0;
         }
 
         private class PrvEntityDescription : IEntityDescription
         {
-            private List<string> fields;
-            private List<string> keys;
+            private IDictionary<string, PropertyInfo> fields;
+            private IDictionary<string, PropertyInfo> keys;
 
             internal PrvEntityDescription()
             {
-                this.fields = new List<string>();
-                this.keys = new List<string>();
+                this.fields = new Dictionary<string, PropertyInfo>();
+                this.keys = new Dictionary<string, PropertyInfo>();
             }
 
             public string Name { get; internal set; }
             public Type Entity { get; internal set; }
-            public IReadOnlyList<string> Fields => this.fields.AsReadOnly();
-            public IReadOnlyList<string> Keys => this.keys.AsReadOnly();
+            internal IDictionary<string, PropertyInfo> Fields { get; set; }
+            internal IDictionary<string, PropertyInfo> Keys { get; set; }
+            IReadOnlyDictionary<string, PropertyInfo> IEntityDescription.Fields => new ReadOnlyDictionary<string, PropertyInfo>(this.fields);
+            IReadOnlyDictionary<string, PropertyInfo> IEntityDescription.Keys => new ReadOnlyDictionary<string, PropertyInfo>(this.keys);
 
-            internal void addField(string field)
-            {
-                this.fields.Add(field);
-            }
-
-            internal void addKey(string field)
-            {
-                this.keys.Add(field);
-            }
-
-            internal void removeField(string idKey)
-            {
-                this.fields.Remove(idKey);
-            }
         }
 
     }

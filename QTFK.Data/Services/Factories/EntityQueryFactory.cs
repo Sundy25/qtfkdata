@@ -62,7 +62,7 @@ namespace QTFK.Services.Factories
                 .SetPrefix(this.Prefix)
                 ;
 
-            foreach (var field in this.entityDescription.Fields)
+            foreach (var field in this.entityDescription.Fields.Keys)
                 q.SetColumn(field, null, $"@{field}");
 
             return q;
@@ -76,7 +76,7 @@ namespace QTFK.Services.Factories
                 .SetPrefix(this.Prefix)
                 ;
 
-            foreach (var field in this.entityDescription.Fields)
+            foreach (var field in this.entityDescription.Fields.Keys)
                 q.AddColumn(field, null);
 
             return q;
@@ -90,7 +90,7 @@ namespace QTFK.Services.Factories
                 .SetPrefix(this.Prefix)
                 ;
 
-            foreach (var field in this.entityDescription.Fields)
+            foreach (var field in this.entityDescription.Fields.Keys)
                 q.SetColumn(field, null, $"@{field}");
 
             return q;

@@ -7,8 +7,8 @@ namespace QTFK.Models
     public interface IEntityDescription
     {
         string Name { get; }
-        IReadOnlyList<string> Fields { get; }
-        IReadOnlyList<string> Keys { get; }
+        IReadOnlyDictionary<string, PropertyInfo> Fields { get; }
+        IReadOnlyDictionary<string, PropertyInfo> Keys { get; }
         Type Entity { get; }
     }
 }
