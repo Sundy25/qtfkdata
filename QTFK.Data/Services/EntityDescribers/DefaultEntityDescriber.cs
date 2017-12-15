@@ -8,6 +8,7 @@ using System.Reflection;
 using QTFK.Attributes;
 using QTFK.Extensions.TypeInfo;
 using System.Collections.ObjectModel;
+using System.Data;
 
 namespace QTFK.Services.EntityDescribers
 {
@@ -40,13 +41,13 @@ namespace QTFK.Services.EntityDescribers
                 else
                     entityDescription.Fields.Add(fieldName, field);
             }
-            if(entityDescription.Keys.Count == 0)
+            if (entityDescription.Keys.Count == 0)
             {
                 KeyValuePair<string, PropertyInfo> id;
                 StringComparer comparer;
 
                 comparer = StringComparer.InvariantCultureIgnoreCase;
-                id = entityDescription.Fields.FirstOrDefault(pair => comparer.Equals(pair.Key,DEFAULT_ID_FIELD));
+                id = entityDescription.Fields.FirstOrDefault(pair => comparer.Equals(pair.Key, DEFAULT_ID_FIELD));
 
                 if (id.Key != null)
                 {
@@ -70,13 +71,61 @@ namespace QTFK.Services.EntityDescribers
                 this.keys = new Dictionary<string, PropertyInfo>();
             }
 
-            public string Name { get; internal set; }
-            public Type Entity { get; internal set; }
+            internal string Name { get; set; }
+            internal Type Entity { get; set; }
             internal IDictionary<string, PropertyInfo> Fields { get; set; }
             internal IDictionary<string, PropertyInfo> Keys { get; set; }
-            IReadOnlyDictionary<string, PropertyInfo> IEntityDescription.Fields => new ReadOnlyDictionary<string, PropertyInfo>(this.fields);
-            IReadOnlyDictionary<string, PropertyInfo> IEntityDescription.Keys => new ReadOnlyDictionary<string, PropertyInfo>(this.keys);
 
+            public bool UsesAutoId { get; }
+
+            public object build(IDataRecord record)
+            {
+                object item;
+
+                item = Activator.CreateInstance(this.Entity);
+
+                foreach (var field in this.Keys)
+                    prv_map(record, field, item);
+                foreach (var field in this.Fields)
+                    prv_map(record, field, item);
+
+                return item;
+            }
+
+            private static void prv_map(IDataRecord record, KeyValuePair<string, PropertyInfo> field, object item)
+            {
+                int fieldIndex;
+                object value;
+                string fieldName;
+                PropertyInfo fieldProperty;
+
+                fieldName = field.Key;
+                fieldProperty = field.Value;
+                fieldIndex = record.GetOrdinal(fieldName);
+                Asserts.check(fieldIndex >= 0, $"Returned field index below zero '{fieldIndex}' from '{record.GetType().FullName}'.");
+                value = record[fieldIndex];
+                fieldProperty.SetValue(item, value);
+            }
+
+            public bool hasId(object item)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void prepare(object item, IDBQueryDelete deleteQuery)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void prepare(object item, IDBQueryInsert deleteQuery)
+            {
+                throw new NotImplementedException();
+            }
+
+            public void prepare(object item, IDBQueryUpdate deleteQuery)
+            {
+                throw new NotImplementedException();
+            }
         }
 
     }

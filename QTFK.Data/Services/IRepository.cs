@@ -8,11 +8,12 @@ namespace QTFK.Services
 {
     public interface IRepository<T> where T : new()
     {
-        IEnumerable<T> Get();
-        RepositoryOperationResult Set(T item);
-        RepositoryOperationResult Delete(T item);
+        IEnumerable<T> get(Expression<Func<T,bool>> filterExpression);
+        void add(T item);
+        void update(T item);
+        void delete(T item);
 
-        IDBIO DB { get; set; }
         IQueryFactory QueryFactory { get; set; }
+        IDBIO DB { get; set; }
     }
 }

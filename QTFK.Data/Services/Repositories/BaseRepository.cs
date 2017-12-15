@@ -1,16 +1,12 @@
 ﻿using System.Collections.Generic;
-using System.Reflection;
 using QTFK.Models;
 using QTFK.Extensions.DBIO.QueryFactory;
-using QTFK.Attributes;
 using QTFK.Extensions.DBIO;
 using QTFK.Extensions.DBCommand;
-using QTFK.Extensions.Objects.DictionaryConverter;
-using QTFK.Services.Factories;
 using QTFK.Extensions.DBIO.EngineAttribute;
-using System.Data;
-using System.Linq;
-using QTFK.Extensions.TypeInfo;
+using System;
+using System.Linq.Expressions;
+using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.EntityDescription;
 
 namespace QTFK.Services.Repositories
@@ -18,16 +14,16 @@ namespace QTFK.Services.Repositories
     public abstract class BaseRepository<T> : IRepository<T> where T : new()
     {
         private readonly IEntityDescription entityDescription;
-        private IEntityQueryFactory entityQueryFactory;
+        //private IEntityQueryFactory entityQueryFactory;
 
         //private readonly IEnumerable<IMethodParser> methodParsers;
 
-        public BaseRepository(
-            //IEnumerable<IMethodParser> methodParsers
-            )
-        {
-            //this.methodParsers = methodParsers;
-        }
+        //public BaseRepository(
+        //    //IEnumerable<IMethodParser> methodParsers
+        //    )
+        //{
+        //    //this.methodParsers = methodParsers;
+        //}
 
         public BaseRepository(IEntityDescriber entityDescriber)
         {
@@ -39,93 +35,100 @@ namespace QTFK.Services.Repositories
         public IDBIO DB { get; set; }
         public IQueryFactory QueryFactory { get; set; }
 
-        public RepositoryOperationResult Delete(T item)
+        public void add(T item)
         {
-            RepositoryOperationResult operationResult;
-            int result;
+            IDBQueryInsert insertQuery;
+            object id;
+
+            prv_prepareEngine();
+
+            if (this.entityDescription.UsesAutoId)
+                Asserts.check(this.entityDescription.hasId(item) == false, $"Because of type '{typeof(T).FullName}' has autonumeric Id, parameter '{nameof(item)}' must have no id in order to add to repository.");
+            else
+                Asserts.check(this.entityDescription.hasId(item) == true, $"Because of type '{typeof(T).FullName}' has no autonumeric Id, parameter '{nameof(item)}' must have setted id in order to add to repository.");
+
+            id = null;
+            insertQuery = this.QueryFactory.newInsert();
+            this.entityDescription.prepare(item, insertQuery);
+
+            this.DB.Set(cmd =>
+            {
+                int affected;
+
+                affected = cmd
+                    .SetCommandText(insertQuery.Compile())
+                    .AddParameters(insertQuery.Parameters)
+                    .ExecuteNonQuery()
+                    ;
+
+                Asserts.check(affected == 1, $"Insert of type {typeof(T).FullName} failed. Affected rows: {affected}.");
+
+                if (this.entityDescription.UsesAutoId)
+                    id = this.DB.GetLastID(cmd);
+            });
+            this.entityDescription.setId(item, id);
+        }
+
+        public void delete(T item)
+        {
+            int affected;
             IDBQueryDelete deleteQuery;
 
             prv_prepareEngine();
-            deleteQuery = this.entityQueryFactory.newDelete();
-            prv_setFilter(deleteQuery, item);
-            result = this.DB.Set(deleteQuery);
-            operationResult = result == 1
-                ? RepositoryOperationResult.Deleted
-                : RepositoryOperationResult.NonDeleted
-                ;
 
-            return operationResult;
+            deleteQuery = this.QueryFactory.newDelete();
+            this.entityDescription.prepare(item, deleteQuery);
+
+            affected = this.DB.Set(deleteQuery);
+            Asserts.check(affected == 1, $"Failed deleting of type {typeof(T).FullName}. More than one rows affected: {affected}.");
         }
 
-        public IEnumerable<T> Get()
+        public IEnumerable<T> get(Expression<Func<T, bool>> filterExpression)
         {
             IEnumerable<T> items;
             IDBQuerySelect selectQuery;
+            IQueryFilter filter;
 
             prv_prepareEngine();
-            selectQuery = this.entityQueryFactory.newSelect();
-            items = this.DB.Get<T>(selectQuery, prv_map);
+
+            selectQuery = this.QueryFactory.newSelect();
+            filter = this.QueryFactory.buildFilter(filterExpression);
+            selectQuery.SetFilter(filter);
+            items = this.DB.Get<T>(selectQuery, this.entityDescription.build<T>);
 
             return items;
         }
 
-        public RepositoryOperationResult Set(T item)
+        public void update(T item)
         {
-            RepositoryOperationResult operationResult;
-            object id, newId;
-            IDBQueryInsert insertQuery;
             IDBQueryUpdate updateQuery;
-            IDictionary<string, object> values;
-            int affectedRows;
 
             prv_prepareEngine();
 
-            id = this.entityQueryFactory
-                    .EntityDescription
-                    .getId(item);
+            Asserts.check(this.entityDescription.hasId(item), $"Parameter '{nameof(item)}' must have setted id in order to update repository.");
 
-            values = item.toDictionary(p => p.GetCustomAttribute<KeyAttribute>() == null);
+            updateQuery = this.QueryFactory.newUpdate();
+            this.entityDescription.prepare(item, updateQuery);
 
-            if (id == null)
+            this.DB.Set(cmd =>
             {
-                insertQuery = this.entityQueryFactory.newInsert();
-                foreach (var f in values)
-                    insertQuery.Parameters[$"@{f.Key}"] = f.Value;
+                int affected;
 
-                newId = null;
-                this.DB.Set(cmd =>
-                {
-                    int affected = cmd
-                        .SetCommandText(insertQuery.Compile())
-                        .AddParameters(insertQuery.Parameters)
-                        .ExecuteNonQuery()
-                        ;
-
-                    if (affected <= 1)
-                        throw new RepositoryInsertException(insertQuery);
-
-                    newId = this.DB.GetLastID(cmd);
-                    return affected;
-                });
-
-                this.entityQueryFactory.EntityDescription.setId(item, newId);
-                operationResult = RepositoryOperationResult.Added;
-            }
-            else
-            {
-                updateQuery = this.entityQueryFactory.newUpdate();
-                foreach (var f in values)
-                    updateQuery.Parameters[$"@{f.Key}"] = f.Value;
-
-                prv_setFilter(updateQuery, item);
-                affectedRows = this.DB.Set(updateQuery);
-                operationResult = affectedRows == 1
-                    ? RepositoryOperationResult.Updated
-                    : RepositoryOperationResult.NonUpdated
+                affected = cmd
+                    .SetCommandText(updateQuery.Compile())
+                    .AddParameters(updateQuery.Parameters)
+                    .ExecuteNonQuery()
                     ;
-            }
 
-            return operationResult;
+                Asserts.check(affected == 1, $"Failed updating of type {typeof(T).FullName}. More than one rows affected: {affected}.");
+            });
+        }
+
+        private void prv_prepareEngine()
+        {
+            Asserts.isSomething(DB, $"Property '{nameof(DB)}' not established.");
+            Asserts.isSomething(QueryFactory, $"Property '{nameof(QueryFactory)}' not established.");
+            Asserts.check(DB.getDBEngine() == QueryFactory.getDBEngine(), $"Database engine missmatch for '{DB.GetType().FullName}' and '{QueryFactory.GetType().FullName}'.");
         }
 
         //protected IQueryFilter GetFilter(MethodBase method)
@@ -144,59 +147,6 @@ namespace QTFK.Services.Repositories
         //        ;
         //}
 
-        private void prv_setFilter(IDBQueryFilterable query, T item)
-        {
-            IByParamEqualsFilter filter;
-            string param;
-
-            filter = this.entityQueryFactory.buildFilter<IByParamEqualsFilter>();
-            filter.Field = this.entityDescription.Keys;
-            param = $"@{this.entityQueryFactory.EntityDescription.Keys}";
-            filter.Parameter = param;
-            query.Parameters[param] = this.entityQueryFactory
-                .EntityDescription
-                .getId(item)
-                .ToString();
-
-            query.Filter = filter;
-        }
-
-        private void prv_prepareEngine()
-        {
-            Asserts.isSomething(DB, $"Property '{nameof(DB)}' not established");
-            Asserts.isSomething(QueryFactory, $"Property '{nameof(QueryFactory)}' not established");
-            Asserts.check(DB.getDBEngine() == QueryFactory.getDBEngine(), $"Database engine missmatch for '{DB.GetType().FullName}' and '{QueryFactory.GetType().FullName}'.");
-
-            if (this.entityQueryFactory == null)
-                this.entityQueryFactory = new EntityQueryFactory()
-                {
-                    EntityDescription = this.entityDescription,
-                };
-            this.entityQueryFactory.QueryFactory = this.QueryFactory;
-            this.entityQueryFactory.Prefix = this.QueryFactory.Prefix;
-        }
-
-        private T prv_map(IDataRecord record)
-        {
-            T item = new T();
-
-            foreach (var field in this.entityDescription.getKeysAndFields())
-            {
-                int fieldIndex;
-                object value;
-                string fieldName;
-                PropertyInfo fieldProperty;
-
-                fieldName = field.Key;
-                fieldProperty = field.Value;
-                fieldIndex = record.GetOrdinal(fieldName);
-                Asserts.check(fieldIndex >= 0, $"Returned field index below zero '{fieldIndex}' from '{record.GetType().FullName}'.");
-                value = record[fieldIndex];
-                fieldProperty.SetValue(item, value);
-            }
-
-            return item;
-        }
 
     }
 }

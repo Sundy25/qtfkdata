@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace QTFK.Extensions.TypeInfo
 {
-    public static class TypeInfoExtensions
+    public static class TypeAttributesExtensions
     {
         public static string getNameOrAlias(this Type type)
         {
@@ -38,6 +38,13 @@ namespace QTFK.Extensions.TypeInfo
             Asserts.isSomething(property, $"Parameter '{nameof(property)}' cannot be null.");
 
             return property.GetCustomAttribute<KeyAttribute>() != null;
+        }
+
+        public static bool isAutonumeric(this PropertyInfo property)
+        {
+            Asserts.isSomething(property, $"Parameter '{nameof(property)}' cannot be null.");
+
+            return property.GetCustomAttribute<AutoAttribute>() != null;
         }
     }
 }
