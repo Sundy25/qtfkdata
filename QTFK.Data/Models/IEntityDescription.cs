@@ -20,5 +20,6 @@ namespace QTFK.Models
         void prepare(object item, IDBQueryDelete deleteQuery);
         void prepare(object item, IDBQueryInsert deleteQuery);
         void prepare(object item, IDBQueryUpdate deleteQuery);
+        void setId(object id, object item);
     }
 }

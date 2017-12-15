@@ -66,7 +66,7 @@ namespace QTFK.Services.Repositories
                 if (this.entityDescription.UsesAutoId)
                     id = this.DB.GetLastID(cmd);
             });
-            this.entityDescription.setId(item, id);
+            this.entityDescription.setId(id, item);
         }
 
         public void delete(T item)
