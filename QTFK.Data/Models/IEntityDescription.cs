@@ -1,4 +1,5 @@
-﻿using System;
+﻿using QTFK.Services;
+using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
@@ -13,13 +14,12 @@ namespace QTFK.Models
         //Type Entity { get; }
 
         bool UsesAutoId { get; }
-        bool hasId(object item);
 
         object build(IDataRecord record);
 
-        void prepare(object item, IDBQueryDelete deleteQuery);
-        void prepare(object item, IDBQueryInsert deleteQuery);
-        void prepare(object item, IDBQueryUpdate deleteQuery);
+        IDBQueryDelete buildDelete(IQueryFactory queryFactory, object item);
+        IDBQueryInsert buildInsert(IQueryFactory queryFactory, object item);
+        IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item);
         void setId(object id, object item);
     }
 }

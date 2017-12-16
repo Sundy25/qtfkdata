@@ -42,14 +42,8 @@ namespace QTFK.Services.Repositories
 
             prv_prepareEngine();
 
-            if (this.entityDescription.UsesAutoId)
-                Asserts.check(this.entityDescription.hasId(item) == false, $"Because of type '{typeof(T).FullName}' has autonumeric Id, parameter '{nameof(item)}' must have no id in order to add to repository.");
-            else
-                Asserts.check(this.entityDescription.hasId(item) == true, $"Because of type '{typeof(T).FullName}' has no autonumeric Id, parameter '{nameof(item)}' must have setted id in order to add to repository.");
-
             id = null;
-            insertQuery = this.QueryFactory.newInsert();
-            this.entityDescription.prepare(item, insertQuery);
+            insertQuery = this.entityDescription.buildInsert( this.QueryFactory, item);
 
             this.DB.Set(cmd =>
             {
@@ -76,8 +70,7 @@ namespace QTFK.Services.Repositories
 
             prv_prepareEngine();
 
-            deleteQuery = this.QueryFactory.newDelete();
-            this.entityDescription.prepare(item, deleteQuery);
+            deleteQuery = this.entityDescription.buildDelete(this.QueryFactory, item);
 
             affected = this.DB.Set(deleteQuery);
             Asserts.check(affected == 1, $"Failed deleting of type {typeof(T).FullName}. More than one rows affected: {affected}.");
@@ -105,10 +98,7 @@ namespace QTFK.Services.Repositories
 
             prv_prepareEngine();
 
-            Asserts.check(this.entityDescription.hasId(item), $"Parameter '{nameof(item)}' must have setted id in order to update repository.");
-
-            updateQuery = this.QueryFactory.newUpdate();
-            this.entityDescription.prepare(item, updateQuery);
+            updateQuery = this.entityDescription.buildUpdate(this.QueryFactory, item);
 
             this.DB.Set(cmd =>
             {

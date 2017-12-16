@@ -1,14 +1,12 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using QTFK.Models;
 using System.Reflection;
 using QTFK.Attributes;
 using QTFK.Extensions.TypeInfo;
-using System.Collections.ObjectModel;
 using System.Data;
+using QTFK.Extensions.DBIO.DBQueries;
 
 namespace QTFK.Services.EntityDescribers
 {
@@ -62,19 +60,16 @@ namespace QTFK.Services.EntityDescribers
 
         private class PrvEntityDescription : IEntityDescription
         {
-            private IDictionary<string, PropertyInfo> fields;
-            private IDictionary<string, PropertyInfo> keys;
-
             internal PrvEntityDescription()
             {
-                this.fields = new Dictionary<string, PropertyInfo>();
-                this.keys = new Dictionary<string, PropertyInfo>();
+                this.Fields = new Dictionary<string, PropertyInfo>();
+                this.Keys = new Dictionary<string, PropertyInfo>();
             }
 
             internal string Name { get; set; }
             internal Type Entity { get; set; }
-            internal IDictionary<string, PropertyInfo> Fields { get; set; }
-            internal IDictionary<string, PropertyInfo> Keys { get; set; }
+            internal IDictionary<string, PropertyInfo> Fields { get; }
+            internal IDictionary<string, PropertyInfo> Keys { get; }
 
             public bool UsesAutoId { get; }
 
@@ -107,25 +102,71 @@ namespace QTFK.Services.EntityDescribers
                 fieldProperty.SetValue(item, value);
             }
 
-            public bool hasId(object item)
+            public void setId(object id, object item)
             {
                 throw new NotImplementedException();
             }
 
-            public void prepare(object item, IDBQueryDelete deleteQuery)
+            public IDBQueryDelete buildDelete(IQueryFactory queryFactory, object item)
+            {
+                IDBQueryDelete query;
+
+                query = queryFactory.newDelete();
+                query.Table = this.Name;
+
+                throw new NotImplementedException();
+            }
+
+            public IDBQueryInsert buildInsert(IQueryFactory queryFactory, object item)
+            {
+                IDBQueryInsert query;
+
+                if (this.UsesAutoId)
+                    Asserts.check(this.prv_hasId(item) == false, $"Because of type '{this.Entity.FullName}' has autonumeric Id, parameter '{nameof(item)}' must have no id in order to add to repository.");
+                else
+                    Asserts.check(this.prv_hasId(item) == true, $"Because of type '{this.Entity.FullName}' has no autonumeric Id, parameter '{nameof(item)}' must have setted id in order to add to repository.");
+
+                query = queryFactory.newInsert();
+                query.Table = this.Name;
+
+                foreach (var field in this.Fields)
+                    prv_setQueryColumn(queryFactory, item, query, field);
+                foreach (var id in this.Keys.Where(id => id.Value.isAutonumeric() == false))
+                        prv_setQueryColumn(queryFactory, item, query, id);
+
+                return query;
+            }
+
+            public IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item)
+            {
+                IDBQueryUpdate query;
+
+                Asserts.check(this.entityDescription.hasId(item), $"Parameter '{nameof(item)}' must have setted id in order to update repository.");
+
+                query = queryFactory.newUpdate();
+                query.Table = this.Name;
+
+                foreach (var field in this.Fields)
+                    prv_setQueryColumn(queryFactory, item, query, field);
+
+                throw new NotImplementedException();
+            }
+
+            private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
+            {
+                object fieldValue;
+                string fieldParameter;
+
+                fieldParameter = queryFactory.buildParameter(field.Key);
+                fieldValue = field.Value.GetValue(item);
+                query.SetColumn(field.Key, fieldValue, fieldParameter);
+            }
+
+            private bool prv_hasId(object item)
             {
                 throw new NotImplementedException();
             }
 
-            public void prepare(object item, IDBQueryInsert deleteQuery)
-            {
-                throw new NotImplementedException();
-            }
-
-            public void prepare(object item, IDBQueryUpdate deleteQuery)
-            {
-                throw new NotImplementedException();
-            }
         }
 
     }

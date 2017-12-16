@@ -64,8 +64,6 @@
     <Compile Include="Models\RepositoryOperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EntityDescribers\DefaultEntityDescriber.cs" />
-    <Compile Include="Services\FilterParsers\ByParamBetweenFilterParser.cs" />
-    <Compile Include="Services\FilterParsers\ByParamEqualsFilterParser.cs" />
     <Compile Include="Services\IEntityDescriber.cs" />
     <Compile Include="Services\IDependency.cs" />
     <Compile Include="Services\IMethodParser.cs" />
@@ -79,6 +77,7 @@
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Services\Factories\" />
+    <Folder Include="Services\FilterParsers\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
