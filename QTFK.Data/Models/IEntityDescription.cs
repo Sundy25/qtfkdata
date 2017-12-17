@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Data;
 using System.Reflection;
+using System.Linq.Expressions;
 
 namespace QTFK.Models
 {
@@ -20,6 +21,7 @@ namespace QTFK.Models
         IDBQueryDelete buildDelete(IQueryFactory queryFactory, object item);
         IDBQueryInsert buildInsert(IQueryFactory queryFactory, object item);
         IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item);
-        void setId(object id, object item);
+
+        void setAutoId(object id, object item);
     }
 }

@@ -64,8 +64,10 @@
     <Compile Include="Models\RepositoryOperationResult.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\EntityDescribers\DefaultEntityDescriber.cs" />
+    <Compile Include="Services\ExpressionFilters\DefaultExpressionFilter.cs" />
     <Compile Include="Services\IEntityDescriber.cs" />
     <Compile Include="Services\IDependency.cs" />
+    <Compile Include="Services\IExpressionFilterParser.cs" />
     <Compile Include="Services\IMethodParser.cs" />
     <Compile Include="Services\IQueryFilterFactoryCollection.cs" />
     <Compile Include="Services\IRepository.cs" />

@@ -2,8 +2,8 @@
 {
     public class Repository<T> : BaseRepository<T> where T : class, new()
     {
-        public Repository(IEntityDescriber entityDescriber) 
-            : base(entityDescriber)
+        public Repository(IEntityDescriber entityDescriber, IExpressionFilterParser expressionFilterParser) 
+            : base(entityDescriber, expressionFilterParser)
         {
         }
     }

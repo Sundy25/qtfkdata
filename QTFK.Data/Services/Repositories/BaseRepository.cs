@@ -14,6 +14,7 @@ namespace QTFK.Services.Repositories
     public abstract class BaseRepository<T> : IRepository<T> where T : new()
     {
         private readonly IEntityDescription entityDescription;
+        private readonly IExpressionFilterParser expressionFilterParser;
         //private IEntityQueryFactory entityQueryFactory;
 
         //private readonly IEnumerable<IMethodParser> methodParsers;
@@ -25,11 +26,13 @@ namespace QTFK.Services.Repositories
         //    //this.methodParsers = methodParsers;
         //}
 
-        public BaseRepository(IEntityDescriber entityDescriber)
+        public BaseRepository(IEntityDescriber entityDescriber, IExpressionFilterParser expressionFilterParser)
         {
             Asserts.isSomething(entityDescriber, $"Parameter '{nameof(entityDescriber)}' cannot be null.");
+            Asserts.isSomething(expressionFilterParser, $"Parameter '{nameof(expressionFilterParser)}' cannot be null.");
 
             this.entityDescription = entityDescriber.describe(typeof(T));
+            this.expressionFilterParser = expressionFilterParser;
         }
 
         public IDBIO DB { get; set; }
@@ -60,7 +63,7 @@ namespace QTFK.Services.Repositories
                 if (this.entityDescription.UsesAutoId)
                     id = this.DB.GetLastID(cmd);
             });
-            this.entityDescription.setId(id, item);
+            this.entityDescription.setAutoId(id, item);
         }
 
         public void delete(T item)
@@ -84,9 +87,39 @@ namespace QTFK.Services.Repositories
 
             prv_prepareEngine();
 
+            //selectQuery = this.entityDescription.buildSelect(this.QueryFactory, filterExpression, item);
+
             selectQuery = this.QueryFactory.newSelect();
-            filter = this.QueryFactory.buildFilter(filterExpression);
+
+
+            /*
+ExprFilter			->	OrFilter
+
+OrFilter	->	AndFilter OrFilter
+			`-	EmptyFilter
+
+AndFilter	->	PairFilter AndFilter
+			`-	EmptyFilter
+
+PairFilter	->	Equalfilter
+			|-	GreaterFilter
+			|-	GreaterOrEqualFilter
+			|-	MinorFilter
+			|-	MinorOrEqualFilter
+			|-	DistincFilter
+			`-	ExprFilter
+             */
+            IOrFilter orFilter = this.QueryFactory.buildFilter<IOrFilter>();
+            IAndFilter andFilter = this.QueryFactory.buildFilter<IAndFilter>();
+            IConditionFilter conditionFilter = this.QueryFactory.buildFilter<IEqualFilter>();
+            conditionFilter.SetField("pepe", 0);
+            andFilter.addCondition(conditionFilter);
+            orFilter.addAndFilter(andFilter);
+
+            filter = this.expressionFilterParser.buildFilter<T>(this.QueryFactory, filterExpression);
             selectQuery.SetFilter(filter);
+            selectQuery.Filter = orFilter;
+
             items = this.DB.Get<T>(selectQuery, this.entityDescription.build<T>);
 
             return items;
@@ -138,5 +171,21 @@ namespace QTFK.Services.Repositories
         //}
 
 
+    }
+
+    internal interface IOrFilter : IQueryFilter
+    {
+        void addAndFilter(IAndFilter andFilter);
+    }
+    internal interface IAndFilter : IQueryFilter
+    {
+        void addCondition(IConditionFilter conditionFilter);
+    }
+    internal interface IConditionFilter : IQueryFilter
+    {
+        void SetField(string field, object value);
+    }
+    internal interface IEqualFilter : IConditionFilter
+    {
     }
 }

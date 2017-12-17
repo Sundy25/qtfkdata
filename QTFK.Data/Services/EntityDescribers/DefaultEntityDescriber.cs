@@ -7,6 +7,8 @@ using QTFK.Attributes;
 using QTFK.Extensions.TypeInfo;
 using System.Data;
 using QTFK.Extensions.DBIO.DBQueries;
+using QTFK.Extensions.DBIO.QueryFactory;
+using QTFK.Models.QueryFilters;
 
 namespace QTFK.Services.EntityDescribers
 {
@@ -102,29 +104,48 @@ namespace QTFK.Services.EntityDescribers
                 fieldProperty.SetValue(item, value);
             }
 
-            public void setId(object id, object item)
+            public void setAutoId(object id, object item)
             {
-                throw new NotImplementedException();
+                PropertyInfo fieldProperty;
+
+                fieldProperty = this.Keys
+                    .Single(pair => pair.Value.isAutonumeric())
+                    .Value;
+
+                fieldProperty.SetValue(item, id);
             }
 
             public IDBQueryDelete buildDelete(IQueryFactory queryFactory, object item)
             {
                 IDBQueryDelete query;
+                IKeyFilter filter;
+                bool autoKeyIsFilled, normalKeysAreFilled;
+                
+                autoKeyIsFilled = this.prv_autoKeyFieldIsFilled(item);
+                normalKeysAreFilled = this.prv_nonAutoKeyFieldsAreFilled(item);
+
+                Asserts.check(autoKeyIsFilled && normalKeysAreFilled, $"Parameter '{nameof(item)}' must have setted id fields in order to update repository.");
 
                 query = queryFactory.newDelete();
                 query.Table = this.Name;
+                filter = queryFactory.buildFilter<IKeyFilter>();
+                filter.setIdValuePairs(this.Keys, item);
+                query.Filter = filter;
 
-                throw new NotImplementedException();
+                return query;
             }
 
             public IDBQueryInsert buildInsert(IQueryFactory queryFactory, object item)
             {
                 IDBQueryInsert query;
+                bool autoKeyIsFilled, normalKeysAreFilled;
 
+                autoKeyIsFilled = this.prv_autoKeyFieldIsFilled(item);
+                normalKeysAreFilled = this.prv_nonAutoKeyFieldsAreFilled(item);
+
+                Asserts.check(normalKeysAreFilled, $"Item of type '{this.Entity.FullName}' must have setted id fields in order to add to repository.");
                 if (this.UsesAutoId)
-                    Asserts.check(this.prv_hasId(item) == false, $"Because of type '{this.Entity.FullName}' has autonumeric Id, parameter '{nameof(item)}' must have no id in order to add to repository.");
-                else
-                    Asserts.check(this.prv_hasId(item) == true, $"Because of type '{this.Entity.FullName}' has no autonumeric Id, parameter '{nameof(item)}' must have setted id in order to add to repository.");
+                    Asserts.check(autoKeyIsFilled == false, $"Item of type '{this.Entity.FullName}' must have autonumeric id field empty in order to add to repository.");
 
                 query = queryFactory.newInsert();
                 query.Table = this.Name;
@@ -132,7 +153,7 @@ namespace QTFK.Services.EntityDescribers
                 foreach (var field in this.Fields)
                     prv_setQueryColumn(queryFactory, item, query, field);
                 foreach (var id in this.Keys.Where(id => id.Value.isAutonumeric() == false))
-                        prv_setQueryColumn(queryFactory, item, query, id);
+                    prv_setQueryColumn(queryFactory, item, query, id);
 
                 return query;
             }
@@ -140,8 +161,13 @@ namespace QTFK.Services.EntityDescribers
             public IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item)
             {
                 IDBQueryUpdate query;
+                IKeyFilter filter;
+                bool autoKeyIsFilled, normalKeysAreFilled;
 
-                Asserts.check(this.entityDescription.hasId(item), $"Parameter '{nameof(item)}' must have setted id in order to update repository.");
+                autoKeyIsFilled = this.prv_autoKeyFieldIsFilled(item);
+                normalKeysAreFilled = this.prv_nonAutoKeyFieldsAreFilled(item);
+
+                Asserts.check(autoKeyIsFilled && normalKeysAreFilled, $"Parameter '{nameof(item)}' must have setted id fields in order to update repository.");
 
                 query = queryFactory.newUpdate();
                 query.Table = this.Name;
@@ -149,7 +175,11 @@ namespace QTFK.Services.EntityDescribers
                 foreach (var field in this.Fields)
                     prv_setQueryColumn(queryFactory, item, query, field);
 
-                throw new NotImplementedException();
+                filter = queryFactory.buildFilter<IKeyFilter>();
+                filter.setIdValuePairs(this.Keys, item);
+                query.Filter = filter;
+
+                return query;
             }
 
             private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
@@ -160,9 +190,15 @@ namespace QTFK.Services.EntityDescribers
                 fieldParameter = queryFactory.buildParameter(field.Key);
                 fieldValue = field.Value.GetValue(item);
                 query.SetColumn(field.Key, fieldValue, fieldParameter);
+                //query.SetColumn(field.Key, fieldValue, $"@{field.Key}");
             }
 
-            private bool prv_hasId(object item)
+            private bool prv_nonAutoKeyFieldsAreFilled(object item)
+            {
+                throw new NotImplementedException();
+            }
+
+            private bool prv_autoKeyFieldIsFilled(object item)
             {
                 throw new NotImplementedException();
             }
