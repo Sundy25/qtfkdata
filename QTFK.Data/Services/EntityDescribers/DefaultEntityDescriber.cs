@@ -182,15 +182,21 @@ namespace QTFK.Services.EntityDescribers
                 return query;
             }
 
+            //private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
+            //{
+            //    object fieldValue;
+            //    string fieldParameter;
+
+            //    fieldParameter = queryFactory.buildParameter(field.Key);
+            //    fieldValue = field.Value.GetValue(item);
+            //    query.SetColumn(field.Key, fieldValue, fieldParameter);
+            //}
             private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
             {
                 object fieldValue;
-                string fieldParameter;
 
-                fieldParameter = queryFactory.buildParameter(field.Key);
                 fieldValue = field.Value.GetValue(item);
-                query.SetColumn(field.Key, fieldValue, fieldParameter);
-                //query.SetColumn(field.Key, fieldValue, $"@{field.Key}");
+                query.SetColumn(field.Key, fieldValue, $"@{field.Key}");
             }
 
             private bool prv_nonAutoKeyFieldsAreFilled(object item)

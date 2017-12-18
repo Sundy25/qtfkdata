@@ -33,6 +33,7 @@
     <Reference Include="QTFK.Core">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Core.dll</HintPath>
     </Reference>
+    <Reference Include="QTFK.DB, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +44,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Models\QueryFilters\OleDBAndQueryFilter.cs" />
+    <Compile Include="Models\QueryFilters\OleDBOrQueryFilter.cs" />
+    <Compile Include="Models\QueryFilters\OleDBEqualQueryFilter.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

@@ -9,7 +9,8 @@ using QTFK.Services.DBIO;
 using System.IO;
 using QTFK.Services.Loggers;
 using QTFK.Services.EntityDescribers;
-using QTFK.Services.ExpressionFilters;
+using QTFK.Services.ExpressionFilterParsers;
+using QTFK.Models.QueryFilters;
 
 namespace QTFK.Data.Tests
 {
@@ -34,8 +35,13 @@ namespace QTFK.Data.Tests
             connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Path.Combine(Environment.CurrentDirectory, "Database1.accdb")};Persist Security Info = False;";
             logger = new DebugLogger<LogLevel>("QTFK Repositories");
             db = new OleDBIO(connectionString, logger);
-            queryFactory = OleDBQueryFactory.buildDefault();
-            expressionFilterParser = new DefaultExpressionFilter();
+            queryFactory = new OleDBQueryFactory(new Type[]
+            {
+                typeof(OleDBOrQueryFilter),
+                typeof(OleDBAndQueryFilter),
+                typeof(OleDBEqualQueryFilter),
+            });
+            expressionFilterParser = new DefaultExpressionFilterParser();
             entityDescriber = new DefaultEntityDescriber();
             employees = new Repository<Employee>(entityDescriber, expressionFilterParser)
             {
@@ -44,12 +50,18 @@ namespace QTFK.Data.Tests
             };
 
             minimumAge = DateTime.Now.AddYears(-18);
-            items = employees.get(employee => 
-                employee.Birth > minimumAge
-                || employee.LastName == "Céspedes" && employee.Id < 10000
+            items = employees.get(employee =>
+                employee.Birth == minimumAge
+                || employee.LastName == "Céspedes" && employee.Id == 10000
                 || employee.Name == "Pepe"
                 || employee.Name == "Tronco"
                 );
+            //items = employees.get(employee =>
+            //    employee.Birth > minimumAge
+            //    || employee.LastName == "Céspedes" && employee.Id < 10000
+            //    || employee.Name == "Pepe"
+            //    || employee.Name == "Tronco"
+            //    );
 
             jacintoEmployee = new Employee
             {
