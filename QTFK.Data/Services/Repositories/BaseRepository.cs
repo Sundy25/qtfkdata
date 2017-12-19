@@ -88,10 +88,9 @@ namespace QTFK.Services.Repositories
             prv_prepareEngine();
 
             selectQuery = this.QueryFactory.newSelect();
-            filter = this.expressionFilterParser.buildFilter<T>(this.QueryFactory, filterExpression);
+            filter = this.expressionFilterParser.parse<T>(filterExpression, this.QueryFactory, this.entityDescription);
             selectQuery.SetFilter(filter);
-
-            items = this.DB.Get<T>(selectQuery, this.entityDescription.build<T>);
+            items = this.DB.Get<T>(selectQuery, this.entityDescription.buildEntity<T>);
 
             return items;
         }

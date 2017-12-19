@@ -16,12 +16,13 @@ namespace QTFK.Models
 
         bool UsesAutoId { get; }
 
-        object build(IDataRecord record);
+        object buildEntity(IDataRecord record);
 
         IDBQueryDelete buildDelete(IQueryFactory queryFactory, object item);
         IDBQueryInsert buildInsert(IQueryFactory queryFactory, object item);
         IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item);
 
         void setAutoId(object id, object item);
+        string getField(string propertyName);
     }
 }

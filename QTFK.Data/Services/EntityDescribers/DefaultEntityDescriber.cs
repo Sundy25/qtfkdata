@@ -9,6 +9,7 @@ using System.Data;
 using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.DBIO.QueryFactory;
 using QTFK.Models.QueryFilters;
+using System.Linq.Expressions;
 
 namespace QTFK.Services.EntityDescribers
 {
@@ -75,7 +76,7 @@ namespace QTFK.Services.EntityDescribers
 
             public bool UsesAutoId { get; }
 
-            public object build(IDataRecord record)
+            public object buildEntity(IDataRecord record)
             {
                 object item;
 
@@ -87,21 +88,6 @@ namespace QTFK.Services.EntityDescribers
                     prv_map(record, field, item);
 
                 return item;
-            }
-
-            private static void prv_map(IDataRecord record, KeyValuePair<string, PropertyInfo> field, object item)
-            {
-                int fieldIndex;
-                object value;
-                string fieldName;
-                PropertyInfo fieldProperty;
-
-                fieldName = field.Key;
-                fieldProperty = field.Value;
-                fieldIndex = record.GetOrdinal(fieldName);
-                Asserts.check(fieldIndex >= 0, $"Returned field index below zero '{fieldIndex}' from '{record.GetType().FullName}'.");
-                value = record[fieldIndex];
-                fieldProperty.SetValue(item, value);
             }
 
             public void setAutoId(object id, object item)
@@ -182,6 +168,11 @@ namespace QTFK.Services.EntityDescribers
                 return query;
             }
 
+            public string getField(string propertyName)
+            {
+                throw new NotImplementedException();
+            }
+
             //private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
             //{
             //    object fieldValue;
@@ -207,6 +198,21 @@ namespace QTFK.Services.EntityDescribers
             private bool prv_autoKeyFieldIsFilled(object item)
             {
                 throw new NotImplementedException();
+            }
+
+            private static void prv_map(IDataRecord record, KeyValuePair<string, PropertyInfo> field, object item)
+            {
+                int fieldIndex;
+                object value;
+                string fieldName;
+                PropertyInfo fieldProperty;
+
+                fieldName = field.Key;
+                fieldProperty = field.Value;
+                fieldIndex = record.GetOrdinal(fieldName);
+                Asserts.check(fieldIndex >= 0, $"Returned field index below zero '{fieldIndex}' from '{record.GetType().FullName}'.");
+                value = record[fieldIndex];
+                fieldProperty.SetValue(item, value);
             }
 
         }

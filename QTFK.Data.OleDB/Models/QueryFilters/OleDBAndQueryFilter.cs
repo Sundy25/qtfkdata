@@ -1,6 +1,6 @@
 ﻿namespace QTFK.Models.QueryFilters
 {
-    public class OleDBAndQueryFilter : IOrQueryFilter
+    public class OleDBAndQueryFilter : IAndQueryFilter
     {
         public IQueryFilter Left { get; set; }
         public IQueryFilter Right { get; set; }

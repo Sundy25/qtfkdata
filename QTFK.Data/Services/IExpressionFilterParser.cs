@@ -6,6 +6,6 @@ namespace QTFK.Services
 {
     public interface IExpressionFilterParser
     {
-        IQueryFilter buildFilter<T>(IQueryFactory queryFactory, Expression<Func<T, bool>> filterExpression);
+        IQueryFilter parse<T>(Expression<Func<T, bool>> filterExpression, IQueryFactory queryFactory, IEntityDescription entityDescription);
     }
 }

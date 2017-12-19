@@ -20,9 +20,9 @@ namespace QTFK.Extensions.EntityDescription
         //        yield return pair;
         //}
 
-        public static T build<T>(this IEntityDescription entityDescription, IDataRecord record) where T: new()
+        public static T buildEntity<T>(this IEntityDescription entityDescription, IDataRecord record) where T: new()
         {
-            return (T)entityDescription.build(record);
+            return (T)entityDescription.buildEntity(record);
         }
     }
 }
