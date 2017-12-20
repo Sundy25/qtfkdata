@@ -2,5 +2,6 @@
 {
     public interface IComparerQueryFilter : IQueryFilter
     {
+        void setFieldValue(string fieldName, object value);
     }
 }

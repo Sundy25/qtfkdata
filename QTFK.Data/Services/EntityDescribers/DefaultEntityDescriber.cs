@@ -168,9 +168,20 @@ namespace QTFK.Services.EntityDescribers
                 return query;
             }
 
-            public string getField(string propertyName)
+            public string getField(PropertyInfo property)
             {
-                throw new NotImplementedException();
+                return this.prv_keysAndFields()
+                    .Single(pair => pair.Value.Equals(property))
+                    .Key
+                    ;
+            }
+
+            private IEnumerable<KeyValuePair<string, PropertyInfo>> prv_keysAndFields()
+            {
+                foreach (var pair in this.Keys)
+                    yield return pair;
+                foreach (var pair in this.Fields)
+                    yield return pair;
             }
 
             //private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
@@ -214,7 +225,6 @@ namespace QTFK.Services.EntityDescribers
                 value = record[fieldIndex];
                 fieldProperty.SetValue(item, value);
             }
-
         }
 
     }

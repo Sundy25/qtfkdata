@@ -23,6 +23,6 @@ namespace QTFK.Models
         IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item);
 
         void setAutoId(object id, object item);
-        string getField(string propertyName);
+        string getField(PropertyInfo property);
     }
 }

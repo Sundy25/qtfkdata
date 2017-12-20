@@ -14,7 +14,7 @@ namespace QTFK.Services.Repositories
     public abstract class BaseRepository<T> : IRepository<T> where T : new()
     {
         private readonly IEntityDescription entityDescription;
-        private readonly IExpressionFilterParser expressionFilterParser;
+        private readonly IExpressionParser<T> expressionParser;
         //private IEntityQueryFactory entityQueryFactory;
 
         //private readonly IEnumerable<IMethodParser> methodParsers;
@@ -26,13 +26,13 @@ namespace QTFK.Services.Repositories
         //    //this.methodParsers = methodParsers;
         //}
 
-        public BaseRepository(IEntityDescriber entityDescriber, IExpressionFilterParser expressionFilterParser)
+        public BaseRepository(IEntityDescriber entityDescriber, IExpressionParserFactory expressionParserFactory)
         {
             Asserts.isSomething(entityDescriber, $"Parameter '{nameof(entityDescriber)}' cannot be null.");
-            Asserts.isSomething(expressionFilterParser, $"Parameter '{nameof(expressionFilterParser)}' cannot be null.");
+            Asserts.isSomething(expressionParserFactory, $"Parameter '{nameof(expressionParserFactory)}' cannot be null.");
 
             this.entityDescription = entityDescriber.describe(typeof(T));
-            this.expressionFilterParser = expressionFilterParser;
+            this.expressionParser = expressionParserFactory.build<T>(this.entityDescription);
         }
 
         public IDBIO DB { get; set; }
@@ -87,8 +87,9 @@ namespace QTFK.Services.Repositories
 
             prv_prepareEngine();
 
+            //selectQuery = this.entityDescription.buildSelect();
             selectQuery = this.QueryFactory.newSelect();
-            filter = this.expressionFilterParser.parse<T>(filterExpression, this.QueryFactory, this.entityDescription);
+            filter = this.expressionParser.parse(filterExpression);
             selectQuery.SetFilter(filter);
             items = this.DB.Get<T>(selectQuery, this.entityDescription.buildEntity<T>);
 
@@ -122,6 +123,8 @@ namespace QTFK.Services.Repositories
             Asserts.isSomething(DB, $"Property '{nameof(DB)}' not established.");
             Asserts.isSomething(QueryFactory, $"Property '{nameof(QueryFactory)}' not established.");
             Asserts.check(DB.getDBEngine() == QueryFactory.getDBEngine(), $"Database engine missmatch for '{DB.GetType().FullName}' and '{QueryFactory.GetType().FullName}'.");
+
+            this.expressionParser.QueryFactory = this.QueryFactory;
         }
 
         //protected IQueryFilter GetFilter(MethodBase method)

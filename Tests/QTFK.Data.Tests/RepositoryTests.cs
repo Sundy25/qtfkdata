@@ -9,7 +9,7 @@ using QTFK.Services.DBIO;
 using System.IO;
 using QTFK.Services.Loggers;
 using QTFK.Services.EntityDescribers;
-using QTFK.Services.ExpressionFilterParsers;
+using QTFK.Services.ExpressionParsers;
 using QTFK.Models.QueryFilters;
 
 namespace QTFK.Data.Tests
@@ -29,7 +29,7 @@ namespace QTFK.Data.Tests
             ILogger<LogLevel> logger;
             Employee jacintoEmployee;
             IEntityDescriber entityDescriber;
-            IExpressionFilterParser expressionFilterParser;
+            IExpressionParserFactory expressionParserFactory;
             DateTime minimumAge;
 
             connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Path.Combine(Environment.CurrentDirectory, "Database1.accdb")};Persist Security Info = False;";
@@ -41,9 +41,9 @@ namespace QTFK.Data.Tests
                 typeof(OleDBAndQueryFilter),
                 typeof(OleDBEqualQueryFilter),
             });
-            expressionFilterParser = new DefaultExpressionFilterParser();
+            expressionParserFactory = new FilterExpressionParserFactory();
             entityDescriber = new DefaultEntityDescriber();
-            employees = new Repository<Employee>(entityDescriber, expressionFilterParser)
+            employees = new Repository<Employee>(entityDescriber, expressionParserFactory)
             {
                 DB = db,
                 QueryFactory = queryFactory
