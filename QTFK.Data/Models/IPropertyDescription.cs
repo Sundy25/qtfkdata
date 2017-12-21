@@ -7,9 +7,11 @@ using System.Linq.Expressions;
 
 namespace QTFK.Models
 {
-    public class PropertyValue : PropertyDescription
+    public interface IPropertyDescription
     {
-        public bool IsNullOrDefault { get; }
-        public object Value { get; }
+        string Name { get; }
+        bool IsAutonumeric { get; }
+        bool IsKey { get; }
+        PropertyInfo Property { get; }
     }
 }

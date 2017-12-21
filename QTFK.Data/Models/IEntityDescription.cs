@@ -15,7 +15,7 @@ namespace QTFK.Models
 
         string getField(PropertyInfo property);
 
-        IEnumerable<PropertyValue> getValues(object item);
-        IEnumerable<PropertyDescription> getDescriptions();
+        IEnumerable<IPropertyValue> getValues(object item);
+        IEnumerable<IPropertyDescription> getDescriptions();
     }
 }

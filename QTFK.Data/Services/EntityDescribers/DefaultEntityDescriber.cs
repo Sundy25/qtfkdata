@@ -20,116 +20,137 @@ namespace QTFK.Services.EntityDescribers
         public IEntityDescription describe(Type entityType)
         {
             PrvEntityDescription entityDescription;
+            PrvPropertyValue propertyValue;
             IEnumerable<PropertyInfo> fields;
+            int numKeys;
 
             entityDescription = new PrvEntityDescription
             {
-                Name = entityType.getNameOrAlias(),
                 Entity = entityType,
+                Name = entityType.getNameOrAlias(),
             };
 
             fields = entityType
                 .GetProperties()
                 .Where(p => p.CanRead && p.CanWrite);
 
+            numKeys = 0;
             foreach (var field in fields)
             {
-                string fieldName;
+                propertyValue = new PrvPropertyValue
+                {
+                    Name = field.getNameOrAlias(),
+                    IsKey = field.isKey(),
+                    IsAutonumeric = field.isAutonumeric(),
+                    Property = field,
+                };
+                if(propertyValue.IsKey)
+                    numKeys++;
 
-                fieldName = field.getNameOrAlias();
-                if (field.isKey())
-                    entityDescription.Keys.Add(fieldName, field);
-                else
-                    entityDescription.Fields.Add(fieldName, field);
+                entityDescription.Fields.Add(propertyValue.Name, propertyValue);
             }
-            if (entityDescription.Keys.Count == 0)
+            if (numKeys == 0)
             {
-                KeyValuePair<string, PropertyInfo> id;
+                PrvPropertyValue id;
                 StringComparer comparer;
 
                 comparer = StringComparer.InvariantCultureIgnoreCase;
-                id = entityDescription.Fields.FirstOrDefault(pair => comparer.Equals(pair.Key, DEFAULT_ID_FIELD));
+                id = (PrvPropertyValue)entityDescription
+                    .Fields
+                    .Values
+                    .FirstOrDefault(field => comparer.Equals(field.Name, DEFAULT_ID_FIELD));
 
-                if (id.Key != null)
+                if (id != null)
                 {
-                    entityDescription.Keys.Add(id);
-                    entityDescription.Fields.Remove(id);
+                    id.IsKey = true;
+                    numKeys++;
                 }
             }
 
-            Asserts.check(entityDescription.Keys.Count > 0, $"Type '{entityType.FullName}' has no property tagged with '{typeof(KeyAttribute).FullName}' neither a '{DEFAULT_ID_FIELD}' named property.");
+            Asserts.check(numKeys > 0, $"Type '{entityType.FullName}' has no property tagged with '{typeof(KeyAttribute).FullName}' neither a '{DEFAULT_ID_FIELD}' named property.");
             return entityDescription;
+        }
+
+        private class PrvPropertyValue : IPropertyValue
+        {
+            internal PrvPropertyValue() { }
+
+            internal PrvPropertyValue(IPropertyDescription description)
+            {
+                this.IsAutonumeric = description.IsAutonumeric;
+                this.IsKey = description.IsKey;
+                this.Name = description.Name;
+                this.Property = description.Property;
+            }
+
+            public bool IsNullOrDefault { get; set; }
+            public object Value { get; set; }
+            public string Name { get; set; }
+            public bool IsAutonumeric { get; set; }
+            public bool IsKey { get; set; }
+            public PropertyInfo Property { get; set; }
         }
 
         private class PrvEntityDescription : IEntityDescription
         {
+
             internal PrvEntityDescription()
             {
-                this.Fields = new Dictionary<string, PropertyInfo>();
-                this.Keys = new Dictionary<string, PropertyInfo>();
+                this.Fields = new Dictionary<string, IPropertyDescription>();
             }
 
             public string Name { get; internal set; }
-            internal Type Entity { get; set; }
-            internal IDictionary<string, PropertyInfo> Fields { get; }
-            internal IDictionary<string, PropertyInfo> Keys { get; }
-
-            public bool UsesAutoId { get; }
-
-            public string getField(PropertyInfo property)
+            public Type Entity { get; internal set; }
+            public bool UsesAutoId
             {
-                return this.prv_keysAndFields()
-                    .Single(pair => pair.Value.Equals(property))
-                    .Key
-                    ;
+                get
+                {
+                    return this.Fields.Values.Any(f => f.IsAutonumeric);
+                }
             }
+            internal IDictionary<string, IPropertyDescription> Fields { get; }
 
-            public IEnumerable<KeyValuePair<string, object>> getKeyValues(object item)
+            public IEnumerable<IPropertyValue> getValues(object item)
             {
                 Asserts.isSomething(item, $"Parameter '{nameof(item)}' cannot be null.");
 
-                foreach (var pair in this.Keys)
-                    yield return prv_getFilledKey(pair, item);
+                foreach (var field in this.Fields.Values)
+                    yield return prv_getField(field, item);
             }
 
-            private static KeyValuePair<string, object> prv_getFilledKey(KeyValuePair<string, PropertyInfo> pair, object item)
+            public IEnumerable<IPropertyDescription> getDescriptions()
             {
-                PropertyInfo property;
-                object value;
-                KeyValuePair<string, object> itemKey;
-
-                property = pair.Value;
-                value = property.GetValue(item);
-                prv_assertKeyIsFilled(property, value);
-                itemKey = new KeyValuePair<string, object>(pair.Key, value);
-
-                return itemKey;
+                return this.Fields.Values;
             }
 
-            private static void prv_assertKeyIsFilled(PropertyInfo field, object value)
+            public string getField(PropertyInfo property)
             {
-                Type type;
+                return this.Fields.Values
+                    .Single(field => field.Property.Equals(property))
+                    .Name;
+            }
+
+            private IPropertyValue prv_getField(IPropertyDescription field, object item)
+            {
+                PrvPropertyValue propertyValue;
                 object defaultValue;
+                Type type;
 
-                type = value.GetType();
+                propertyValue = new PrvPropertyValue(field);
+                propertyValue.Value = propertyValue.Property.GetValue(item);
 
+                type = propertyValue.Value.GetType();
                 if (type.IsValueType)
                 {
                     defaultValue = Activator.CreateInstance(type);
-                    Asserts.check(value.Equals(defaultValue) == false, $"Key Value property '{field.Name}' of '{field.DeclaringType.FullName}' cannot have default value.");
+                    propertyValue.IsNullOrDefault = propertyValue.Value.Equals(defaultValue);
                 }
                 else
                 {
-                    Asserts.isSomething(value, $"Key property '{field.Name}' of '{field.DeclaringType.FullName}' cannot be null.");
+                    propertyValue.IsNullOrDefault = propertyValue.Value == null;
                 }
-            }
 
-            private IEnumerable<KeyValuePair<string, PropertyInfo>> prv_keysAndFields()
-            {
-                foreach (var pair in this.Keys)
-                    yield return pair;
-                foreach (var pair in this.Fields)
-                    yield return pair;
+                return propertyValue;
             }
         }
 

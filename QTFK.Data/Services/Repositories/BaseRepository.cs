@@ -7,11 +7,9 @@ using QTFK.Extensions.DBIO.EngineAttribute;
 using System;
 using System.Linq.Expressions;
 using QTFK.Extensions.DBIO.DBQueries;
-using QTFK.Extensions.EntityDescription;
 using QTFK.Models.QueryFilters;
 using System.Linq;
 using System.Data;
-using System.Reflection;
 
 namespace QTFK.Services.Repositories
 {
@@ -50,7 +48,7 @@ namespace QTFK.Services.Repositories
         public void add(T item)
         {
             IDBQueryInsert insertQuery;
-            IEnumerable<PropertyValue> itemValues;
+            IEnumerable<IPropertyValue> itemValues;
 
             itemValues = this.entityDescription.getValues(item);
             prv_assertAutoIdKeyAreEmpty(itemValues);
@@ -65,7 +63,7 @@ namespace QTFK.Services.Repositories
             {
                 int affected;
                 object id;
-                PropertyDescription autoIdField;
+                IPropertyDescription autoIdField;
 
                 affected = cmd
                     .SetCommandText(insertQuery.Compile())
@@ -87,7 +85,7 @@ namespace QTFK.Services.Repositories
         {
             IDBQueryDelete deleteQuery;
             IKeyFilter filter;
-            IEnumerable<PropertyValue> keys;
+            IEnumerable<IPropertyValue> keys;
 
             keys = this.entityDescription
                 .getValues(item)
@@ -121,7 +119,7 @@ namespace QTFK.Services.Repositories
         {
             IDBQueryUpdate updateQuery;
             IKeyFilter filter;
-            IEnumerable<PropertyValue> itemValues, keys, values;
+            IEnumerable<IPropertyValue> itemValues, keys, values;
 
             itemValues = this.entityDescription.getValues(item);
             prv_assertKeysHaveValue(itemValues);
@@ -178,7 +176,7 @@ namespace QTFK.Services.Repositories
             return item;
         }
 
-        private static void prv_mapField(IDataRecord record, PropertyDescription field, T item)
+        private static void prv_mapField(IDataRecord record, IPropertyDescription field, T item)
         {
             int fieldIndex;
             object value;
@@ -189,18 +187,18 @@ namespace QTFK.Services.Repositories
             field.Property.SetValue(item, value);
         }
 
-        private void prv_assertNoAutoIdKeysHaveValue(IEnumerable<PropertyValue> itemValues)
+        private void prv_assertNoAutoIdKeysHaveValue(IEnumerable<IPropertyValue> itemValues)
         {
             prv_assertKeysHaveValue(itemValues.Where(v => !v.IsAutonumeric));
         }
 
-        private void prv_assertKeysHaveValue(IEnumerable<PropertyValue> keys)
+        private void prv_assertKeysHaveValue(IEnumerable<IPropertyValue> keys)
         {
             foreach (var key in keys.Where(k => k.IsKey))
                 Asserts.check(key.IsNullOrDefault == false, $"Key '{key.Name}' for type {this.entityDescription.Entity.FullName} cannot be empty.");
         }
 
-        private void prv_assertAutoIdKeyAreEmpty(IEnumerable<PropertyValue> itemValues)
+        private void prv_assertAutoIdKeyAreEmpty(IEnumerable<IPropertyValue> itemValues)
         {
             foreach (var key in itemValues.Where(k => k.IsKey && k.IsAutonumeric))
                 Asserts.check(key.IsNullOrDefault , $"Key '{key.Name}' for type {this.entityDescription.Entity.FullName} must have null or default value.");
