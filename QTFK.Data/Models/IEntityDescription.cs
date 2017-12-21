@@ -12,17 +12,18 @@ namespace QTFK.Models
         //string Name { get; }
         //IReadOnlyDictionary<string, PropertyInfo> Fields { get; }
         //IReadOnlyDictionary<string, PropertyInfo> Keys { get; }
-        //Type Entity { get; }
+        Type Entity { get; }
 
         bool UsesAutoId { get; }
+        string Name { get; }
 
         object buildEntity(IDataRecord record);
 
-        IDBQueryDelete buildDelete(IQueryFactory queryFactory, object item);
-        IDBQueryInsert buildInsert(IQueryFactory queryFactory, object item);
         IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item);
 
         void setAutoId(object id, object item);
         string getField(PropertyInfo property);
+        IEnumerable<KeyValuePair<string, object>> getKeyValues(object item);
+        IEnumerable<PropertyValue> getValues(object item);
     }
 }

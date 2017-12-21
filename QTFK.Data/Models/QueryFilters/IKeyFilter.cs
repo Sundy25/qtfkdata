@@ -9,6 +9,6 @@ namespace QTFK.Models.QueryFilters
 {
     public interface IKeyFilter : IQueryFilter
     {
-        void setIdValuePairs<T>(IEnumerable<KeyValuePair<string, PropertyInfo>> ids, T item) where T : new();
+        void setKeys(IEnumerable<KeyValuePair<string, object>> keys);
     }
 }

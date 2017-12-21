@@ -69,7 +69,7 @@ namespace QTFK.Services.EntityDescribers
                 this.Keys = new Dictionary<string, PropertyInfo>();
             }
 
-            internal string Name { get; set; }
+            public string Name { get; internal set; }
             internal Type Entity { get; set; }
             internal IDictionary<string, PropertyInfo> Fields { get; }
             internal IDictionary<string, PropertyInfo> Keys { get; }
@@ -99,49 +99,6 @@ namespace QTFK.Services.EntityDescribers
                     .Value;
 
                 fieldProperty.SetValue(item, id);
-            }
-
-            public IDBQueryDelete buildDelete(IQueryFactory queryFactory, object item)
-            {
-                IDBQueryDelete query;
-                IKeyFilter filter;
-                bool autoKeyIsFilled, normalKeysAreFilled;
-                
-                autoKeyIsFilled = this.prv_autoKeyFieldIsFilled(item);
-                normalKeysAreFilled = this.prv_nonAutoKeyFieldsAreFilled(item);
-
-                Asserts.check(autoKeyIsFilled && normalKeysAreFilled, $"Parameter '{nameof(item)}' must have setted id fields in order to update repository.");
-
-                query = queryFactory.newDelete();
-                query.Table = this.Name;
-                filter = queryFactory.buildFilter<IKeyFilter>();
-                filter.setIdValuePairs(this.Keys, item);
-                query.Filter = filter;
-
-                return query;
-            }
-
-            public IDBQueryInsert buildInsert(IQueryFactory queryFactory, object item)
-            {
-                IDBQueryInsert query;
-                bool autoKeyIsFilled, normalKeysAreFilled;
-
-                autoKeyIsFilled = this.prv_autoKeyFieldIsFilled(item);
-                normalKeysAreFilled = this.prv_nonAutoKeyFieldsAreFilled(item);
-
-                Asserts.check(normalKeysAreFilled, $"Item of type '{this.Entity.FullName}' must have setted id fields in order to add to repository.");
-                if (this.UsesAutoId)
-                    Asserts.check(autoKeyIsFilled == false, $"Item of type '{this.Entity.FullName}' must have autonumeric id field empty in order to add to repository.");
-
-                query = queryFactory.newInsert();
-                query.Table = this.Name;
-
-                foreach (var field in this.Fields)
-                    prv_setQueryColumn(queryFactory, item, query, field);
-                foreach (var id in this.Keys.Where(id => id.Value.isAutonumeric() == false))
-                    prv_setQueryColumn(queryFactory, item, query, id);
-
-                return query;
             }
 
             public IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item)
@@ -176,6 +133,46 @@ namespace QTFK.Services.EntityDescribers
                     ;
             }
 
+            public IEnumerable<KeyValuePair<string, object>> getKeyValues(object item)
+            {
+                Asserts.isSomething(item, $"Parameter '{nameof(item)}' cannot be null.");
+
+                foreach (var pair in this.Keys)
+                    yield return prv_getFilledKey(pair, item);
+            }
+
+            private static KeyValuePair<string, object> prv_getFilledKey(KeyValuePair<string, PropertyInfo> pair, object item)
+            {
+                PropertyInfo property;
+                object value;
+                KeyValuePair<string, object> itemKey;
+
+                property = pair.Value;
+                value = property.GetValue(item);
+                prv_assertKeyIsFilled(property, value);
+                itemKey = new KeyValuePair<string, object>(pair.Key, value);
+
+                return itemKey;
+            }
+
+            private static void prv_assertKeyIsFilled(PropertyInfo field, object value)
+            {
+                Type type;
+                object defaultValue;
+
+                type = value.GetType();
+
+                if (type.IsValueType)
+                {
+                    defaultValue = Activator.CreateInstance(type);
+                    Asserts.check(value.Equals(defaultValue) == false, $"Key Value property '{field.Name}' of '{field.DeclaringType.FullName}' cannot have default value.");
+                }
+                else
+                {
+                    Asserts.isSomething(value, $"Key property '{field.Name}' of '{field.DeclaringType.FullName}' cannot be null.");
+                }
+            }
+
             private IEnumerable<KeyValuePair<string, PropertyInfo>> prv_keysAndFields()
             {
                 foreach (var pair in this.Keys)
@@ -184,16 +181,7 @@ namespace QTFK.Services.EntityDescribers
                     yield return pair;
             }
 
-            //private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
-            //{
-            //    object fieldValue;
-            //    string fieldParameter;
-
-            //    fieldParameter = queryFactory.buildParameter(field.Key);
-            //    fieldValue = field.Value.GetValue(item);
-            //    query.SetColumn(field.Key, fieldValue, fieldParameter);
-            //}
-            private static void prv_setQueryColumn(IQueryFactory queryFactory, object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
+            private static void prv_setQueryColumn(object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
             {
                 object fieldValue;
 
@@ -225,6 +213,7 @@ namespace QTFK.Services.EntityDescribers
                 value = record[fieldIndex];
                 fieldProperty.SetValue(item, value);
             }
+
         }
 
     }

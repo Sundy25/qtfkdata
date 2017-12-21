@@ -43,11 +43,7 @@ namespace QTFK.Data.Tests
             });
             expressionParserFactory = new FilterExpressionParserFactory();
             entityDescriber = new DefaultEntityDescriber();
-            employees = new Repository<Employee>(entityDescriber, expressionParserFactory)
-            {
-                DB = db,
-                QueryFactory = queryFactory
-            };
+            employees = new Repository<Employee>(entityDescriber, expressionParserFactory, db, queryFactory);
 
             minimumAge = DateTime.Now.AddYears(-18);
             items = employees.get(employee =>

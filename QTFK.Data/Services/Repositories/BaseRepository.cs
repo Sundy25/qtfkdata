@@ -8,6 +8,8 @@ using System;
 using System.Linq.Expressions;
 using QTFK.Extensions.DBIO.DBQueries;
 using QTFK.Extensions.EntityDescription;
+using QTFK.Models.QueryFilters;
+using System.Linq;
 
 namespace QTFK.Services.Repositories
 {
@@ -15,6 +17,9 @@ namespace QTFK.Services.Repositories
     {
         private readonly IEntityDescription entityDescription;
         private readonly IExpressionParser<T> expressionParser;
+        private readonly IDBIO db;
+        private readonly IQueryFactory queryFactory;
+
         //private IEntityQueryFactory entityQueryFactory;
 
         //private readonly IEnumerable<IMethodParser> methodParsers;
@@ -26,31 +31,38 @@ namespace QTFK.Services.Repositories
         //    //this.methodParsers = methodParsers;
         //}
 
-        public BaseRepository(IEntityDescriber entityDescriber, IExpressionParserFactory expressionParserFactory)
+        public BaseRepository(IEntityDescriber entityDescriber, IExpressionParserFactory expressionParserFactory, IDBIO db, IQueryFactory queryFactory)
         {
             Asserts.isSomething(entityDescriber, $"Parameter '{nameof(entityDescriber)}' cannot be null.");
             Asserts.isSomething(expressionParserFactory, $"Parameter '{nameof(expressionParserFactory)}' cannot be null.");
+            Asserts.isSomething(db, $"Parameter '{nameof(db)}' cannot be null.");
+            Asserts.isSomething(queryFactory, $"Parameter '{nameof(queryFactory)}' cannot be null.");
+            Asserts.check(this.db.getDBEngine() == this.queryFactory.getDBEngine(), $"Database engine missmatch for '{this.db.GetType().FullName}' and '{this.queryFactory.GetType().FullName}'.");
 
+            this.db = db;
+            this.queryFactory = queryFactory;
             this.entityDescription = entityDescriber.describe(typeof(T));
-            this.expressionParser = expressionParserFactory.build<T>(this.entityDescription);
+            this.expressionParser = expressionParserFactory.build<T>(this.entityDescription, this.queryFactory);
         }
-
-        public IDBIO DB { get; set; }
-        public IQueryFactory QueryFactory { get; set; }
 
         public void add(T item)
         {
             IDBQueryInsert insertQuery;
-            object id;
+            IEnumerable<PropertyValue> itemValues;
 
-            prv_prepareEngine();
+            itemValues = this.entityDescription.getValues(item);
+            prv_assertAutoIdIsEmpty(this.entityDescription, itemValues);
+            prv_assertNonAutoIdIsFilled(this.entityDescription, itemValues);
 
-            id = null;
-            insertQuery = this.entityDescription.buildInsert( this.QueryFactory, item);
+            insertQuery = this.queryFactory.newInsert();
+            insertQuery.Table = this.entityDescription.Name;
+            foreach (var itemValue in itemValues)
+                insertQuery.SetColumn(itemValue.Name, itemValue.Value);
 
-            this.DB.Set(cmd =>
+            this.db.Set(cmd =>
             {
                 int affected;
+                object id;
 
                 affected = cmd
                     .SetCommandText(insertQuery.Compile())
@@ -61,21 +73,28 @@ namespace QTFK.Services.Repositories
                 Asserts.check(affected == 1, $"Insert of type {typeof(T).FullName} failed. Affected rows: {affected}.");
 
                 if (this.entityDescription.UsesAutoId)
-                    id = this.DB.GetLastID(cmd);
+                {
+                    id = this.db.GetLastID(cmd);
+                    this.entityDescription.setAutoId(id, item);
+                }
             });
-            this.entityDescription.setAutoId(id, item);
         }
 
         public void delete(T item)
         {
             int affected;
             IDBQueryDelete deleteQuery;
+            IKeyFilter filter;
+            IEnumerable<KeyValuePair<string, object>> keys;
 
-            prv_prepareEngine();
+            deleteQuery = this.queryFactory.newDelete();
+            deleteQuery.Table = this.entityDescription.Name;
+            filter = this.queryFactory.buildFilter<IKeyFilter>();
+            keys = this.entityDescription.getKeyValues(item);
+            filter.setKeys(keys);
+            deleteQuery.Filter = filter;
 
-            deleteQuery = this.entityDescription.buildDelete(this.QueryFactory, item);
-
-            affected = this.DB.Set(deleteQuery);
+            affected = this.db.Set(deleteQuery);
             Asserts.check(affected == 1, $"Failed deleting of type {typeof(T).FullName}. More than one rows affected: {affected}.");
         }
 
@@ -85,13 +104,11 @@ namespace QTFK.Services.Repositories
             IDBQuerySelect selectQuery;
             IQueryFilter filter;
 
-            prv_prepareEngine();
-
             //selectQuery = this.entityDescription.buildSelect();
-            selectQuery = this.QueryFactory.newSelect();
+            selectQuery = this.queryFactory.newSelect();
             filter = this.expressionParser.parse(filterExpression);
             selectQuery.SetFilter(filter);
-            items = this.DB.Get<T>(selectQuery, this.entityDescription.buildEntity<T>);
+            items = this.db.Get<T>(selectQuery, this.entityDescription.buildEntity<T>);
 
             return items;
         }
@@ -100,11 +117,9 @@ namespace QTFK.Services.Repositories
         {
             IDBQueryUpdate updateQuery;
 
-            prv_prepareEngine();
+            updateQuery = this.entityDescription.buildUpdate(this.queryFactory, item);
 
-            updateQuery = this.entityDescription.buildUpdate(this.QueryFactory, item);
-
-            this.DB.Set(cmd =>
+            this.db.Set(cmd =>
             {
                 int affected;
 
@@ -116,15 +131,6 @@ namespace QTFK.Services.Repositories
 
                 Asserts.check(affected == 1, $"Failed updating of type {typeof(T).FullName}. More than one rows affected: {affected}.");
             });
-        }
-
-        private void prv_prepareEngine()
-        {
-            Asserts.isSomething(DB, $"Property '{nameof(DB)}' not established.");
-            Asserts.isSomething(QueryFactory, $"Property '{nameof(QueryFactory)}' not established.");
-            Asserts.check(DB.getDBEngine() == QueryFactory.getDBEngine(), $"Database engine missmatch for '{DB.GetType().FullName}' and '{QueryFactory.GetType().FullName}'.");
-
-            this.expressionParser.QueryFactory = this.QueryFactory;
         }
 
         //protected IQueryFilter GetFilter(MethodBase method)
@@ -142,6 +148,26 @@ namespace QTFK.Services.Repositories
         //        .SingleOrDefault()
         //        ;
         //}
+
+        private static void prv_assertNonAutoIdIsFilled(IEntityDescription entityDescription, IEnumerable<PropertyValue> itemValues)
+        {
+            IEnumerable<PropertyValue> keys;
+
+            keys = itemValues.Where(p => p.IsKey && !p.IsAutonumeric);
+            foreach (var key in keys)
+                Asserts.check(key.IsNullOrDefault == false, $"Item of type {entityDescription.Entity.FullName} must have its key '{key.Name}' setted to a non empty.");
+        }
+
+        private static void prv_assertAutoIdIsEmpty(IEntityDescription entityDescription, IEnumerable<PropertyValue> itemValues)
+        {
+            PropertyValue autoIdField;
+
+            if (entityDescription.UsesAutoId)
+            {
+                autoIdField = itemValues.First(field => field.IsAutonumeric);
+                Asserts.check(autoIdField.IsNullOrDefault, $"Item of type {entityDescription.Entity.FullName} must have its autonumeric field '{autoIdField.Name}' setted to null or default value.");
+            }
+        }
 
 
     }

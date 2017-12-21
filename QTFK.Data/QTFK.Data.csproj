@@ -57,6 +57,8 @@
     <Compile Include="Attributes\UniqueAttribute.cs" />
     <Compile Include="Extensions\EntityDescription\EntityDescriptionExtension.cs" />
     <Compile Include="Extensions\TypeInfo\TypeAttributesExtensions.cs" />
+    <Compile Include="Models\PropertyValue.cs" />
+    <Compile Include="Models\PropertyDescription.cs" />
     <Compile Include="Models\IEntityDescription.cs" />
     <Compile Include="Models\QueryFilters\IAndQueryFilter.cs" />
     <Compile Include="Models\QueryFilters\IBooleanQueryFilter.cs" />

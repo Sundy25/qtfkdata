@@ -12,8 +12,5 @@ namespace QTFK.Services
         void add(T item);
         void update(T item);
         void delete(T item);
-
-        IQueryFactory QueryFactory { get; set; }
-        IDBIO DB { get; set; }
     }
 }

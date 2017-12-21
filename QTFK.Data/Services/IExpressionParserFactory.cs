@@ -4,6 +4,6 @@ namespace QTFK.Services
 {
     public interface IExpressionParserFactory
     {
-        IExpressionParser<T> build<T>(IEntityDescription entityDescription);
+        IExpressionParser<T> build<T>(IEntityDescription entityDescription, IQueryFactory queryFactory);
     }
 }

@@ -9,29 +9,29 @@ namespace QTFK.Services.ExpressionParsers
 {
     public class FilterExpressionParserFactory : IExpressionParserFactory
     {
-        public IExpressionParser<T> build<T>(IEntityDescription entityDescription)
+        public IExpressionParser<T> build<T>(IEntityDescription entityDescription, IQueryFactory queryFactory)
         {
             Asserts.isSomething(entityDescription, $"Constructor parameter '{nameof(entityDescription)}' cannot be null.");
 
-            return new PrvExpressionParser<T>(entityDescription);
+            return new PrvExpressionParser<T>(entityDescription, queryFactory);
         }
 
         private class PrvExpressionParser<T> : IExpressionParser<T>
         {
             private IEntityDescription entityDescription;
+            private readonly IQueryFactory queryFactory;
 
-            public PrvExpressionParser(IEntityDescription entityDescription)
+            public PrvExpressionParser(IEntityDescription entityDescription, IQueryFactory queryFactory)
             {
                 this.entityDescription = entityDescription;
+                this.queryFactory = queryFactory;
             }
-
-            public IQueryFactory QueryFactory { get; set; }
 
             public IQueryFilter parse(Expression<Func<T, bool>> filterExpression)
             {
                 IQueryFilter queryFilter;
 
-                Asserts.isSomething(this.QueryFactory, $"Property '{nameof(this.QueryFactory)}' cannot be null.");
+                Asserts.isSomething(this.queryFactory, $"Property '{nameof(this.queryFactory)}' cannot be null.");
                 Asserts.isSomething(filterExpression, $"Parameter '{nameof(filterExpression)}' cannot be null.");
 
                 queryFilter = prv_parseExpr(filterExpression.Body);
@@ -63,7 +63,7 @@ namespace QTFK.Services.ExpressionParsers
             {
                 IOrQueryFilter orFilter;
 
-                orFilter = this.QueryFactory.buildFilter<IOrQueryFilter>();
+                orFilter = this.queryFactory.buildFilter<IOrQueryFilter>();
                 orFilter.Left = prv_parseExpr(expression.Left);
                 orFilter.Right = prv_parseExpr(expression.Right);
 
@@ -74,7 +74,7 @@ namespace QTFK.Services.ExpressionParsers
             {
                 IAndQueryFilter orFilter;
 
-                orFilter = this.QueryFactory.buildFilter<IAndQueryFilter>();
+                orFilter = this.queryFactory.buildFilter<IAndQueryFilter>();
                 orFilter.Left = prv_parseExpr(expression.Left);
                 orFilter.Right = prv_parseExpr(expression.Right);
 
@@ -111,7 +111,7 @@ namespace QTFK.Services.ExpressionParsers
                 fieldName = prv_parsePropertyName(expression.Left);
                 value = prv_parseValue(expression.Right);
 
-                filter = this.QueryFactory.buildFilter<TFilter>();
+                filter = this.queryFactory.buildFilter<TFilter>();
                 filter.setFieldValue(fieldName, value);
 
                 return filter;
