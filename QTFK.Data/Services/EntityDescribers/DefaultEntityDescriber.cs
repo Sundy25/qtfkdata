@@ -76,55 +76,6 @@ namespace QTFK.Services.EntityDescribers
 
             public bool UsesAutoId { get; }
 
-            public object buildEntity(IDataRecord record)
-            {
-                object item;
-
-                item = Activator.CreateInstance(this.Entity);
-
-                foreach (var field in this.Keys)
-                    prv_map(record, field, item);
-                foreach (var field in this.Fields)
-                    prv_map(record, field, item);
-
-                return item;
-            }
-
-            public void setAutoId(object id, object item)
-            {
-                PropertyInfo fieldProperty;
-
-                fieldProperty = this.Keys
-                    .Single(pair => pair.Value.isAutonumeric())
-                    .Value;
-
-                fieldProperty.SetValue(item, id);
-            }
-
-            public IDBQueryUpdate buildUpdate(IQueryFactory queryFactory, object item)
-            {
-                IDBQueryUpdate query;
-                IKeyFilter filter;
-                bool autoKeyIsFilled, normalKeysAreFilled;
-
-                autoKeyIsFilled = this.prv_autoKeyFieldIsFilled(item);
-                normalKeysAreFilled = this.prv_nonAutoKeyFieldsAreFilled(item);
-
-                Asserts.check(autoKeyIsFilled && normalKeysAreFilled, $"Parameter '{nameof(item)}' must have setted id fields in order to update repository.");
-
-                query = queryFactory.newUpdate();
-                query.Table = this.Name;
-
-                foreach (var field in this.Fields)
-                    prv_setQueryColumn(queryFactory, item, query, field);
-
-                filter = queryFactory.buildFilter<IKeyFilter>();
-                filter.setIdValuePairs(this.Keys, item);
-                query.Filter = filter;
-
-                return query;
-            }
-
             public string getField(PropertyInfo property)
             {
                 return this.prv_keysAndFields()
@@ -180,40 +131,6 @@ namespace QTFK.Services.EntityDescribers
                 foreach (var pair in this.Fields)
                     yield return pair;
             }
-
-            private static void prv_setQueryColumn(object item, IDBQueryWriteColumns query, KeyValuePair<string, PropertyInfo> field)
-            {
-                object fieldValue;
-
-                fieldValue = field.Value.GetValue(item);
-                query.SetColumn(field.Key, fieldValue, $"@{field.Key}");
-            }
-
-            private bool prv_nonAutoKeyFieldsAreFilled(object item)
-            {
-                throw new NotImplementedException();
-            }
-
-            private bool prv_autoKeyFieldIsFilled(object item)
-            {
-                throw new NotImplementedException();
-            }
-
-            private static void prv_map(IDataRecord record, KeyValuePair<string, PropertyInfo> field, object item)
-            {
-                int fieldIndex;
-                object value;
-                string fieldName;
-                PropertyInfo fieldProperty;
-
-                fieldName = field.Key;
-                fieldProperty = field.Value;
-                fieldIndex = record.GetOrdinal(fieldName);
-                Asserts.check(fieldIndex >= 0, $"Returned field index below zero '{fieldIndex}' from '{record.GetType().FullName}'.");
-                value = record[fieldIndex];
-                fieldProperty.SetValue(item, value);
-            }
-
         }
 
     }

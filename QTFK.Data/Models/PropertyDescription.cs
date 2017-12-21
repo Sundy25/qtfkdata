@@ -12,5 +12,6 @@ namespace QTFK.Models
         public string Name { get; }
         public bool IsAutonumeric { get; }
         public bool IsKey { get; }
+        public PropertyInfo Property { get; }
     }
 }
