@@ -16,7 +16,7 @@ namespace QTFK.Services.Repositories
     public abstract class BaseRepository<T> : IRepository<T> where T : new()
     {
         private readonly IEntityDescription entityDescription;
-        private readonly IExpressionParser<T> expressionParser;
+        private readonly IExpressionParser expressionParser;
         private readonly IDBIO db;
         private readonly IQueryFactory queryFactory;
 
@@ -42,7 +42,7 @@ namespace QTFK.Services.Repositories
             this.db = db;
             this.queryFactory = queryFactory;
             this.entityDescription = entityDescriber.describe(typeof(T));
-            this.expressionParser = expressionParserFactory.build<T>(this.entityDescription, this.queryFactory);
+            this.expressionParser = expressionParserFactory.build(this.entityDescription, this.queryFactory);
         }
 
         public void add(T item)
@@ -158,7 +158,7 @@ namespace QTFK.Services.Repositories
             IQueryFilter filter;
 
             selectQuery = this.queryFactory.newSelect();
-            filter = this.expressionParser.parse(filterExpression);
+            filter = this.expressionParser.parse<T>(filterExpression);
             selectQuery.SetFilter(filter);
             items = this.db.Get<T>(selectQuery, prv_mapItems);
 

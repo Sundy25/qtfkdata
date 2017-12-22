@@ -4,8 +4,8 @@ using System.Linq.Expressions;
 
 namespace QTFK.Services
 {
-    public interface IExpressionParser<T>
+    public interface IExpressionParser
     {
-        IQueryFilter parse(Expression<Func<T, bool>> filterExpression);
+        IQueryFilter parse<T>(Expression<Func<T, bool>> filterExpression);
     }
 }

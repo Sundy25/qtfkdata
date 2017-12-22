@@ -13,8 +13,6 @@ namespace QTFK.Models
         bool UsesAutoId { get; }
         string Name { get; }
 
-        string getField(PropertyInfo property);
-
         IEnumerable<IPropertyValue> getValues(object item);
         IEnumerable<IPropertyDescription> getDescriptions();
     }

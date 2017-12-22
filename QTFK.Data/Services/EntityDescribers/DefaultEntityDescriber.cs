@@ -123,13 +123,6 @@ namespace QTFK.Services.EntityDescribers
                 return this.Fields.Values;
             }
 
-            public string getField(PropertyInfo property)
-            {
-                return this.Fields.Values
-                    .Single(field => field.Property.Equals(property))
-                    .Name;
-            }
-
             private IPropertyValue prv_getField(IPropertyDescription field, object item)
             {
                 PrvPropertyValue propertyValue;

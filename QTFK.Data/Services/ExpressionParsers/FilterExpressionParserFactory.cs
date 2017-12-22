@@ -4,19 +4,21 @@ using QTFK.Models;
 using QTFK.Models.QueryFilters;
 using QTFK.Extensions.DBIO.QueryFactory;
 using System.Reflection;
+using System.Linq;
 
 namespace QTFK.Services.ExpressionParsers
 {
     public class FilterExpressionParserFactory : IExpressionParserFactory
     {
-        public IExpressionParser<T> build<T>(IEntityDescription entityDescription, IQueryFactory queryFactory)
+        public IExpressionParser build(IEntityDescription entityDescription, IQueryFactory queryFactory)
         {
             Asserts.isSomething(entityDescription, $"Constructor parameter '{nameof(entityDescription)}' cannot be null.");
+            Asserts.isSomething(queryFactory, $"Constructor parameter '{nameof(queryFactory)}' cannot be null.");
 
-            return new PrvExpressionParser<T>(entityDescription, queryFactory);
+            return new PrvExpressionParser(entityDescription, queryFactory);
         }
 
-        private class PrvExpressionParser<T> : IExpressionParser<T>
+        private class PrvExpressionParser : IExpressionParser
         {
             private IEntityDescription entityDescription;
             private readonly IQueryFactory queryFactory;
@@ -27,7 +29,7 @@ namespace QTFK.Services.ExpressionParsers
                 this.queryFactory = queryFactory;
             }
 
-            public IQueryFilter parse(Expression<Func<T, bool>> filterExpression)
+            public IQueryFilter parse<T>(Expression<Func<T, bool>> filterExpression)
             {
                 IQueryFilter queryFilter;
 
@@ -130,7 +132,10 @@ namespace QTFK.Services.ExpressionParsers
                 Asserts.check(memberExpression.Member is PropertyInfo, $"Expected property for left member of expression '{expression.ToString()}'");
 
                 property = (PropertyInfo)memberExpression.Member;
-                fieldName = this.entityDescription.getField(property);
+                fieldName = this.entityDescription
+                    .getDescriptions()
+                    .Single(d => d.Property.Equals(property))
+                    .Name;
 
                 return fieldName;
             }
