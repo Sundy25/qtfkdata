@@ -33,7 +33,6 @@ namespace QTFK.Services.ExpressionParsers
             {
                 IQueryFilter queryFilter;
 
-                Asserts.isSomething(this.queryFactory, $"Property '{nameof(this.queryFactory)}' cannot be null.");
                 Asserts.isSomething(filterExpression, $"Parameter '{nameof(filterExpression)}' cannot be null.");
 
                 queryFilter = prv_parseExpr(filterExpression.Body);

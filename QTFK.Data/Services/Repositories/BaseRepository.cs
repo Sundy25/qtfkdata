@@ -37,12 +37,14 @@ namespace QTFK.Services.Repositories
             Asserts.isSomething(expressionParserFactory, $"Parameter '{nameof(expressionParserFactory)}' cannot be null.");
             Asserts.isSomething(db, $"Parameter '{nameof(db)}' cannot be null.");
             Asserts.isSomething(queryFactory, $"Parameter '{nameof(queryFactory)}' cannot be null.");
-            Asserts.check(this.db.getDBEngine() == this.queryFactory.getDBEngine(), $"Database engine missmatch for '{this.db.GetType().FullName}' and '{this.queryFactory.GetType().FullName}'.");
+            Asserts.check(db.getDBEngine() == queryFactory.getDBEngine(), $"Database engine missmatch for '{db.GetType().FullName}' and '{queryFactory.GetType().FullName}'.");
 
             this.db = db;
             this.queryFactory = queryFactory;
             this.entityDescription = entityDescriber.describe(typeof(T));
             this.expressionParser = expressionParserFactory.build(this.entityDescription, this.queryFactory);
+            Asserts.isSomething(this.entityDescription, $"Field '{nameof(this.entityDescription)}' is null.");
+            Asserts.isSomething(this.expressionParser, $"Field '{nameof(this.expressionParser)}' is null.");
         }
 
         public void add(T item)
@@ -158,6 +160,8 @@ namespace QTFK.Services.Repositories
             IQueryFilter filter;
 
             selectQuery = this.queryFactory.newSelect();
+            selectQuery.Table = this.entityDescription.Name;
+            selectQuery.AddColumn("*");
             filter = this.expressionParser.parse<T>(filterExpression);
             selectQuery.SetFilter(filter);
             items = this.db.Get<T>(selectQuery, prv_mapItems);
