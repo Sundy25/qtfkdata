@@ -59,7 +59,7 @@ namespace QTFK.Services.Repositories
             insertQuery = this.queryFactory.newInsert();
             insertQuery.Table = this.entityDescription.Name;
             foreach (var itemValue in itemValues)
-                insertQuery.SetColumn(itemValue.Name, itemValue.Value);
+                insertQuery.column(itemValue.Name, itemValue.Value);
 
             this.db.Set(cmd =>
             {
@@ -69,7 +69,7 @@ namespace QTFK.Services.Repositories
 
                 affected = cmd
                     .SetCommandText(insertQuery.Compile())
-                    .AddParameters(insertQuery.Parameters)
+                    .AddParameters(insertQuery.getParameters())
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Insert of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -110,7 +110,7 @@ namespace QTFK.Services.Repositories
 
                 affected = cmd
                     .SetCommandText(deleteQuery.Compile())
-                    .AddParameters(deleteQuery.Parameters)
+                    .AddParameters(deleteQuery.getParameters())
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Delete of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -136,7 +136,7 @@ namespace QTFK.Services.Repositories
 
             values = itemValues.Where(field => !field.IsKey);
             foreach (var value in values)
-                updateQuery.SetColumn(value.Name, value.Value);
+                updateQuery.column(value.Name, value.Value);
 
             updateQuery.Filter = filter;
 
@@ -146,7 +146,7 @@ namespace QTFK.Services.Repositories
 
                 affected = cmd
                     .SetCommandText(updateQuery.Compile())
-                    .AddParameters(updateQuery.Parameters)
+                    .AddParameters(updateQuery.getParameters())
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Failed updating of type {typeof(T).FullName}. More than one rows affected: {affected}.");
@@ -161,9 +161,9 @@ namespace QTFK.Services.Repositories
 
             selectQuery = this.queryFactory.newSelect();
             selectQuery.Table = this.entityDescription.Name;
-            selectQuery.AddColumn("*");
+            selectQuery.column("*");
             filter = this.expressionParser.parse<T>(filterExpression);
-            selectQuery.SetFilter(filter);
+            selectQuery.setFilter(filter);
             items = this.db.Get<T>(selectQuery, prv_mapItems);
 
             return items;

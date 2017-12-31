@@ -80,8 +80,6 @@
     <Compile Include="Services\IDependency.cs" />
     <Compile Include="Services\IExpressionParser.cs" />
     <Compile Include="Services\IExpressionParserFactory.cs" />
-    <Compile Include="Services\IMethodParser.cs" />
-    <Compile Include="Services\IQueryFilterFactoryCollection.cs" />
     <Compile Include="Services\IRepository.cs" />
     <Compile Include="Services\IRepositoryBuilder.cs" />
     <Compile Include="Services\IRepositoryExplorer.cs" />
