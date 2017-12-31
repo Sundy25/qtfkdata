@@ -59,6 +59,7 @@
     <Compile Include="Models\IPropertyValue.cs" />
     <Compile Include="Models\IPropertyDescription.cs" />
     <Compile Include="Models\IEntityDescription.cs" />
+    <Compile Include="Models\QueryFilters\AbstractBooleanQueryFilter.cs" />
     <Compile Include="Models\QueryFilters\IAndQueryFilter.cs" />
     <Compile Include="Models\QueryFilters\IBooleanQueryFilter.cs" />
     <Compile Include="Models\QueryFilters\IComparerQueryFilter.cs" />

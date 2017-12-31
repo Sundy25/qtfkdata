@@ -6,13 +6,14 @@ namespace QTFK.Models.QueryFilters
     public class OleDBEqualQueryFilter : IEqualQueryFilter
     {
         private SetColumn field;
-        private IParameterBuilder parameterBuilder;
+        private readonly IParameterBuilder parameterBuilder;
 
-        public OleDBEqualQueryFilter()
+        public OleDBEqualQueryFilter(IParameterBuilder parameterBuilder)
         {
             this.field = new SetColumn();
+            this.parameterBuilder = parameterBuilder;
         }
-        
+
         public string Compile()
         {
             return $" ( [{this.field.Name}] = {this.field.Parameter} ) ";
@@ -24,7 +25,15 @@ namespace QTFK.Models.QueryFilters
 
             parameters = new Dictionary<string, object>
             {
-                { this.field.Name, this.field }
+                {
+                    this.field.Name,
+                    new SetColumn
+                    {
+                        Name = this.field.Name,
+                        Value = this.field.Value,
+                        Parameter = this.field.Parameter,
+                    }
+                }
             };
 
             return parameters;
@@ -37,11 +46,6 @@ namespace QTFK.Models.QueryFilters
             this.field.Name = fieldName;
             this.field.Value = value;
             this.field.Parameter = this.parameterBuilder.buildParameter(fieldName);
-        }
-
-        public void setParameterBuilder(IParameterBuilder parameterBuilder)
-        {
-            this.parameterBuilder = parameterBuilder;
         }
     }
 }

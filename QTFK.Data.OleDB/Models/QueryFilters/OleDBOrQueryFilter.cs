@@ -4,27 +4,11 @@ using QTFK.Services;
 
 namespace QTFK.Models.QueryFilters
 {
-    public class OleDBOrQueryFilter : IOrQueryFilter
+    public class OleDBOrQueryFilter : AbstractBooleanQueryFilter, IOrQueryFilter
     {
-        public IQueryFilter Left { get; set; }
-        public IQueryFilter Right { get; set; }
-
-        public string Compile()
+        public override string Compile()
         {
             return $" ( {Left.Compile()} OR {Right.Compile()} ) ";
-        }
-
-        public IDictionary<string, object> getParameters()
-        {
-            return Left.getParameters()
-                .Concat(Right.getParameters())
-                .ToDictionary(item => item.Key, item => item.Value);
-        }
-
-        public void setParameterBuilder(IParameterBuilder parameterBuilder)
-        {
-            Left?.setParameterBuilder(parameterBuilder);
-            Right?.setParameterBuilder(parameterBuilder);
         }
     }
 }
