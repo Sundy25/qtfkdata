@@ -1,4 +1,8 @@
-﻿namespace QTFK.Models.QueryFilters
+﻿using System.Collections.Generic;
+using System.Linq;
+using QTFK.Services;
+
+namespace QTFK.Models.QueryFilters
 {
     public class OleDBOrQueryFilter : IOrQueryFilter
     {
@@ -10,9 +14,17 @@
             return $" ( {Left.Compile()} OR {Right.Compile()} ) ";
         }
 
-        public void SetValues(params object[] args)
+        public IDictionary<string, object> getParameters()
         {
-            throw new System.NotImplementedException();
+            return Left.getParameters()
+                .Concat(Right.getParameters())
+                .ToDictionary(item => item.Key, item => item.Value);
+        }
+
+        public void setParameterBuilder(IParameterBuilder parameterBuilder)
+        {
+            Left?.setParameterBuilder(parameterBuilder);
+            Right?.setParameterBuilder(parameterBuilder);
         }
     }
 }
