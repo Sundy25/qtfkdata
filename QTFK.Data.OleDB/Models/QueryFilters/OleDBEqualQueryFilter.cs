@@ -19,24 +19,13 @@ namespace QTFK.Models.QueryFilters
             return $" ( [{this.field.Name}] = {this.field.Parameter} ) ";
         }
 
-        public IDictionary<string, object> getParameters()
+        public IEnumerable<QueryParameter> getParameters()
         {
-            IDictionary<string, object> parameters;
-
-            parameters = new Dictionary<string, object>
+            yield return new QueryParameter
             {
-                {
-                    this.field.Name,
-                    new SetColumn
-                    {
-                        Name = this.field.Name,
-                        Value = this.field.Value,
-                        Parameter = this.field.Parameter,
-                    }
-                }
+                Parameter = this.field.Parameter,
+                Value = this.field.Value,
             };
-
-            return parameters;
         }
 
         public void setFieldValue(string fieldName, object value)

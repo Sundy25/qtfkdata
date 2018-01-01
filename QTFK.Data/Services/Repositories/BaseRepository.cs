@@ -69,7 +69,7 @@ namespace QTFK.Services.Repositories
 
                 affected = cmd
                     .SetCommandText(insertQuery.Compile())
-                    .AddParameters(insertQuery.getParameters())
+                    .AddParameters(insertQuery.getUniqueParameters())
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Insert of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -110,7 +110,7 @@ namespace QTFK.Services.Repositories
 
                 affected = cmd
                     .SetCommandText(deleteQuery.Compile())
-                    .AddParameters(deleteQuery.getParameters())
+                    .AddParameters(deleteQuery.getUniqueParameters())
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Delete of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -146,7 +146,7 @@ namespace QTFK.Services.Repositories
 
                 affected = cmd
                     .SetCommandText(updateQuery.Compile())
-                    .AddParameters(updateQuery.getParameters())
+                    .AddParameters(updateQuery.getUniqueParameters())
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Failed updating of type {typeof(T).FullName}. More than one rows affected: {affected}.");

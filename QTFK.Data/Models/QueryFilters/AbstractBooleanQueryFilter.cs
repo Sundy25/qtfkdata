@@ -14,26 +14,15 @@ namespace QTFK.Models.QueryFilters
 
         public abstract string Compile();
 
-        public virtual IDictionary<string, object> getParameters()
+        public virtual IEnumerable<QueryParameter> getParameters()
         {
-            IEnumerable<KeyValuePair<string, object>> leftParameters, rightParameters;
-            IDictionary<string, object> parameters;
+            if(Left != null)
+                foreach (var item in Left.getParameters())
+                    yield return item;
 
-            leftParameters = Left != null
-                ? Left.getParameters()
-                : Enumerable.Empty<KeyValuePair<string, object>>();
-            rightParameters = Right != null
-                ? Right.getParameters()
-                : Enumerable.Empty<KeyValuePair<string, object>>();
-
-            parameters = new Dictionary<string, object>();
-
-            foreach (var item in leftParameters)
-                parameters.Add(item);
-            foreach (var item in rightParameters)
-                parameters.Add(item);
-
-            return parameters;
+            if (Right != null)
+                foreach (var item in Right.getParameters())
+                    yield return item;
         }
     }
 }
