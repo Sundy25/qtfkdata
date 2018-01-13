@@ -4,11 +4,11 @@ using QTFK.Services;
 
 namespace QTFK.Models.QueryFilters
 {
-    public class OleDBAndQueryFilter : AbstractBooleanQueryFilter,  IAndQueryFilter
+    public class OleDBAndQueryFilter : AbstractBooleanQueryFilter, IAndQueryFilter
     {
-        public override string Compile()
+        protected override string prv_buildBooleanSegment(string left, string right)
         {
-            return $" ( {Left.Compile()} AND {Right.Compile()} ) ";
+            return $" ( {left} AND {right} ) ";
         }
     }
 }

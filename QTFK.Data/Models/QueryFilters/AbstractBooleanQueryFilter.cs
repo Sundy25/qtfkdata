@@ -12,17 +12,25 @@ namespace QTFK.Models.QueryFilters
         public IQueryFilter Left { get; set; }
         public IQueryFilter Right { get; set; }
 
-        public abstract string Compile();
-
-        public virtual IEnumerable<QueryParameter> getParameters()
+        public FilterCompilation Compile(IParameterBuilder parameterBuilder)
         {
-            if(Left != null)
-                foreach (var item in Left.getParameters())
-                    yield return item;
+            Asserts.isSomething(this.Left, $"Property '{nameof(this.Left)}' cannot be null.");
+            Asserts.isSomething(this.Right, $"Property '{nameof(this.Right)}' cannot be null.");
 
-            if (Right != null)
-                foreach (var item in Right.getParameters())
-                    yield return item;
+            FilterCompilation filterCompilation;
+            FilterCompilation leftFilterCompilation, rightFilterCompilation;
+            string segment;
+            IEnumerable<QueryParameter> queryParameters;
+
+            leftFilterCompilation = this.Left.Compile(parameterBuilder);
+            rightFilterCompilation = this.Right.Compile(parameterBuilder);
+            segment = prv_buildBooleanSegment(leftFilterCompilation.FilterSegment, rightFilterCompilation.FilterSegment);
+            queryParameters = leftFilterCompilation.Parameters.Concat(rightFilterCompilation.Parameters);
+            filterCompilation = new FilterCompilation(segment, queryParameters);
+
+            return filterCompilation;
         }
+
+        protected abstract string prv_buildBooleanSegment(string left, string right);
     }
 }

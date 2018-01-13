@@ -51,6 +51,7 @@ namespace QTFK.Services.Repositories
         {
             IDBQueryInsert insertQuery;
             IEnumerable<IPropertyValue> itemValues;
+            QueryCompilation queryCompilation;
 
             itemValues = this.entityDescription.getValues(item);
             prv_assertAutoIdKeyAreEmpty(itemValues);
@@ -61,6 +62,8 @@ namespace QTFK.Services.Repositories
             foreach (var itemValue in itemValues)
                 insertQuery.column(itemValue.Name, itemValue.Value);
 
+            queryCompilation = insertQuery.Compile();
+
             this.db.Set(cmd =>
             {
                 int affected;
@@ -68,8 +71,8 @@ namespace QTFK.Services.Repositories
                 IPropertyDescription autoIdField;
 
                 affected = cmd
-                    .SetCommandText(insertQuery.Compile())
-                    .AddParameters(insertQuery.getUniqueParameters())
+                    .SetCommandText(queryCompilation.Query)
+                    .AddParameters(queryCompilation.Parameters)
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Insert of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -88,6 +91,7 @@ namespace QTFK.Services.Repositories
             IDBQueryDelete deleteQuery;
             IKeyFilter filter;
             IEnumerable<IPropertyValue> keys;
+            QueryCompilation queryCompilation;
 
             keys = this.entityDescription
                 .getValues(item)
@@ -103,14 +107,15 @@ namespace QTFK.Services.Repositories
                 filter.setKey(key.Name, key.Value);
 
             deleteQuery.Filter = filter;
+            queryCompilation = deleteQuery.Compile();
 
             this.db.Set(cmd =>
             {
                 int affected;
 
                 affected = cmd
-                    .SetCommandText(deleteQuery.Compile())
-                    .AddParameters(deleteQuery.getUniqueParameters())
+                    .SetCommandText(queryCompilation.Query)
+                    .AddParameters(queryCompilation.Parameters)
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Delete of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -122,6 +127,7 @@ namespace QTFK.Services.Repositories
             IDBQueryUpdate updateQuery;
             IKeyFilter filter;
             IEnumerable<IPropertyValue> itemValues, keys, values;
+            QueryCompilation queryCompilation;
 
             itemValues = this.entityDescription.getValues(item);
             prv_assertKeysHaveValue(itemValues);
@@ -139,14 +145,15 @@ namespace QTFK.Services.Repositories
                 updateQuery.column(value.Name, value.Value);
 
             updateQuery.Filter = filter;
+            queryCompilation = updateQuery.Compile();
 
             this.db.Set(cmd =>
             {
                 int affected;
 
                 affected = cmd
-                    .SetCommandText(updateQuery.Compile())
-                    .AddParameters(updateQuery.getUniqueParameters())
+                    .SetCommandText(queryCompilation.Query)
+                    .AddParameters(queryCompilation.Parameters)
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Failed updating of type {typeof(T).FullName}. More than one rows affected: {affected}.");

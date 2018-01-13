@@ -6,9 +6,9 @@ namespace QTFK.Models.QueryFilters
 {
     public class OleDBOrQueryFilter : AbstractBooleanQueryFilter, IOrQueryFilter
     {
-        public override string Compile()
+        protected override string prv_buildBooleanSegment(string left, string right)
         {
-            return $" ( {Left.Compile()} OR {Right.Compile()} ) ";
+            return $" ( {left} OR {right} ) ";
         }
     }
 }
