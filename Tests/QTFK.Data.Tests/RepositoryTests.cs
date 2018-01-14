@@ -11,6 +11,7 @@ using QTFK.Services.Loggers;
 using QTFK.Services.EntityDescribers;
 using QTFK.Services.ExpressionParsers;
 using QTFK.Models.QueryFilters;
+using System.Linq;
 
 namespace QTFK.Data.Tests
 {
@@ -45,7 +46,24 @@ namespace QTFK.Data.Tests
             entityDescriber = new DefaultEntityDescriber();
             employees = new Repository<Employee>(entityDescriber, expressionParserFactory, db, queryFactory);
 
-            minimumAge = DateTime.Now.AddYears(-18);
+            minimumAge = new DateTime(1980, 01, 01);
+
+            items = employees.get(employee => employee.Name == "Rosa" || employee.Name == "Narciso");
+            Assert.AreEqual(2, items.Count());
+
+            items = employees.get(employee => employee.Birth == minimumAge || employee.Id == 2);
+            Assert.AreEqual(1, items.Count());
+
+            items = employees.get(employee => employee.Birth == minimumAge);
+            Assert.AreEqual(1, items.Count());
+
+            items = employees.get(employee => employee.Id == 2);
+            Assert.AreEqual(1, items.Count());
+
+            items = employees.get(e => e.Name == "Rosa");
+            Assert.AreEqual(1, items.Count());
+
+            //minimumAge = DateTime.Now.AddYears(-18);
             items = employees.get(employee =>
                 employee.Birth == minimumAge
                 || employee.LastName == "Céspedes" && employee.Id == 10000
