@@ -15,18 +15,17 @@ namespace QTFK.Models.QueryFilters
         public FilterCompilation Compile(IParameterBuilder parameterBuilder)
         {
             FilterCompilation result;
-            string segment;
-            QueryParameter filterParameter;
+            string segment, parameterName;
+            KeyValuePair<string, object> filterParameter;
+            IEnumerable<KeyValuePair<string, object>> parameters;
 
             Asserts.isFilled(this.fieldName, $"Parameter '{nameof(this.fieldName)}' cannot be null");
 
-            filterParameter = new QueryParameter()
-            {
-                Parameter = parameterBuilder.buildParameter(this.fieldName),
-                Value = this.fieldValue,
-            };
-            segment = prv_buildComparerSegment(this.fieldName, filterParameter.Parameter);
-            result = new FilterCompilation(segment, new QueryParameter[] { filterParameter });
+            parameterName = parameterBuilder.buildParameter(this.fieldName);
+            filterParameter = new KeyValuePair<string, object>(parameterName, this.fieldValue);
+            segment = prv_buildComparerSegment(this.fieldName, filterParameter.Key);
+            parameters = new KeyValuePair<string, object>[] { filterParameter };
+            result = new FilterCompilation(segment, parameters);
 
             return result;
         }

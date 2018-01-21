@@ -71,8 +71,8 @@ namespace QTFK.Services.Repositories
                 IPropertyDescription autoIdField;
 
                 affected = cmd
-                    .SetCommandText(queryCompilation.Query)
-                    .AddParameters(queryCompilation.Parameters)
+                    .setCommandText(queryCompilation.Query)
+                    .addParameters(queryCompilation.Parameters)
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Insert of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -114,8 +114,8 @@ namespace QTFK.Services.Repositories
                 int affected;
 
                 affected = cmd
-                    .SetCommandText(queryCompilation.Query)
-                    .AddParameters(queryCompilation.Parameters)
+                    .setCommandText(queryCompilation.Query)
+                    .addParameters(queryCompilation.Parameters)
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Delete of type {this.entityDescription.Entity.FullName} failed. Affected rows: {affected}.");
@@ -152,8 +152,8 @@ namespace QTFK.Services.Repositories
                 int affected;
 
                 affected = cmd
-                    .SetCommandText(queryCompilation.Query)
-                    .AddParameters(queryCompilation.Parameters)
+                    .setCommandText(queryCompilation.Query)
+                    .addParameters(queryCompilation.Parameters)
                     .ExecuteNonQuery();
 
                 Asserts.check(affected == 1, $"Failed updating of type {typeof(T).FullName}. More than one rows affected: {affected}.");

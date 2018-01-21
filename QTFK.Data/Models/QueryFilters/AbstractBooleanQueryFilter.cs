@@ -20,7 +20,7 @@ namespace QTFK.Models.QueryFilters
             FilterCompilation filterCompilation;
             FilterCompilation leftFilterCompilation, rightFilterCompilation;
             string segment;
-            IEnumerable<QueryParameter> queryParameters;
+            IEnumerable<KeyValuePair<string,object>> queryParameters;
 
             leftFilterCompilation = this.Left.Compile(parameterBuilder);
             rightFilterCompilation = this.Right.Compile(parameterBuilder);

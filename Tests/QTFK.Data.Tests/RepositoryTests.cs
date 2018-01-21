@@ -31,7 +31,7 @@ namespace QTFK.Data.Tests
             Employee jacintoEmployee;
             IEntityDescriber entityDescriber;
             IExpressionParserFactory expressionParserFactory;
-            DateTime minimumAge;
+            DateTime age1980, age1990;
 
             connectionString = $"Provider=Microsoft.ACE.OLEDB.12.0;Data Source={Path.Combine(Environment.CurrentDirectory, "Database1.accdb")};Persist Security Info = False;";
             logger = new DebugLogger<LogLevel>("QTFK Repositories");
@@ -46,15 +46,19 @@ namespace QTFK.Data.Tests
             entityDescriber = new DefaultEntityDescriber();
             employees = new Repository<Employee>(entityDescriber, expressionParserFactory, db, queryFactory);
 
-            minimumAge = new DateTime(1980, 01, 01);
+            age1980 = new DateTime(1980, 01, 01);
+            age1990 = new DateTime(1990, 09, 10);
+
+            items = employees.get(employee => employee.Birth == age1980 || employee.Birth == age1990);
+            Assert.AreEqual(2, items.Count());
 
             items = employees.get(employee => employee.Name == "Rosa" || employee.Name == "Narciso");
             Assert.AreEqual(2, items.Count());
 
-            items = employees.get(employee => employee.Birth == minimumAge || employee.Id == 2);
+            items = employees.get(employee => employee.Birth == age1980 || employee.Id == 2);
             Assert.AreEqual(1, items.Count());
 
-            items = employees.get(employee => employee.Birth == minimumAge);
+            items = employees.get(employee => employee.Birth == age1980);
             Assert.AreEqual(1, items.Count());
 
             items = employees.get(employee => employee.Id == 2);
@@ -65,7 +69,7 @@ namespace QTFK.Data.Tests
 
             //minimumAge = DateTime.Now.AddYears(-18);
             items = employees.get(employee =>
-                employee.Birth == minimumAge
+                employee.Birth == age1980
                 || employee.LastName == "Céspedes" && employee.Id == 10000
                 || employee.Name == "Pepe"
                 || employee.Name == "Tronco"
