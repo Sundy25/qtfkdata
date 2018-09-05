@@ -6,8 +6,7 @@ using System.Threading.Tasks;
 
 namespace QTFK.Services
 {
-    public interface IQuery<TDB, TResult>
+    public interface IView<T> : IEnumerable<T>
     {
-        IEnumerable<TResult> get(TDB db);
     }
 }

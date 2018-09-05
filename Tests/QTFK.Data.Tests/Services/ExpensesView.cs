@@ -8,9 +8,9 @@ using QTFK.Services;
 
 namespace QTFK.Data.Tests.Services
 {
-    public class ExpensesQuery : IQuery<IExpensesDB, IExpense>
+    public class ExpensesView : AbstractView<IExpensesDB, IExpense>
     {
-        public IEnumerable<IExpense> get(IExpensesDB db)
+        protected override IEnumerable<IExpense> getRecords(IExpensesDB db)
         {
             throw new NotImplementedException();
         }

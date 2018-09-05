@@ -12,5 +12,7 @@ namespace QTFK.Data.Tests.Services
     {
         IUserRepository Users { get; }
         IRepository<ICurrencyConversion> CurrencyExchanges { get; }
+        IRepository<IPayment> Payments { get; }
+        AbstractView<IExpensesDB, IExpense> Expenses { get; }
     }
 }

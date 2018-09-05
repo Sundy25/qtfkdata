@@ -48,9 +48,19 @@ namespace QTFK.Data.Tests
                 db.Users.update(filteredUser);
             }
 
+            foreach (IUser user1 in db.Users)
+            {
+                Console.WriteLine($"{user1.Name} - {user1.Mail}");
+            }
+
             foreach (ICurrencyConversion exchange in db.CurrencyExchanges)
             {
                 exchange.Value += 0.00005m;
+            }
+
+            foreach (IExpense expense in db.Expenses)
+            {
+                Console.WriteLine($"{expense.Concept} - {expense.Date}");
             }
         }
 

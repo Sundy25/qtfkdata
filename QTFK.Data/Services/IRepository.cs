@@ -3,10 +3,11 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
+using QTFK.Models;
 
 namespace QTFK.Services
 {
-    public interface IRepository<T> : IEnumerable<T>
+    public interface IRepository<T> : IView<T> where T : IEntity
     {
         T create();
         void insert(ref T item);
