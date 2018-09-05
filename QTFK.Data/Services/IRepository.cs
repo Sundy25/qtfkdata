@@ -13,5 +13,6 @@ namespace QTFK.Services
         void insert(ref T item);
         void update(T item);
         void delete(T item);
+        int deleteAll();
     }
 }
