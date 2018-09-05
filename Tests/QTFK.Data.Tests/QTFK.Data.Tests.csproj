@@ -53,6 +53,7 @@
     </Otherwise>
   </Choose>
   <ItemGroup>
+    <Compile Include="Models\ExpenseAmount.cs" />
     <Compile Include="Models\ICategory.cs" />
     <Compile Include="Models\ICurrency.cs" />
     <Compile Include="Models\ICurrencyConversion.cs" />
@@ -60,7 +61,7 @@
     <Compile Include="Models\IPayment.cs" />
     <Compile Include="Models\IUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\ExpensesView.cs" />
+    <Compile Include="Services\ExpenseAmountView.cs" />
     <Compile Include="Services\IExpensesDB.cs" />
     <Compile Include="Services\IUserRepository.cs" />
     <Compile Include="UnitTest1.cs" />
