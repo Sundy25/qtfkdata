@@ -4,6 +4,7 @@ using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QTFK.Data.Tests.Models;
 using QTFK.Data.Tests.Services;
 using QTFK.Services;
+using System.Linq;
 
 namespace QTFK.Data.Tests
 {
@@ -27,9 +28,29 @@ namespace QTFK.Data.Tests
             IExpensesDB db;
             IUser user;
             IEnumerable<IUser> users;
+            ICurrency euroCurrency, dollardCurrency;
+            ICurrencyConversion eurUsd;
 
             driver = getSomeDriver();
             db = buildDB(driver);
+
+            db.CurrencyExchanges.deleteAll();
+            db.Currencies.deleteAll();
+
+            euroCurrency = db.Currencies.create();
+            euroCurrency.Name = "Euro";
+            db.Currencies.insert(ref euroCurrency);
+            dollardCurrency = db.Currencies.create();
+            dollardCurrency.Name = "US Dollard";
+            db.Currencies.insert(ref dollardCurrency);
+
+            eurUsd = db.CurrencyExchanges.create();
+            eurUsd.Date = DateTime.Now;
+            eurUsd.From = euroCurrency;
+            eurUsd.To = dollardCurrency;
+            eurUsd.Value = 1.16m;
+            db.CurrencyExchanges.insert(ref eurUsd);
+
 
             user = db.Users.create();
             user.Name = "pepe";
@@ -62,7 +83,11 @@ namespace QTFK.Data.Tests
             {
                 Console.WriteLine($"{expense.Concept} - {expense.Date}");
             }
-        }
 
+            foreach (ExpenseAmount amount in db.ExpenseAmounts)
+            {
+                Console.WriteLine($"{amount.Concept} - {amount.Amount} - {amount.TotalContributors}");
+            }
+        }
     }
 }

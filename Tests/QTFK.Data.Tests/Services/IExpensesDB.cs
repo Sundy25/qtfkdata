@@ -11,8 +11,12 @@ namespace QTFK.Data.Tests.Services
     public interface IExpensesDB : IDB
     {
         IUserRepository Users { get; }
+        IRepository<IExpense> Expenses { get; }
+        IView<IPayment> Payments { get; }
+
         IRepository<ICurrencyConversion> CurrencyExchanges { get; }
-        IRepository<IPayment> Payments { get; }
-        AbstractView<IExpensesDB, IExpense> Expenses { get; }
+        IRepository<ICurrency> Currencies { get; }
+
+        ExpenseAmountView ExpenseAmounts { get; }
     }
 }
