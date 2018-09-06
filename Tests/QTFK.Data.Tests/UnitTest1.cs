@@ -30,6 +30,8 @@ namespace QTFK.Data.Tests
             IEnumerable<IUser> users;
             ICurrency euroCurrency, dollardCurrency;
             ICurrencyConversion eurUsd;
+            int expenseAmountsCount;
+            IPageView<ExpenseAmount> expenseAmountPage;
 
             driver = getSomeDriver();
             db = buildDB(driver);
@@ -84,10 +86,22 @@ namespace QTFK.Data.Tests
                 Console.WriteLine($"{expense.Concept} - {expense.Date}");
             }
 
-            foreach (ExpenseAmount amount in db.ExpenseAmounts)
+            expenseAmountsCount = db.ExpenseAmounts.Count;
+            expenseAmountPage = db.ExpenseAmounts.paginate(10, 0);
+
+            Console.WriteLine($"Current Page: {expenseAmountPage.CurrentPage}");
+            Console.WriteLine($"Total Pages: {expenseAmountPage.PagesCount}");
+            Console.WriteLine($"Page size: {expenseAmountPage.PageSize}");
+            foreach (ExpenseAmount amount in expenseAmountPage)
             {
                 Console.WriteLine($"{amount.Concept} - {amount.Amount} - {amount.TotalContributors}");
             }
+
+            foreach (ExpenseAmount amount in db.ExpenseAmounts.paginate(10, 1))
+            {
+                Console.WriteLine($"{amount.Concept} - {amount.Amount} - {amount.TotalContributors}");
+            }
+
         }
     }
 }
