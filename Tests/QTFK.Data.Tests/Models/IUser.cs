@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using QTFK.Attributes;
 using QTFK.Models;
+using QTFK.Services;
 
 namespace QTFK.Data.Tests.Models
 {
@@ -11,7 +12,7 @@ namespace QTFK.Data.Tests.Models
         string Name { get; set; }
         string Mail { get; set; }
 
-        IEnumerable<IExpense> Debts { get; }
-        IEnumerable<IPayment> Payments { get; }
+        IView<IExpense> Debts { get; }
+        IView<IPayment> Payments { get; }
     }
 }

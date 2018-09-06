@@ -1,6 +1,7 @@
 ﻿using System.Collections.Generic;
 using QTFK.Attributes;
 using QTFK.Models;
+using QTFK.Services;
 
 namespace QTFK.Data.Tests.Models
 {
@@ -11,7 +12,7 @@ namespace QTFK.Data.Tests.Models
         string Name { get; set; }
 
         ICategory Parent { get; set; }
-        IEnumerable<ICategory> SubCategories { get; }
-        IEnumerable<IExpense> Expenses { get; }
+        IView<ICategory> SubCategories { get; }
+        IView<IExpense> Expenses { get; }
     }
 }

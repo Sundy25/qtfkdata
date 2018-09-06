@@ -2,6 +2,7 @@
 using System.Collections.Generic;
 using QTFK.Attributes;
 using QTFK.Models;
+using QTFK.Services;
 
 namespace QTFK.Data.Tests.Models
 {
@@ -12,8 +13,8 @@ namespace QTFK.Data.Tests.Models
         string Concept { get; set; }
         DateTime Date { get; set; }
 
-        IEnumerable<ICategory> Categories { get; }
-        IEnumerable<IUser> Debtors { get; }
-        IEnumerable<IPayment> Contributors { get; }
+        IView<ICategory> Categories { get; }
+        IView<IUser> Debtors { get; }
+        IView<IPayment> Contributors { get; }
     }
 }
