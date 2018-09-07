@@ -56,6 +56,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Attributes\ColumnAttribute.cs" />
+    <Compile Include="Attributes\ForeignAttribute.cs" />
     <Compile Include="Attributes\IdAttribute.cs" />
     <Compile Include="Models\IEntity.cs" />
     <Compile Include="Models\ITransaction.cs" />
