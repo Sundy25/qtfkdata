@@ -39,6 +39,10 @@
     <Reference Include="QTFK.Extensions">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
     </Reference>
+    <Reference Include="QTFK.Logs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\Tests\QTFK.Data.Tests\bin\Debug\QTFK.Logs.dll</HintPath>
+    </Reference>
     <Reference Include="QTFK.Services.DBIO.OleDB">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Services.DBIO.OleDB.dll</HintPath>
     </Reference>
@@ -62,6 +66,11 @@
     <Compile Include="Models\ITransaction.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AbstractView.cs" />
+    <Compile Include="Services\DbFactory\DbMetadata.cs" />
+    <Compile Include="Services\DbFactory\DefaultMetadataBuilder.cs" />
+    <Compile Include="Services\DbFactory\IDbBuilder.cs" />
+    <Compile Include="Services\DbFactory\IMetadataBuilder.cs" />
+    <Compile Include="Services\DbFactory\SqlServerDbBuilder.cs" />
     <Compile Include="Services\IDB.cs" />
     <Compile Include="Services\IPageView.cs" />
     <Compile Include="Services\IView.cs" />
