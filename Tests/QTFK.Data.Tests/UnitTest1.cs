@@ -53,6 +53,12 @@ namespace QTFK.Data.Tests
             eurUsd.Value = 1.16m;
             db.CurrencyExchanges.insert(ref eurUsd);
 
+            foreach (ICurrencyConversion exchange in db.Currencies
+                .First(c => c.Name == "Euro")
+                .Exchanges)
+            {
+                Console.WriteLine($"1 {exchange.From.Name} = {exchange.Value} {exchange.To.Name}s at {exchange.Date}");
+            }
 
             user = db.Users.create();
             user.Name = "pepe";
