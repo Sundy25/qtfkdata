@@ -12,6 +12,8 @@ namespace QTFK.Data.Tests.Models
         string Name { get; set; }
 
         ICategory Parent { get; set; }
+
+        [Foreign("parentCategoryId")]
         IView<ICategory> SubCategories { get; }
         IView<IExpense> Expenses { get; }
     }
