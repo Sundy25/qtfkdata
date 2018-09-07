@@ -5,6 +5,11 @@ using QTFK.Data.Tests.Models;
 using QTFK.Data.Tests.Services;
 using QTFK.Services;
 using System.Linq;
+using QTFK.Services.DbFactory;
+using QTFK.Services.DBIO;
+using System.Configuration;
+using QTFK.Models;
+using QTFK.Services.Loggers;
 
 namespace QTFK.Data.Tests
 {
@@ -16,16 +21,37 @@ namespace QTFK.Data.Tests
             throw new NotImplementedException();
         }
 
-        private static IExpensesDB buildDB(IDBIO driver)
+        private IDBIO driver;
+        private IExpensesDB db;
+        private readonly ILogger<LogLevel> logger;
+
+        public UnitTest1()
         {
-            throw new NotImplementedException();
+            IMetadataBuilder metadataBuilder;
+            DbMetadata dbMetadata;
+            IDbBuilder dbBuilder;
+            string connectionString;
+
+            this.logger = new MultiLogger(new ILogger<LogLevel>[]
+            {
+                new ConsoleLogger(),
+                new DebugLogger("QTFKdata"),
+            });
+
+            connectionString = ConfigurationManager.ConnectionStrings["tests"]?.ConnectionString;
+            Assert.IsTrue(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
+
+            metadataBuilder = new DefaultMetadataBuilder();
+            dbMetadata = metadataBuilder.scan<IExpensesDB>();
+
+            dbBuilder = new SqlServerDbBuilder(this.logger);
+            this.driver = new SQLServerDBIO(connectionString, this.logger);
+            this.db = dbBuilder.createDb<IExpensesDB>(dbMetadata, this.driver);
         }
 
         [TestMethod]
         public void TestMethod1()
         {
-            IDBIO driver;
-            IExpensesDB db;
             IUser user;
             IEnumerable<IUser> users;
             ICurrency euroCurrency, dollardCurrency;
@@ -33,67 +59,64 @@ namespace QTFK.Data.Tests
             int expenseAmountsCount;
             IPageView<ExpenseAmount> expenseAmountPage;
 
-            driver = getSomeDriver();
-            db = buildDB(driver);
+            this.db.CurrencyExchanges.deleteAll();
+            this.db.Currencies.deleteAll();
 
-            db.CurrencyExchanges.deleteAll();
-            db.Currencies.deleteAll();
-
-            euroCurrency = db.Currencies.create();
+            euroCurrency = this.db.Currencies.create();
             euroCurrency.Name = "Euro";
-            db.Currencies.insert(ref euroCurrency);
-            dollardCurrency = db.Currencies.create();
+            this.db.Currencies.insert(ref euroCurrency);
+            dollardCurrency = this.db.Currencies.create();
             dollardCurrency.Name = "US Dollard";
-            db.Currencies.insert(ref dollardCurrency);
+            this.db.Currencies.insert(ref dollardCurrency);
 
-            eurUsd = db.CurrencyExchanges.create();
+            eurUsd = this.db.CurrencyExchanges.create();
             eurUsd.Date = DateTime.Now;
             eurUsd.From = euroCurrency;
             eurUsd.To = dollardCurrency;
             eurUsd.Value = 1.16m;
-            db.CurrencyExchanges.insert(ref eurUsd);
+            this.db.CurrencyExchanges.insert(ref eurUsd);
 
-            foreach (ICurrencyConversion exchange in db.Currencies
+            foreach (ICurrencyConversion exchange in this.db.Currencies
                 .First(c => c.Name == "Euro")
                 .Exchanges)
             {
                 Console.WriteLine($"1 {exchange.From.Name} = {exchange.Value} {exchange.To.Name}s at {exchange.Date}");
             }
 
-            user = db.Users.create();
+            user = this.db.Users.create();
             user.Name = "pepe";
             user.Mail = "pepe@tronco.es";
-            db.Users.insert(ref user);
+            this.db.Users.insert(ref user);
 
             user.Mail = "pepe@gmail.com";
-            db.Users.update(user);
+            this.db.Users.update(user);
 
-            db.Users.delete(user);
+            this.db.Users.delete(user);
 
-            users = db.Users.getWhereMailContains("Frank");
+            users = this.db.Users.getWhereMailContains("Frank");
             foreach (IUser filteredUser in users)
             {
                 filteredUser.Name += "_check";
-                db.Users.update(filteredUser);
+                this.db.Users.update(filteredUser);
             }
 
-            foreach (IUser user1 in db.Users)
+            foreach (IUser user1 in this.db.Users)
             {
                 Console.WriteLine($"{user1.Name} - {user1.Mail}");
             }
 
-            foreach (ICurrencyConversion exchange in db.CurrencyExchanges)
+            foreach (ICurrencyConversion exchange in this.db.CurrencyExchanges)
             {
                 exchange.Value += 0.00005m;
             }
 
-            foreach (IExpense expense in db.Expenses)
+            foreach (IExpense expense in this.db.Expenses)
             {
                 Console.WriteLine($"{expense.Concept} - {expense.Date}");
             }
 
-            expenseAmountsCount = db.ExpenseAmounts.Count;
-            expenseAmountPage = db.ExpenseAmounts.paginate(10, 0);
+            expenseAmountsCount = this.db.ExpenseAmounts.Count;
+            expenseAmountPage = this.db.ExpenseAmounts.paginate(10, 0);
 
             Console.WriteLine($"Current Page: {expenseAmountPage.CurrentPage}");
             Console.WriteLine($"Total Pages: {expenseAmountPage.PagesCount}");
@@ -103,7 +126,7 @@ namespace QTFK.Data.Tests
                 Console.WriteLine($"{amount.Concept} - {amount.Amount} - {amount.TotalContributors}");
             }
 
-            foreach (ExpenseAmount amount in db.ExpenseAmounts.paginate(10, 1))
+            foreach (ExpenseAmount amount in this.db.ExpenseAmounts.paginate(10, 1))
             {
                 Console.WriteLine($"{amount.Concept} - {amount.Amount} - {amount.TotalContributors}");
             }

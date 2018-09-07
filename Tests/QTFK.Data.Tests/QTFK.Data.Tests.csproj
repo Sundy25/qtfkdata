@@ -38,7 +38,12 @@
     <Reference Include="QTFK.DB">
       <HintPath>..\..\libs\qtfk.1.5.0\QTFK.DB.dll</HintPath>
     </Reference>
+    <Reference Include="QTFK.Logs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="QTFK.Services.DBIO.SQLServer">
+      <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
+    <Reference Include="System.configuration" />
   </ItemGroup>
   <Choose>
     <When Condition="('$(VisualStudioVersion)' == '10.0' or '$(VisualStudioVersion)' == '') and '$(TargetFrameworkVersion)' == 'v3.5'">
@@ -72,7 +77,9 @@
       <Name>QTFK.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <None Include="App.config" />
+  </ItemGroup>
   <Choose>
     <When Condition="'$(VisualStudioVersion)' == '10.0' And '$(IsCodedUITest)' == 'True'">
       <ItemGroup>
