@@ -4,9 +4,9 @@ namespace QTFK.Attributes
 {
     public class ForeignAttribute : Attribute
     {
-        public ForeignAttribute(string columnName)
+        public ForeignAttribute(string foreignTableColumnName)
         {
-            this.ColumnName = columnName;
+            this.ColumnName = foreignTableColumnName;
         }
 
         public string ColumnName { get; }
