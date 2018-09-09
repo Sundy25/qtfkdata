@@ -36,12 +36,8 @@
     <Reference Include="QTFK.DB">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.DB.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Extensions">
-      <HintPath>..\libs\qtfk.1.5.0\QTFK.Extensions.dll</HintPath>
-    </Reference>
-    <Reference Include="QTFK.Logs, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\Tests\QTFK.Data.Tests\bin\Debug\QTFK.Logs.dll</HintPath>
+    <Reference Include="QTFK.Logs">
+      <HintPath>..\libs\qtfk.1.5.0\QTFK.Logs.dll</HintPath>
     </Reference>
     <Reference Include="QTFK.Services.DBIO.OleDB">
       <HintPath>..\libs\qtfk.1.5.0\QTFK.Services.DBIO.OleDB.dll</HintPath>

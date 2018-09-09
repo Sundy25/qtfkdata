@@ -10,6 +10,6 @@ namespace QTFK.Services
     public interface IDB
     {
         IDBIO DBIO { get; }
-        void run(Action<ITransaction> transactionBlock);
+        void transact(Func<bool> transactionBlock);
     }
 }
