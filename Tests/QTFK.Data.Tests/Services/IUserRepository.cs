@@ -6,7 +6,7 @@ namespace QTFK.Data.Tests.Services
 {
     public interface IUserRepository : IRepository<IUser>
     {
-        IEnumerable<IUser> getWhereMailContains(string mail);
+        IView<IUser> getWhereMailContains(string mail);
         int deleteWhereNameStartsWith(string namePrefix);
     }
 }
