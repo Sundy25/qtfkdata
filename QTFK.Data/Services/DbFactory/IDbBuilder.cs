@@ -2,6 +2,6 @@
 {
     public interface IDbBuilder
     {
-        TDB createDb<TDB>(DbMetadata dbMetadata, IDBIO driver) where TDB : IDB;
+        TDB createDb<TDB>(DbMetadata dbMetadata) where TDB : IDB;
     }
 }

@@ -1,4 +1,5 @@
 ﻿using QTFK.Models;
+using QTFK.Services.DBIO;
 using QTFK.Services.Loggers;
 
 namespace QTFK.Services.DbFactory
@@ -7,12 +8,12 @@ namespace QTFK.Services.DbFactory
     {
         private ILogger<LogLevel> logger;
 
-        public SqlServerDbBuilder(ILogger<LogLevel> logger = null)
+        public SqlServerDbBuilder(ISqlServerDBIO driver, ILogger<LogLevel> logger = null)
         {
             this.logger = logger ?? NullLogger.Instance;
         }
 
-        public TDB createDb<TDB>(DbMetadata dbMetadata, IDBIO driver) where TDB : IDB
+        public TDB createDb<TDB>(DbMetadata dbMetadata) where TDB : IDB
         {
             throw new System.NotImplementedException();
         }
