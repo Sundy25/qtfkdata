@@ -45,7 +45,7 @@ namespace QTFK.Data.Tests
             dbMetadata = metadataBuilder.scan<IExpensesDB>();
 
             this.driver = new SQLServerDBIO(connectionString, this.logger);
-            dbBuilder = new SqlServerDbBuilder(this.driver as ISqlServerDBIO, this.logger);
+            dbBuilder = new SqlServerDbBuilder(this.driver, this.logger);
             this.db = dbBuilder.createDb<IExpensesDB>(dbMetadata);
         }
 
