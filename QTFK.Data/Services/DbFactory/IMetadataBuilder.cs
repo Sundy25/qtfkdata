@@ -2,6 +2,6 @@
 {
     public interface IMetadataBuilder
     {
-        DbMetadata scan<T>() where T : IDB;
+        IDbMetadata scan<T>() where T : IDB;
     }
 }

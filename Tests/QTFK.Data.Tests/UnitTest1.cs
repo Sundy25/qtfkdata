@@ -28,7 +28,7 @@ namespace QTFK.Data.Tests
         public UnitTest1()
         {
             IMetadataBuilder metadataBuilder;
-            DbMetadata dbMetadata;
+            IDbMetadata dbMetadata;
             IDbBuilder dbBuilder;
             string connectionString;
 
