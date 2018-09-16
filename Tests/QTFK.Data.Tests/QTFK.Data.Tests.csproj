@@ -71,6 +71,7 @@
     <Compile Include="Services\IExpensesDB.cs" />
     <Compile Include="Services\IUserRepository.cs" />
     <Compile Include="UnitTest1.cs" />
+    <Compile Include="UnitTest2.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QTFK.Data\QTFK.Data.csproj">
