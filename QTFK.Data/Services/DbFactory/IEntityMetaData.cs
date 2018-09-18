@@ -2,11 +2,11 @@
 
 namespace QTFK.Services.DbFactory
 {
-    public interface IEntityMetaData
+    public interface IEntityMetaData : IMetaData
     {
-        string Name { get; }
         Type InterfaceType { get; }
         string Table { get; }
         IColumnMetaData[] Columns { get; }
+        IRelationShipMetaData[] RelationShips { get; }
     }
 }

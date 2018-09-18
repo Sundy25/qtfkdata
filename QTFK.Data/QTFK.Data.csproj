@@ -68,6 +68,9 @@
     <Compile Include="Services\DbFactory\IDbBuilder.cs" />
     <Compile Include="Services\DbFactory\IEntityMetaData.cs" />
     <Compile Include="Services\DbFactory\IMetadataBuilder.cs" />
+    <Compile Include="Services\DbFactory\IMetaData.cs" />
+    <Compile Include="Services\DbFactory\IRelationShipMetaData.cs" />
+    <Compile Include="Services\DbFactory\RelationShipKind.cs" />
     <Compile Include="Services\DbFactory\SqlServerDbBuilder.cs" />
     <Compile Include="Services\IDB.cs" />
     <Compile Include="Services\IPageView.cs" />

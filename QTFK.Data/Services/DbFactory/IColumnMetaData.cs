@@ -2,9 +2,8 @@
 
 namespace QTFK.Services.DbFactory
 {
-    public interface IColumnMetaData
+    public interface IColumnMetaData : IMetaData
     {
-        string Name { get; }
         string ColumnName { get; }
         Type ColumnType { get; }
         bool IsPrimaryKey { get; }

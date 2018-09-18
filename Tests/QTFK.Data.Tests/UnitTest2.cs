@@ -24,6 +24,7 @@ namespace QTFK.Data.Tests
         {
             Assert.IsNotNull(this.dbMetadata);
             Assert.AreEqual(typeof(IExpensesDB), this.dbMetadata.InterfaceType);
+            Assert.AreEqual("ExpensesDB", this.dbMetadata.Name);
             Assert.AreEqual(7, this.dbMetadata.Entities.Length);
         }
 
@@ -82,5 +83,49 @@ namespace QTFK.Data.Tests
             Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsForeignKey).Count());
             Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsAlternativeKey).Count());
         }
+
+        [TestMethod]
+        public void expenseMetaDataTest()
+        {
+            IEntityMetaData entityMetaData;
+            IColumnMetaData columnMetaData;
+
+            entityMetaData = this.dbMetadata.Entities.Single(e => e.Name == "Expense");
+            Assert.AreEqual(typeof(IExpense), entityMetaData.InterfaceType);
+            Assert.AreEqual("expense", entityMetaData.Table);
+
+            Assert.AreEqual(3, entityMetaData.Columns.Length);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Concept");
+            Assert.AreEqual("concept", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(string), columnMetaData.ColumnType);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Date");
+            Assert.AreEqual("date", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(DateTime), columnMetaData.ColumnType);
+
+            Assert.AreEqual(1, entityMetaData.Columns.Where(c => c.IsPrimaryKey).Count());
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Id");
+            Assert.AreEqual("id", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(int), columnMetaData.ColumnType);
+
+            Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsForeignKey).Count());
+            Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsAlternativeKey).Count());
+        }
+
+        [TestMethod]
+        public void usersRelationshipMetaDataTest()
+        {
+            IEntityMetaData entityMetaData;
+            IRelationShipMetaData relationshipMetaData;
+
+            entityMetaData = this.dbMetadata.Entities.Single(e => e.Name == "User");
+
+            Assert.AreEqual(2, entityMetaData.RelationShips.Length);
+            relationshipMetaData = entityMetaData.RelationShips.Single(r => r.Name == "Debts");
+            Assert.AreEqual(RelationShipKind.ToMany, relationshipMetaData.Kind);
+            throw new NotImplementedException();
+        }
+
     }
 }
