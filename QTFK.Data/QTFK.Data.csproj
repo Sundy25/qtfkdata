@@ -65,6 +65,7 @@
     <Compile Include="Services\DbFactory\IDbMetadata.cs" />
     <Compile Include="Services\DbFactory\DefaultMetadataBuilder.cs" />
     <Compile Include="Services\DbFactory\IDbBuilder.cs" />
+    <Compile Include="Services\DbFactory\IEntityMetaData.cs" />
     <Compile Include="Services\DbFactory\IMetadataBuilder.cs" />
     <Compile Include="Services\DbFactory\SqlServerDbBuilder.cs" />
     <Compile Include="Services\IDB.cs" />
