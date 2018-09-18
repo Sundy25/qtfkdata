@@ -7,5 +7,6 @@ namespace QTFK.Services.DbFactory
         string Name { get; }
         Type InterfaceType { get; }
         string Table { get; }
+        IColumnMetaData[] Columns { get; }
     }
 }

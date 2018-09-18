@@ -10,24 +10,77 @@ namespace QTFK.Data.Tests
     [TestClass]
     public class UnitTest2
     {
-        [TestMethod]
-        public void TestMethod1()
+        IDbMetadata dbMetadata;
+        IMetadataBuilder metadataBuilder;
+
+        public UnitTest2()
         {
-            IDbMetadata dbMetadata;
-            IMetadataBuilder metadataBuilder;
+            this.metadataBuilder = new DefaultMetadataBuilder();
+            this.dbMetadata = this.metadataBuilder.scan<IExpensesDB>();
+        }
+
+        [TestMethod]
+        public void dbMetaDataTest()
+        {
+            Assert.IsNotNull(this.dbMetadata);
+            Assert.AreEqual(typeof(IExpensesDB), this.dbMetadata.InterfaceType);
+            Assert.AreEqual(7, this.dbMetadata.Entities.Length);
+        }
+
+        [TestMethod]
+        public void usersMetaDataTest()
+        {
             IEntityMetaData entityMetaData;
+            IColumnMetaData columnMetaData;
 
-            metadataBuilder = new DefaultMetadataBuilder();
-            dbMetadata = metadataBuilder.scan<IExpensesDB>();
-
-            Assert.IsNotNull(dbMetadata);
-            Assert.AreEqual(typeof(IExpensesDB), dbMetadata.InterfaceType);
-            Assert.AreEqual(7, dbMetadata.Entities.Length);
-
-            entityMetaData = dbMetadata.Entities.Single(e => e.Name == "User");
+            entityMetaData = this.dbMetadata.Entities.Single(e => e.Name == "User");
             Assert.AreEqual(typeof(IUser), entityMetaData.InterfaceType);
             Assert.AreEqual("user", entityMetaData.Table);
 
+            Assert.AreEqual(4, entityMetaData.Columns.Length);
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Name");
+            Assert.AreEqual("name", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(string), columnMetaData.ColumnType);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Mail");
+            Assert.AreEqual("mail", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(string), columnMetaData.ColumnType);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "SignDate");
+            Assert.AreEqual("creationDate", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(DateTime), columnMetaData.ColumnType);
+
+            Assert.AreEqual(1, entityMetaData.Columns.Where(c => c.IsPrimaryKey).Count());
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Id");
+            Assert.AreEqual("id", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(int), columnMetaData.ColumnType);
+
+            Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsForeignKey).Count());
+            Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsAlternativeKey).Count());
+        }
+
+        [TestMethod]
+        public void currencysMetaDataTest()
+        {
+            IEntityMetaData entityMetaData;
+            IColumnMetaData columnMetaData;
+
+            entityMetaData = this.dbMetadata.Entities.Single(e => e.Name == "Currency");
+            Assert.AreEqual(typeof(ICurrency), entityMetaData.InterfaceType);
+            Assert.AreEqual("currency", entityMetaData.Table);
+
+            Assert.AreEqual(2, entityMetaData.Columns.Length);
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Name");
+            Assert.AreEqual("name", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(string), columnMetaData.ColumnType);
+
+            Assert.AreEqual(1, entityMetaData.Columns.Where(c => c.IsPrimaryKey).Count());
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Id");
+            Assert.AreEqual("id", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(int), columnMetaData.ColumnType);
+
+            Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsForeignKey).Count());
+            Assert.AreEqual(0, entityMetaData.Columns.Where(c => c.IsAlternativeKey).Count());
         }
     }
 }

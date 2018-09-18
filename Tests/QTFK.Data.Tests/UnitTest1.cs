@@ -86,6 +86,7 @@ namespace QTFK.Data.Tests
                 {
                     u.Name = "pepe";
                     u.Mail = "pepe@tronco.es";
+                    u.SignDate = DateTime.Now;
                 });
 
                 user.Mail = "pepe@gmail.com";
