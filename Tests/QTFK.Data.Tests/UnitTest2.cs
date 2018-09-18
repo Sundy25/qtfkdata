@@ -114,17 +114,63 @@ namespace QTFK.Data.Tests
         }
 
         [TestMethod]
-        public void usersRelationshipMetaDataTest()
+        public void categoryMetaDataTest()
         {
             IEntityMetaData entityMetaData;
-            IRelationShipMetaData relationshipMetaData;
+            IColumnMetaData columnMetaData;
 
-            entityMetaData = this.dbMetadata.Entities.Single(e => e.Name == "User");
+            entityMetaData = this.dbMetadata.Entities.Single(e => e.Name == "Category");
+            Assert.AreEqual(typeof(ICategory), entityMetaData.InterfaceType);
+            Assert.AreEqual("category", entityMetaData.Table);
 
-            Assert.AreEqual(2, entityMetaData.RelationShips.Length);
-            relationshipMetaData = entityMetaData.RelationShips.Single(r => r.Name == "Debts");
-            Assert.AreEqual(RelationShipKind.ToMany, relationshipMetaData.Kind);
-            throw new NotImplementedException();
+            Assert.AreEqual(3, entityMetaData.Columns.Length);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Name");
+            Assert.AreEqual("name", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(string), columnMetaData.ColumnType);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Parent");
+            Assert.AreEqual("parentCategoryId", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(int), columnMetaData.ColumnType);
+            Assert.IsTrue(columnMetaData.IsForeignKey);
+            Assert.IsFalse(columnMetaData.IsPrimaryKey);
+            Assert.IsTrue(columnMetaData.IsHidden);
+
+            Assert.AreEqual(1, entityMetaData.Columns.Where(c => c.IsPrimaryKey).Count());
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Id");
+            Assert.AreEqual("id", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(int), columnMetaData.ColumnType);
+        }
+
+        [TestMethod]
+        public void paymentMetaDataTest()
+        {
+            IEntityMetaData entityMetaData;
+            IColumnMetaData columnMetaData;
+
+            entityMetaData = this.dbMetadata.Entities.Single(e => e.Name == "Payment");
+            Assert.AreEqual(typeof(IPayment), entityMetaData.InterfaceType);
+            Assert.AreEqual("payment", entityMetaData.Table);
+
+            Assert.AreEqual(5, entityMetaData.Columns.Length);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Amount");
+            Assert.AreEqual("amount", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(decimal), columnMetaData.ColumnType);
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Expense");
+            Assert.AreEqual("expenseId", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(int), columnMetaData.ColumnType);
+            Assert.IsTrue(columnMetaData.IsForeignKey);
+            Assert.IsFalse(columnMetaData.IsPrimaryKey);
+            Assert.IsTrue(columnMetaData.IsHidden);
+
+            Assert.AreEqual(1, entityMetaData.Columns.Where(c => c.IsPrimaryKey).Count());
+
+            columnMetaData = entityMetaData.Columns.Single(c => c.Name == "Id");
+            Assert.AreEqual("id", columnMetaData.ColumnName);
+            Assert.AreEqual(typeof(int), columnMetaData.ColumnType);
         }
 
     }

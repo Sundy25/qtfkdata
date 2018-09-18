@@ -9,5 +9,6 @@ namespace QTFK.Services.DbFactory
         bool IsPrimaryKey { get; }
         bool IsForeignKey { get; }
         bool IsAlternativeKey { get; }
+        bool IsHidden { get; }
     }
 }
