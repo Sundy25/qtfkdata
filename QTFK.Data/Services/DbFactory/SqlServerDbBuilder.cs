@@ -9,22 +9,34 @@ namespace QTFK.Services.DbFactory
     {
         private ILogger<LogLevel> logger;
         private readonly ISqlServerDBIO dbio;
+        private readonly IMetadataBuilder metaDataBuilder;
 
-        public SqlServerDbBuilder(ISqlServerDBIO dbio, ILogger<LogLevel> logger = null)
+        public SqlServerDbBuilder(IMetadataBuilder metadataBuilder, ISqlServerDBIO dbio, ILogger<LogLevel> logger = null)
         {
+            Asserts.isSomething(metadataBuilder, $"Contructor parameter '{nameof(metadataBuilder)}' cannot be null");
+            Asserts.isSomething(dbio, $"Contructor parameter '{nameof(dbio)}' cannot be null");
+
             this.logger = logger ?? NullLogger.Instance;
             this.dbio = dbio;
+            this.metaDataBuilder = metadataBuilder;
         }
 
-        public SqlServerDbBuilder(IDBIO dbio, ILogger<LogLevel> logger = null)
+        public SqlServerDbBuilder(IMetadataBuilder metadataBuilder, IDBIO dbio, ILogger<LogLevel> logger = null)
         {
+            Asserts.isSomething(metadataBuilder, $"Contructor parameter '{nameof(metadataBuilder)}' cannot be null");
+            Asserts.isSomething(dbio, $"Contructor parameter '{nameof(dbio)}' cannot be null");
             Asserts.check(dbio is ISqlServerDBIO, $"Contructor parameter '{nameof(dbio)}' must implement {typeof(ISqlServerDBIO).FullName}.");
+
             this.logger = logger ?? NullLogger.Instance;
             this.dbio = dbio as ISqlServerDBIO;
+            this.metaDataBuilder = metadataBuilder;
         }
 
-        public TDB createDb<TDB>(IDbMetadata dbMetadata) where TDB : IDB
+        public TDB createDb<TDB>() where TDB : IDB
         {
+            IDbMetadata dbMetadata;
+
+            dbMetadata = this.metaDataBuilder.scan<TDB>();
             throw new NotImplementedException();
         }
     }

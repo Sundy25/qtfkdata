@@ -16,37 +16,23 @@ namespace QTFK.Data.Tests
     [TestClass]
     public class UnitTest1
     {
-        private static IDBIO getSomeDriver()
-        {
-            throw new NotImplementedException();
-        }
-
-        private IDBIO driver;
         private IExpensesDB db;
-        private readonly ILogger<LogLevel> logger;
 
         public UnitTest1()
         {
             IMetadataBuilder metadataBuilder;
-            IDbMetadata dbMetadata;
             IDbBuilder dbBuilder;
+            IDBIO driver;
             string connectionString;
-
-            this.logger = new MultiLogger(new ILogger<LogLevel>[]
-            {
-                new ConsoleLogger(),
-                new DebugLogger("QTFKdata"),
-            });
 
             connectionString = ConfigurationManager.ConnectionStrings["tests"]?.ConnectionString;
             Assert.IsTrue(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
 
             metadataBuilder = new DefaultMetadataBuilder();
-            dbMetadata = metadataBuilder.scan<IExpensesDB>();
+            driver = new SQLServerDBIO(connectionString);
+            dbBuilder = new SqlServerDbBuilder(metadataBuilder, driver);
 
-            this.driver = new SQLServerDBIO(connectionString, this.logger);
-            dbBuilder = new SqlServerDbBuilder(this.driver, this.logger);
-            this.db = dbBuilder.createDb<IExpensesDB>(dbMetadata);
+            this.db = dbBuilder.createDb<IExpensesDB>();
         }
 
         [TestMethod]

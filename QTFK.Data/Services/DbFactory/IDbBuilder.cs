@@ -2,6 +2,6 @@
 {
     public interface IDbBuilder
     {
-        TDB createDb<TDB>(IDbMetadata dbMetadata) where TDB : IDB;
+        TDB createDb<TDB>() where TDB : IDB;
     }
 }
