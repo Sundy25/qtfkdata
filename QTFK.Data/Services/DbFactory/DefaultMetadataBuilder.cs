@@ -2,7 +2,7 @@
 {
     public class DefaultMetadataBuilder : IMetadataBuilder
     {
-        public IDbMetadata scan<TDB>() where TDB : IDB
+        public IDbMetadata<T> scan<T>() where T : IDB
         {
             throw new System.NotImplementedException();
         }

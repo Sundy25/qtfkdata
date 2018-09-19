@@ -10,7 +10,7 @@ namespace QTFK.Data.Tests
     [TestClass]
     public class UnitTest2
     {
-        IDbMetadata dbMetadata;
+        IDbMetadata<IExpensesDB> dbMetadata;
         IMetadataBuilder metadataBuilder;
 
         public UnitTest2()
@@ -23,7 +23,6 @@ namespace QTFK.Data.Tests
         public void dbMetaDataTest()
         {
             Assert.IsNotNull(this.dbMetadata);
-            Assert.AreEqual(typeof(IExpensesDB), this.dbMetadata.InterfaceType);
             Assert.AreEqual("ExpensesDB", this.dbMetadata.Name);
             Assert.AreEqual(7, this.dbMetadata.Entities.Length);
         }
