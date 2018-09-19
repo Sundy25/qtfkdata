@@ -42,6 +42,11 @@ namespace QTFK.Data.Tests
         {
             IEnumerable<IUser> users;
 
+            foreach (IUser user1 in this.db.Users)
+            {
+                Console.WriteLine($"{user1.Name} - {user1.Mail}");
+            }
+
             this.db.transact(() =>
             {
                 IUser user;
@@ -68,10 +73,6 @@ namespace QTFK.Data.Tests
                 this.db.Users.update(filteredUser);
             }
 
-            foreach (IUser user1 in this.db.Users)
-            {
-                Console.WriteLine($"{user1.Name} - {user1.Mail}");
-            }
         }
 
         [TestMethod]
