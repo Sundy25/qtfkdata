@@ -9,9 +9,14 @@ namespace QTFK.Data.Tests.Models
         int Id { get; set; }
 
         decimal Amount { get; set; }
+        int CurrenyId { get; set; }
 
         IExpense Expense { get; }
-        IUser User { get; }
+
+        [Column("id_usuario")]
+        IUser User { get; set; }
+
+        [Column("currencyId")]
         ICurrency Currency { get; }
     }
 }

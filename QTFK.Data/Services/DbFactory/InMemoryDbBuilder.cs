@@ -1,8 +1,8 @@
 ﻿namespace QTFK.Services.DbFactory
 {
-    public class DefaultMetadataBuilder : IMetadataBuilder
+    public class InMemoryDbBuilder : IDbBuilder
     {
-        public IDbMetadata<T> scan<T>() where T : IDB
+        public TDB createDb<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : IDB
         {
             throw new System.NotImplementedException();
         }

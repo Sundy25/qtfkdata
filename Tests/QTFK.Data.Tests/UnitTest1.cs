@@ -16,51 +16,76 @@ namespace QTFK.Data.Tests
     [TestClass]
     public class UnitTest1
     {
-        private static IDBIO getSomeDriver()
-        {
-            throw new NotImplementedException();
-        }
-
-        private IDBIO driver;
         private IExpensesDB db;
-        private readonly ILogger<LogLevel> logger;
 
         public UnitTest1()
         {
             IMetadataBuilder metadataBuilder;
-            IDbMetadata dbMetadata;
             IDbBuilder dbBuilder;
+            IDBIO driver;
+            IDbMetadata<IExpensesDB> dbMetadata;
             string connectionString;
-
-            this.logger = new MultiLogger(new ILogger<LogLevel>[]
-            {
-                new ConsoleLogger(),
-                new DebugLogger("QTFKdata"),
-            });
 
             connectionString = ConfigurationManager.ConnectionStrings["tests"]?.ConnectionString;
             Assert.IsTrue(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
 
             metadataBuilder = new DefaultMetadataBuilder();
-            dbMetadata = metadataBuilder.scan<IExpensesDB>();
+            driver = new SQLServerDBIO(connectionString);
+            dbBuilder = new SqlServerDbBuilder(driver);
 
-            this.driver = new SQLServerDBIO(connectionString, this.logger);
-            dbBuilder = new SqlServerDbBuilder(this.driver, this.logger);
-            this.db = dbBuilder.createDb<IExpensesDB>(dbMetadata);
+            dbMetadata = metadataBuilder.scan<IExpensesDB>();
+            this.db = dbBuilder.createDb(dbMetadata);
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void userTestMethod1()
         {
-            IUser user;
             IEnumerable<IUser> users;
-            ICurrency euroCurrency, dollardCurrency;
-            ICurrencyConversion eurUsd;
+
+            foreach (IUser user1 in this.db.Users)
+            {
+                Console.WriteLine($"{user1.Name} - {user1.Mail}");
+            }
+
+            this.db.transact(() =>
+            {
+                IUser user;
+
+                user = this.db.Users.create(u =>
+                {
+                    u.Name = "pepe";
+                    u.Mail = "pepe@tronco.es";
+                    u.SignDate = DateTime.Now;
+                });
+
+                user.Mail = "pepe@gmail.com";
+                this.db.Users.update(user);
+
+                this.db.Users.delete(user);
+
+                return true;
+            });
+
+            users = this.db.Users.whereMailContains("Frank");
+            foreach (IUser filteredUser in users)
+            {
+                filteredUser.Name += "_check";
+                this.db.Users.update(filteredUser);
+            }
+
+        }
+
+        [TestMethod]
+        public void currencyTestMethod1()
+        {
             int expenseAmountsCount;
             IPageView<ExpenseAmount> expenseAmountPage;
 
             this.db.transact(() =>
             {
+                ICurrency euroCurrency, dollardCurrency;
+                ICurrencyConversion eurUsd;
+
                 this.db.CurrencyExchanges.deleteAll();
                 this.db.Currencies.deleteAll();
 
@@ -75,37 +100,14 @@ namespace QTFK.Data.Tests
                     x.Value = 1.16m;
                 });
 
-                foreach (ICurrencyConversion exchange in this.db.Currencies
-                    .First(c => c.Name == "Euro")
-                    .Exchanges)
-                {
-                    Console.WriteLine($"1 {exchange.From.Name} = {exchange.Value} {exchange.To.Name}s at {exchange.Date}");
-                }
-
-                user = this.db.Users.create(u =>
-                {
-                    u.Name = "pepe";
-                    u.Mail = "pepe@tronco.es";
-                    u.SignDate = DateTime.Now;
-                });
-
-                user.Mail = "pepe@gmail.com";
-                this.db.Users.update(user);
-
-                this.db.Users.delete(user);
                 return true;
             });
 
-            users = this.db.Users.getWhereMailContains("Frank");
-            foreach (IUser filteredUser in users)
+            foreach (ICurrencyConversion exchange in this.db.Currencies
+                .First(c => c.Name == "Euro")
+                .Exchanges)
             {
-                filteredUser.Name += "_check";
-                this.db.Users.update(filteredUser);
-            }
-
-            foreach (IUser user1 in this.db.Users)
-            {
-                Console.WriteLine($"{user1.Name} - {user1.Mail}");
+                Console.WriteLine($"1 {exchange.From.Name} = {exchange.Value} {exchange.To.Name}s at {exchange.Date}");
             }
 
             foreach (ICurrencyConversion exchange in this.db.CurrencyExchanges)
