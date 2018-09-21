@@ -1,6 +1,6 @@
 ﻿using System;
 using QTFK.Attributes;
-using QTFK.Models;
+using QTFK.Services;
 
 namespace QTFK.Data.Tests.Models
 {
