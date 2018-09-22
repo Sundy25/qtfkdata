@@ -73,11 +73,16 @@
     <Compile Include="UnitTest1.cs" />
     <Compile Include="UnitTest2.cs" />
     <Compile Include="InMemoryTests.cs" />
+    <Compile Include="SampleDBTests.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QTFK.Data\QTFK.Data.csproj">
       <Project>{a78ecf12-d6e8-4c49-b315-ffb4b3fb11cc}</Project>
       <Name>QTFK.Data</Name>
+    </ProjectReference>
+    <ProjectReference Include="..\SimpleDB1\SimpleDB1.csproj">
+      <Project>{f19fa47e-9e0f-472e-9a31-d40b2b2d4f04}</Project>
+      <Name>SimpleDB1</Name>
     </ProjectReference>
   </ItemGroup>
   <ItemGroup>

@@ -1,13 +1,15 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio 14
-VisualStudioVersion = 14.0.25420.1
+# Visual Studio 15
+VisualStudioVersion = 15.0.28010.2019
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data", "QTFK.Data\QTFK.Data.csproj", "{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}"
 EndProject
 Project("{2150E333-8FDC-42A3-9474-1A3956D46DE8}") = "Tests", "Tests", "{01D1FDFA-2FF5-4F98-AEB2-5FDA33F2C7D0}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data.Tests", "Tests\QTFK.Data.Tests\QTFK.Data.Tests.csproj", "{AACBE225-E01A-4187-B770-944C6758A1A2}"
+EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDB1", "Tests\SimpleDB1\SimpleDB1.csproj", "{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -23,11 +25,19 @@ Global
 		{AACBE225-E01A-4187-B770-944C6758A1A2}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{AACBE225-E01A-4187-B770-944C6758A1A2}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{AACBE225-E01A-4187-B770-944C6758A1A2}.Release|Any CPU.Build.0 = Release|Any CPU
+		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
 	EndGlobalSection
 	GlobalSection(NestedProjects) = preSolution
 		{AACBE225-E01A-4187-B770-944C6758A1A2} = {01D1FDFA-2FF5-4F98-AEB2-5FDA33F2C7D0}
+		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04} = {01D1FDFA-2FF5-4F98-AEB2-5FDA33F2C7D0}
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {7E79798F-D97E-44DA-881A-29AEA53EAA09}
 	EndGlobalSection
 EndGlobal
