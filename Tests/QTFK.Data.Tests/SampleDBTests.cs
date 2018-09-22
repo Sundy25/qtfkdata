@@ -1,8 +1,12 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QTFK.Services;
+using QTFK.Services.CompilerWrappers;
 using QTFK.Services.DbFactory;
 using SimpleDB1;
+using SimpleDB1.DataBases.Empty;
+using SimpleDB1.DataBases.Sample1;
 
 namespace QTFK.Data.Tests
 {
@@ -10,30 +14,32 @@ namespace QTFK.Data.Tests
     public class SampleDBTests
     {
 
-        private static IUsersDB prv_createDb()
+        private static T prv_createDb<T>() where T: class, IDB
         {
-            IUsersDB db;
+            T db;
             IDbBuilder dbBuilder;
-            IDbMetadata<IUsersDB> dbMetadata;
+            IDbMetadata<T> dbMetadata;
             IMetadataBuilder metadataBuilder;
+            ICompilerWrapper compilerWrapper;
 
             metadataBuilder = new DefaultMetadataBuilder();
-            dbMetadata = metadataBuilder.scan<IUsersDB>();
-            dbBuilder = new InMemoryDbBuilder();
+            compilerWrapper = new CompilerWrapper();
+            dbMetadata = metadataBuilder.scan<T>();
+            dbBuilder = new InMemoryDbBuilder(compilerWrapper);
             db = dbBuilder.createDb(dbMetadata);
 
             return db;
         }
 
         [TestMethod]
-        public void TestMethod1()
+        public void TestSampleDB()
         {
             IUsersDB db;
             IUser user;
             IUser[] allUsers;
             int deletedUsers;
 
-            db = prv_createDb();
+            db = prv_createDb<IUsersDB>();
             Assert.AreEqual(0, db.Users.Count);
 
             allUsers = db.Users.ToArray();
@@ -65,6 +71,16 @@ namespace QTFK.Data.Tests
 
             allUsers = db.Users.ToArray();
             Assert.AreEqual(0, allUsers.Length);
+        }
+
+        [TestMethod]
+        public void TestEmptyDB()
+        {
+            IEmptyDB db;
+
+            db = prv_createDb<IEmptyDB>();
+            Assert.IsInstanceOfType(db, typeof(IEmptyDB));
+
         }
     }
 }

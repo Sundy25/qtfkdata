@@ -2,7 +2,7 @@
 using QTFK.Services;
 using System;
 
-namespace SimpleDB1
+namespace SimpleDB1.DataBases.Sample1
 {
     public interface IUser : IEntity
     {

@@ -39,6 +39,10 @@
       <HintPath>..\..\libs\qtfk.1.5.0\QTFK.DB.dll</HintPath>
     </Reference>
     <Reference Include="QTFK.Logs, Version=1.0.0.0, Culture=neutral, PublicKeyToken=null" />
+    <Reference Include="QTFK.Reflection, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Reflection.dll</HintPath>
+    </Reference>
     <Reference Include="QTFK.Services.DBIO.SQLServer">
       <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
     </Reference>

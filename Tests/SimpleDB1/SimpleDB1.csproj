@@ -42,8 +42,9 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="IUsersDB.cs" />
-    <Compile Include="IUser.cs" />
+    <Compile Include="DataBases\Empty\IEmptyDB.cs" />
+    <Compile Include="DataBases\Sample1\IUsersDB.cs" />
+    <Compile Include="DataBases\Sample1\IUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

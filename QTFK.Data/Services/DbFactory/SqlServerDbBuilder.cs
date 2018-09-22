@@ -27,7 +27,7 @@ namespace QTFK.Services.DbFactory
             this.dbio = dbio as ISqlServerDBIO;
         }
 
-        public TDB createDb<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : IDB
+        public TDB createDb<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : class, IDB
         {
             throw new NotImplementedException();
         }
