@@ -9,6 +9,7 @@ namespace QTFK.Services
 {
     public interface IDB
     {
+        bool SupportsTransactions { get; }
         void transact(Func<bool> transactionBlock);
     }
 }

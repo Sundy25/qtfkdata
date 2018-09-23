@@ -20,15 +20,22 @@ namespace {dbMetadata.Namespace}
 
     public class {dbMetadata.Name} : {typeof(TDB).FullName}
     {{
+        public bool SupportsTransactions 
+        {{
+            get
+            {{
+                return false;
+            }}
+        }}
+
         public void transact(Func<bool> transactionBlock)
         {{
-            transactionBlock();
+            throw new System.NotSupportedException(""Transactions are not supported by InMemoryDbBuilder"");
         }}
 
     }}
 }}
 ";
-
             return body;
         }
 

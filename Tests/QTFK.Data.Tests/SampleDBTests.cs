@@ -76,6 +76,19 @@ namespace QTFK.Data.Tests
 
             db = prv_createDb<IEmptyDB>();
             Assert.IsInstanceOfType(db, typeof(IEmptyDB));
+            Assert.IsFalse(db.SupportsTransactions);
+
+            try
+            {
+                db.transact(() =>
+                {
+                    return true;
+                });
+                Assert.Fail();
+            }
+            catch (NotSupportedException)
+            {
+            }
 
         }
     }
