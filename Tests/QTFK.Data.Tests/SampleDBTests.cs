@@ -2,9 +2,7 @@
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
 using QTFK.Services;
-using QTFK.Services.CompilerWrappers;
 using QTFK.Services.DbFactory;
-using SimpleDB1;
 using SimpleDB1.DataBases.Empty;
 using SimpleDB1.DataBases.Sample1;
 
@@ -20,12 +18,10 @@ namespace QTFK.Data.Tests
             IDbBuilder dbBuilder;
             IDbMetadata<T> dbMetadata;
             IMetadataBuilder metadataBuilder;
-            ICompilerWrapper compilerWrapper;
 
             metadataBuilder = new DefaultMetadataBuilder();
-            compilerWrapper = new CompilerWrapper();
             dbMetadata = metadataBuilder.scan<T>();
-            dbBuilder = new InMemoryDbBuilder(compilerWrapper);
+            dbBuilder = new InMemoryDbBuilder();
             db = dbBuilder.createDb(dbMetadata);
 
             return db;

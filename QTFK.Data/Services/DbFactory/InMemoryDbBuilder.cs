@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Reflection;
 using QTFK.Extensions.Assemblies;
+using QTFK.Services.Compilers;
 
 namespace QTFK.Services.DbFactory
 {
@@ -31,12 +32,18 @@ namespace {dbMetadata.Namespace}
             return body;
         }
 
-        private readonly ICompilerWrapper compiler;
-
-        public InMemoryDbBuilder(ICompilerWrapper compiler)
+        private static void prv_compilerCompilationResult(System.CodeDom.Compiler.CompilerResults obj)
         {
-            this.compiler = compiler;
+            if (obj.Errors.HasErrors)
+            {
+                for (int i = 0, n = obj.Errors.Count; i < n; i++)
+                {
+                }
+            }
+        }
 
+        public InMemoryDbBuilder()
+        {
         }
 
         public TDB createDb<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : class, IDB
@@ -65,27 +72,11 @@ namespace {dbMetadata.Namespace}
 
             dbClassBody = prv_createClassBody(dbMetadata);
 
-            this.compiler.CompilationResult += prv_compilerCompilationResult;
-            newAssembly = this.compiler.build(dbClassBody, assemblies, settings =>
-            {
-                settings.GenerateInMemory = true;
-                settings.GenerateExecutable = false;
-                settings.IncludeDebugInformation = false;
-            });
+            newAssembly = CompilerWrapper.buildInMemoryAssembly(dbClassBody, assemblies);
             instance = newAssembly.createAssignableInstance<TDB>();
-            this.compiler.CompilationResult -= prv_compilerCompilationResult;
 
             return instance;
         }
 
-        private static void prv_compilerCompilationResult(System.CodeDom.Compiler.CompilerResults obj)
-        {
-            if(obj.Errors.HasErrors)
-            {
-                for (int i = 0, n = obj.Errors.Count; i < n; i++)
-                {
-                }
-            }
-        }
     }
 }
