@@ -43,6 +43,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBases\Empty\IEmptyDB.cs" />
+    <Compile Include="DataBases\Sample1\IReadonlyUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUser.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

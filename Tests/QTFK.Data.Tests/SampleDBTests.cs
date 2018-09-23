@@ -28,7 +28,43 @@ namespace QTFK.Data.Tests
         }
 
         [TestMethod]
-        public void TestSampleDB()
+        public void TestEmptyDB()
+        {
+            IEmptyDB db;
+
+            db = prv_createDb<IEmptyDB>();
+            Assert.IsInstanceOfType(db, typeof(IEmptyDB));
+            Assert.IsFalse(db.SupportsTransactions);
+
+            try
+            {
+                db.transact(() =>
+                {
+                    return true;
+                });
+                Assert.Fail();
+            }
+            catch (NotSupportedException)
+            {
+            }
+
+        }
+
+        [TestMethod]
+        public void TestReadonlyUserDB()
+        {
+            IReadonlyUsersDB db;
+            IUser[] allUsers;
+
+            db = prv_createDb<IReadonlyUsersDB>();
+            Assert.AreEqual(0, db.Users.Count);
+
+            allUsers = db.Users.ToArray();
+            Assert.AreEqual(0, allUsers.Length);
+        }
+
+        [TestMethod]
+        public void TestWriteUsersDB()
         {
             IUsersDB db;
             IUser user;
@@ -69,27 +105,5 @@ namespace QTFK.Data.Tests
             Assert.AreEqual(0, allUsers.Length);
         }
 
-        [TestMethod]
-        public void TestEmptyDB()
-        {
-            IEmptyDB db;
-
-            db = prv_createDb<IEmptyDB>();
-            Assert.IsInstanceOfType(db, typeof(IEmptyDB));
-            Assert.IsFalse(db.SupportsTransactions);
-
-            try
-            {
-                db.transact(() =>
-                {
-                    return true;
-                });
-                Assert.Fail();
-            }
-            catch (NotSupportedException)
-            {
-            }
-
-        }
     }
 }
