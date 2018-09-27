@@ -63,6 +63,7 @@
     <Compile Include="Attributes\ForeignAttribute.cs" />
     <Compile Include="Attributes\IdAttribute.cs" />
     <Compile Include="Services\DbFactory\IClassMetaData.cs" />
+    <Compile Include="Services\IEngineFeatures.cs" />
     <Compile Include="Services\IEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Services\AbstractView.cs" />

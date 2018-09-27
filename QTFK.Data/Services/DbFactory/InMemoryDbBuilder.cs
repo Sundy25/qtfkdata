@@ -8,6 +8,18 @@ namespace QTFK.Services.DbFactory
 
     public class InMemoryDbBuilder : IDbBuilder
     {
+        private class PrvEngineFeatures : IEngineFeatures
+        {
+            public PrvEngineFeatures()
+            {
+                this.SupportsTransactions = false;
+                this.SupportsStoredProcedures = false;
+            }
+
+            public bool SupportsTransactions { get; }
+            public bool SupportsStoredProcedures { get; }
+        }
+
         private static string prv_createClassBody<TDB>(IDbMetadata<TDB> dbMetadata) where TDB: class, IDB
         {
             string body;
@@ -20,17 +32,16 @@ namespace {dbMetadata.Namespace}
 
     public class {dbMetadata.Name} : {typeof(TDB).FullName}
     {{
-        public bool SupportsTransactions 
+        public {dbMetadata.Name}({typeof(IEngineFeatures).FullName} engineFeatures)
         {{
-            get
-            {{
-                return false;
-            }}
+            this.EngineFeatures = engineFeatures;
         }}
+        
+        public {typeof(IEngineFeatures).FullName} EngineFeatures {{ get; }}
 
         public void transact(Func<bool> transactionBlock)
         {{
-            throw new System.NotSupportedException(""Transactions are not supported by InMemoryDbBuilder"");
+            throw new {typeof(System.NotSupportedException).FullName}(""Transactions are not supported by InMemoryDbBuilder"");
         }}
 
     }}
