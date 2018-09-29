@@ -1,14 +1,6 @@
-﻿using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-
-namespace QTFK.Services
+﻿namespace QTFK.Services
 {
-    public interface IView<T> : IEnumerable<T>
+    public interface IView<T> : IPaginable<T> where T: IEntity
     {
-        IPageView<T> paginate(int pageSize, int page);
-        int Count { get; }
     }
 }
