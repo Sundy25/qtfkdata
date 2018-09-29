@@ -2,7 +2,7 @@
 
 namespace QTFK.Services
 {
-    public interface IRepository<T> : IView<T> where T : IEntity
+    public interface ICrud<T> : IView<T> where T : IEntity
     {
         T create(Action<T> item);
         void update(T item);

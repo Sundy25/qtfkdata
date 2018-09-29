@@ -4,7 +4,7 @@ using QTFK.Services;
 
 namespace QTFK.Data.Tests.Services
 {
-    public interface IUserRepository : IRepository<IUser>
+    public interface IUserCrud : ICrud<IUser>
     {
         IView<IUser> whereMailContains(string mail);
         int deleteWhereNameStartsWith(string namePrefix);
