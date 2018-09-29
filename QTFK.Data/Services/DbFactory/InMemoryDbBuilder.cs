@@ -1,6 +1,7 @@
 ﻿using System;
 using System.CodeDom.Compiler;
 using System.Reflection;
+using System.Text;
 using QTFK.Extensions.Assemblies;
 using QTFK.Services.Compilers;
 
@@ -23,9 +24,12 @@ namespace QTFK.Services.DbFactory
 
         private static string prv_createClassBody<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : class, IDB
         {
-            string body, engineFeaturesTypeFullName;
+            string body, engineFeaturesTypeFullName, views;
 
             engineFeaturesTypeFullName = typeof(IEngineFeatures).FullName;
+
+            views = prv_createViewProperties(dbMetadata);
+
             body = $@"
 
 namespace {dbMetadata.Namespace}
@@ -54,10 +58,48 @@ namespace {dbMetadata.Namespace}
             throw new {typeof(NotSupportedException).FullName}(""Transactions are not supported by InMemoryDbBuilder"");
         }}
 
+        {views}
     }}
 }}
 ";
             return body;
+        }
+
+        private static string prv_createViewProperties<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : class, IDB
+        {
+            StringBuilder stringBuilder;
+
+            stringBuilder = new StringBuilder();
+
+            foreach (IViewMetaData viewMetaData in dbMetadata.Views)
+            {
+                string view, fieldName;
+
+                fieldName = prv_lowerCamelCase(viewMetaData.InterfaceType.Name);
+
+                view = $@"
+private {viewMetaData.InterfaceType.FullName} {fieldName};
+
+public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
+{{
+    get
+    {{
+        if(this.{fieldName} == null)
+            this.{fieldName} = new {viewMetaData.Name}();
+
+        return this.{fieldName};
+    }}
+}}
+";
+                stringBuilder.AppendLine(view);
+            }
+
+            return stringBuilder.ToString();
+        }
+
+        private static string prv_lowerCamelCase(string name)
+        {
+            return name[0].ToString().ToLower() + name.Substring(1);
         }
 
         public InMemoryDbBuilder()
@@ -90,6 +132,7 @@ namespace {dbMetadata.Namespace}
                 dbType.Module.Name,
             };
 
+            
             dbClassBody = prv_createClassBody(dbMetadata);
 
             try

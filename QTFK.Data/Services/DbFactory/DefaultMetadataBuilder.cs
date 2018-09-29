@@ -1,4 +1,6 @@
 ﻿using System;
+using System.Collections.Generic;
+using System.Linq;
 
 namespace QTFK.Services.DbFactory
 {
@@ -6,9 +8,33 @@ namespace QTFK.Services.DbFactory
     {
         private class PrvDbMetaData<T> : IDbMetadata<T> where T : IDB
         {
-            public IEntityMetaData[] Entities { get; set; }
+            public PrvDbMetaData()
+            {
+                this.EntitiesList = new List<IEntityMetaData>();
+                this.ViewsList = new List<IViewMetaData>();
+            }
+
+            public IList<IEntityMetaData> EntitiesList { get; }
+            public IList<IViewMetaData> ViewsList { get; }
+
             public string Name { get; set; }
             public string Namespace { get; set; }
+
+            public IEntityMetaData[] Entities
+            {
+                get
+                {
+                    return this.EntitiesList.ToArray();
+                }
+            }
+
+            public IViewMetaData[] Views
+            {
+                get
+                {
+                    return this.ViewsList.ToArray();
+                }
+            }
         }
 
         private static string prv_composeNewClassName(Type type)
@@ -40,7 +66,6 @@ namespace QTFK.Services.DbFactory
             {
                 Name = prv_composeNewClassName(interfaceType),
                 Namespace = interfaceType.Namespace,
-                Entities = new IEntityMetaData[] { },
             };
 
             return dbMetadata;
