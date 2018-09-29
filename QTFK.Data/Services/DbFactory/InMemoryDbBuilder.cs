@@ -116,8 +116,25 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
             PrvEngineFeatures engineFeatures;
             object[] contructorParameters;
 
-            dbType = typeof(TDB);
+            /* contruir db
+             *  DB      --> {BClass} {DbBody} LView LCrud {EClass}
+             *  LView   --> {E}
+             *          `-> View LView
+             *  View    --> Entity {BClass} {ViewBody} {EClass}
+             *  LCrud   --> {E}
+             *          `-> Crud LCrud
+             *  Crud    --> Entity {BClass} {CrudBody} {EClass}
+             *  Entity  --> {BClass} Column LColumn {EClass}
+             *  LColumn --> {E}
+             *          `-> Column LColumn
+             *  Column  --> ColAttrs
+             *  ColAttr --> IdAtr
+             */
 
+
+            dbClassBody = prv_createClassBody(dbMetadata);
+
+            dbType = typeof(TDB);
             assemblies = new string[]
             {
                 //"Microsoft.CSharp.dll",
@@ -133,7 +150,6 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
             };
 
             
-            dbClassBody = prv_createClassBody(dbMetadata);
 
             try
             {

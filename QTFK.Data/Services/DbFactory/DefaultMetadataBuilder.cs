@@ -8,33 +8,10 @@ namespace QTFK.Services.DbFactory
     {
         private class PrvDbMetaData<T> : IDbMetadata<T> where T : IDB
         {
-            public PrvDbMetaData()
-            {
-                this.EntitiesList = new List<IEntityMetaData>();
-                this.ViewsList = new List<IViewMetaData>();
-            }
-
-            public IList<IEntityMetaData> EntitiesList { get; }
-            public IList<IViewMetaData> ViewsList { get; }
-
             public string Name { get; set; }
             public string Namespace { get; set; }
-
-            public IEntityMetaData[] Entities
-            {
-                get
-                {
-                    return this.EntitiesList.ToArray();
-                }
-            }
-
-            public IViewMetaData[] Views
-            {
-                get
-                {
-                    return this.ViewsList.ToArray();
-                }
-            }
+            public IEntityMetaData[] Entities { get; set; }
+            public IViewMetaData[] Views { get; set; }
         }
 
         private static string prv_composeNewClassName(Type type)
@@ -59,13 +36,19 @@ namespace QTFK.Services.DbFactory
         {
             PrvDbMetaData<T> dbMetadata;
             Type interfaceType;
+            IList<IEntityMetaData> entities;
+            IList<IViewMetaData> views;
 
+            entities = new List<IEntityMetaData>();
+            views = new List<IViewMetaData>();
             interfaceType = typeof(T);
 
             dbMetadata = new PrvDbMetaData<T>()
             {
                 Name = prv_composeNewClassName(interfaceType),
                 Namespace = interfaceType.Namespace,
+                Entities = entities.ToArray(),
+                Views = views.ToArray(),
             };
 
             return dbMetadata;
