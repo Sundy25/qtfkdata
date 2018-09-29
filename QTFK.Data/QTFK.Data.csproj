@@ -81,7 +81,7 @@
     <Compile Include="Services\IDB.cs" />
     <Compile Include="Services\IPageView.cs" />
     <Compile Include="Services\IView.cs" />
-    <Compile Include="Services\IRepository.cs" />
+    <Compile Include="Services\ICrud.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

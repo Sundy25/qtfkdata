@@ -3,7 +3,7 @@ using QTFK.Services;
 
 namespace QTFK.Data.Tests.Services
 {
-    public interface ICategoryRepository : IRepository<ICategory>
+    public interface ICategoryCrud : ICrud<ICategory>
     {
         IView<ICategory> whereParentIsNull();
         IView<ICategory> whereParentNameIs(string parentName);

@@ -5,13 +5,13 @@ namespace QTFK.Data.Tests.Services
 {
     public interface IExpensesDB : IDB
     {
-        IUserRepository Users { get; }
-        IRepository<IExpense> Expenses { get; }
+        IUserCrud Users { get; }
+        ICrud<IExpense> Expenses { get; }
         IView<IPayment> Payments { get; }
-        ICategoryRepository Categories { get; }
+        ICategoryCrud Categories { get; }
 
-        IRepository<ICurrencyConversion> CurrencyExchanges { get; }
-        IRepository<ICurrency> Currencies { get; }
+        ICrud<ICurrencyConversion> CurrencyExchanges { get; }
+        ICrud<ICurrency> Currencies { get; }
 
         ExpenseAmountView ExpenseAmounts { get; }
     }
