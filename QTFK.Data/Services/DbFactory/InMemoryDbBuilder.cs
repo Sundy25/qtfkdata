@@ -78,7 +78,7 @@ namespace {dbMetadata.Namespace}
 
             assemblies = new string[]
             {
-                "Microsoft.CSharp.dll",
+                //"Microsoft.CSharp.dll",
                 "System.dll",
                 "System.Core.dll",
                 "System.Data.DataSetExtensions.dll",
