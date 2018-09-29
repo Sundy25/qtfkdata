@@ -1,4 +1,5 @@
 ﻿using System;
+using System.CodeDom.Compiler;
 using System.Reflection;
 using QTFK.Extensions.Assemblies;
 using QTFK.Services.Compilers;
@@ -20,10 +21,11 @@ namespace QTFK.Services.DbFactory
             public bool SupportsStoredProcedures { get; }
         }
 
-        private static string prv_createClassBody<TDB>(IDbMetadata<TDB> dbMetadata) where TDB: class, IDB
+        private static string prv_createClassBody<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : class, IDB
         {
-            string body;
+            string body, engineFeaturesTypeFullName;
 
+            engineFeaturesTypeFullName = typeof(IEngineFeatures).FullName;
             body = $@"
 
 namespace {dbMetadata.Namespace}
@@ -32,32 +34,30 @@ namespace {dbMetadata.Namespace}
 
     public class {dbMetadata.Name} : {typeof(TDB).FullName}
     {{
-        public {dbMetadata.Name}({typeof(IEngineFeatures).FullName} engineFeatures)
+        private readonly {engineFeaturesTypeFullName} engineFeatures;
+
+        public {dbMetadata.Name}({engineFeaturesTypeFullName} engineFeatures)
         {{
-            this.EngineFeatures = engineFeatures;
+            this.engineFeatures = engineFeatures;
         }}
         
-        public {typeof(IEngineFeatures).FullName} EngineFeatures {{ get; }}
+        public {engineFeaturesTypeFullName} EngineFeatures
+        {{ 
+            get
+            {{
+                return this.engineFeatures;
+            }}
+        }}
 
         public void transact(Func<bool> transactionBlock)
         {{
-            throw new {typeof(System.NotSupportedException).FullName}(""Transactions are not supported by InMemoryDbBuilder"");
+            throw new {typeof(NotSupportedException).FullName}(""Transactions are not supported by InMemoryDbBuilder"");
         }}
 
     }}
 }}
 ";
             return body;
-        }
-
-        private static void prv_compilerCompilationResult(System.CodeDom.Compiler.CompilerResults obj)
-        {
-            if (obj.Errors.HasErrors)
-            {
-                for (int i = 0, n = obj.Errors.Count; i < n; i++)
-                {
-                }
-            }
         }
 
         public InMemoryDbBuilder()
@@ -71,6 +71,8 @@ namespace {dbMetadata.Namespace}
             string dbClassBody;
             string[] assemblies;
             Assembly newAssembly;
+            PrvEngineFeatures engineFeatures;
+            object[] contructorParameters;
 
             dbType = typeof(TDB);
 
@@ -90,8 +92,17 @@ namespace {dbMetadata.Namespace}
 
             dbClassBody = prv_createClassBody(dbMetadata);
 
-            newAssembly = CompilerWrapper.buildInMemoryAssembly(dbClassBody, assemblies);
-            instance = newAssembly.createAssignableInstance<TDB>();
+            try
+            {
+                newAssembly = CompilerWrapper.buildInMemoryAssembly(dbClassBody, assemblies);
+            }
+            catch (CompilerException e)
+            {
+                throw;
+            }
+            engineFeatures = new PrvEngineFeatures();
+            contructorParameters = new object[] { engineFeatures };
+            instance = newAssembly.createAssignableInstance<TDB>(contructorParameters);
 
             return instance;
         }

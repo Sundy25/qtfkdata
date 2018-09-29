@@ -35,6 +35,7 @@ namespace QTFK.Data.Tests
             db = prv_createDb<IEmptyDB>();
             Assert.IsInstanceOfType(db, typeof(IEmptyDB));
             Assert.IsFalse(db.EngineFeatures.SupportsTransactions);
+            Assert.IsFalse(db.EngineFeatures.SupportsStoredProcedures);
 
             try
             {
