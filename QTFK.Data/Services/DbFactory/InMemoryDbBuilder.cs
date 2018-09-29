@@ -124,11 +124,7 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
              *  LCrud   --> {E}
              *          `-> Crud LCrud
              *  Crud    --> Entity {BClass} {CrudBody} {EClass}
-             *  Entity  --> {BClass} Column LColumn {EClass}
-             *  LColumn --> {E}
-             *          `-> Column LColumn
-             *  Column  --> ColAttrs
-             *  ColAttr --> IdAtr
+             *  Entity  --> {BClass} {EntityBody} {EClass}
              */
 
 
