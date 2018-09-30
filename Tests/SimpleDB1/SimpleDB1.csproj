@@ -32,6 +32,14 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="QTFK.DB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\qtfk.1.5.0\QTFK.DB.dll</HintPath>
+    </Reference>
+    <Reference Include="QTFK.Services.DBIO.SQLServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <SpecificVersion>False</SpecificVersion>
+      <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
+    </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
     <Reference Include="System.Xml.Linq" />
@@ -43,6 +51,8 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBases\Empty\IEmptyDB.cs" />
+    <Compile Include="DataBases\Empty\InMemoryPrototype\EmptyInMemoryPrototype.cs" />
+    <Compile Include="DataBases\Empty\SqlServerPrototype\EmptySqlServerPrototype.cs" />
     <Compile Include="DataBases\Sample1\IReadonlyUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUser.cs" />

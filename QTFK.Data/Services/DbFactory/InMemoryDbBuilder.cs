@@ -1,5 +1,6 @@
 ﻿using System;
 using System.CodeDom.Compiler;
+using System.Collections.Generic;
 using System.Reflection;
 using System.Text;
 using QTFK.Extensions.Assemblies;
@@ -102,6 +103,23 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
             return name[0].ToString().ToLower() + name.Substring(1);
         }
 
+        private void prv_buildDb<TDB>(IDbMetadata<TDB> dbMetadata, ICollection<string> sources) where TDB : class, IDB
+        {
+            string dbSource;
+
+            foreach (IViewMetaData viewMetadata in dbMetadata.Views)
+                prv_buildView(dbMetadata, viewMetadata, sources);
+
+
+
+            throw new NotImplementedException();
+        }
+
+        private void prv_buildView<TDB>(IDbMetadata<TDB> dbMetadata, IViewMetaData viewMetadata, ICollection<string> sources) where TDB : class, IDB
+        {
+            throw new NotImplementedException();
+        }
+
         public InMemoryDbBuilder()
         {
         }
@@ -115,6 +133,7 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
             Assembly newAssembly;
             PrvEngineFeatures engineFeatures;
             object[] contructorParameters;
+            ICollection<string> sources;
 
             /* contruir db
              *  DB      --> {BClass} {DbBody} LView LCrud {EClass}
@@ -126,6 +145,11 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
              *  Crud    --> Entity {BClass} {CrudBody} {EClass}
              *  Entity  --> {BClass} {EntityBody} {EClass}
              */
+
+
+            sources = new LinkedList<string>();
+            prv_buildDb(dbMetadata, sources);
+
 
 
             dbClassBody = prv_createClassBody(dbMetadata);
