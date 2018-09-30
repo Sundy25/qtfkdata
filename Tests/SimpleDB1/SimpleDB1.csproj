@@ -57,6 +57,7 @@
     <Compile Include="DataBases\Sample1\IUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUser.cs" />
     <Compile Include="DataBases\Sample1\Prototypes\InMemory\UserDBInMemoryPrototype.cs" />
+    <Compile Include="DataBases\Sample1\Prototypes\SqlServer\UserDBSqlServerPrototype.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -65,8 +66,6 @@
       <Name>QTFK.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="DataBases\Sample1\Prototypes\SqlServer\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
