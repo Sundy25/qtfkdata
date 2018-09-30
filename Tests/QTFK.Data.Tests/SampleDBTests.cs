@@ -55,10 +55,21 @@ namespace QTFK.Data.Tests
         public void TestReadonlyUserDB()
         {
             IReadonlyUsersDB db;
-            IUser[] allUsers;
+            IUser[] allUsers, pageArray;
+            IPageView<IUser> page;
 
-            db = prv_createDb<IReadonlyUsersDB>();
+            //db = prv_createDb<IReadonlyUsersDB>();
+            db = new SimpleDB1.DataBases.Sample1.Prototypes.InMemory.UserDBInMemoryPrototype();
             Assert.AreEqual(0, db.Users.Count);
+
+            page = db.Users.paginate(100,1);
+            Assert.AreEqual(1, page.CurrentPage);
+            Assert.AreEqual(100, page.PageSize);
+            Assert.AreEqual(0, page.PagesCount);
+            Assert.IsNull(page.GetEnumerator().Current);
+            Assert.IsFalse(page.GetEnumerator().MoveNext());
+            pageArray = page.ToArray();
+            Assert.AreEqual(0, pageArray.Length);
 
             allUsers = db.Users.ToArray();
             Assert.AreEqual(0, allUsers.Length);

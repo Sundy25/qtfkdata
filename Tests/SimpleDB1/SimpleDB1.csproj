@@ -51,11 +51,12 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBases\Empty\IEmptyDB.cs" />
-    <Compile Include="DataBases\Empty\InMemoryPrototype\EmptyInMemoryPrototype.cs" />
-    <Compile Include="DataBases\Empty\SqlServerPrototype\EmptySqlServerPrototype.cs" />
+    <Compile Include="DataBases\Empty\Prototypes\InMemory\EmptyInMemoryPrototype.cs" />
+    <Compile Include="DataBases\Empty\Prototypes\SqlServer\EmptySqlServerPrototype.cs" />
     <Compile Include="DataBases\Sample1\IReadonlyUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUser.cs" />
+    <Compile Include="DataBases\Sample1\Prototypes\InMemory\UserDBInMemoryPrototype.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>
@@ -63,6 +64,9 @@
       <Project>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</Project>
       <Name>QTFK.Data</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <Folder Include="DataBases\Sample1\Prototypes\SqlServer\" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

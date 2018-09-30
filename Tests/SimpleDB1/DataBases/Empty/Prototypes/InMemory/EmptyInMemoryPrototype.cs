@@ -1,7 +1,7 @@
 ﻿using System;
 using QTFK.Services;
 
-namespace SimpleDB1.DataBases.Empty.InMemoryPrototype
+namespace SimpleDB1.DataBases.Empty.Prototypes.InMemory
 {
     public class EmptyInMemoryPrototype : IEmptyDB
     {
@@ -25,7 +25,7 @@ namespace SimpleDB1.DataBases.Empty.InMemoryPrototype
 
         public void transact(Func<bool> transactionBlock)
         {
-            throw new NotImplementedException();
+            throw new NotSupportedException();
         }
 
     }

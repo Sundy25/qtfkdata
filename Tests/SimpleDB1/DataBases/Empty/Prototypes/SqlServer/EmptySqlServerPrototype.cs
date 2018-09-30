@@ -2,7 +2,7 @@
 using QTFK.Services;
 using QTFK.Services.DBIO;
 
-namespace SimpleDB1.DataBases.Empty.SqlServerPrototype
+namespace SimpleDB1.DataBases.Empty.Prototypes.SqlServer
 {
     public class EmptySqlServerPrototype : IEmptyDB
     {
@@ -31,12 +31,13 @@ namespace SimpleDB1.DataBases.Empty.SqlServerPrototype
         {
             this.dbio.Set(command =>
             {
-                bool mustCommit;
+                bool blockResult;
 
-                mustCommit = transactionBlock();
+                blockResult = transactionBlock();
 
-                if (mustCommit == false)
+                if (blockResult == false)
                     command.Transaction.Rollback();
+
                 return 0;
             });
         }
