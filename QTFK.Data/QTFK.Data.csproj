@@ -82,8 +82,10 @@
     <Compile Include="Services\IDB.cs" />
     <Compile Include="Services\IPageView.cs" />
     <Compile Include="Services\IPaginable.cs" />
+    <Compile Include="Services\IFullTable.cs" />
     <Compile Include="Services\IView.cs" />
-    <Compile Include="Services\ICrud.cs" />
+    <Compile Include="Services\ITable.cs" />
+    <Compile Include="Services\PageView.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

@@ -2,5 +2,6 @@
 {
     public interface IView<T> : IPaginable<T> where T: IEntity
     {
+        int Count { get; }
     }
 }

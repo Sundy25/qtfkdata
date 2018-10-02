@@ -20,33 +20,6 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.SqlServer
             public bool SupportsStoredProcedures { get; }
         }
 
-        private class PrvPageView<T> : IPageView<T>
-        {
-            private readonly IEnumerable<T> items;
-
-            public PrvPageView(int pageSize, int page, int pagesCount, IEnumerable<T> items)
-            {
-                this.PageSize = pageSize;
-                this.CurrentPage = page;
-                this.PagesCount = pagesCount;
-                this.items = items;
-            }
-
-            public int PagesCount { get; }
-            public int CurrentPage { get; }
-            public int PageSize { get; }
-
-            public IEnumerator<T> GetEnumerator()
-            {
-                return this.items.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this.items.GetEnumerator();
-            }
-        }
-
         private class PrvUser : IUser
         {
             public int Id { get; set; }
@@ -74,11 +47,14 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.SqlServer
             public IPageView<IUser> paginate(int pageSize, int page)
             {
                 IEnumerable<IUser> paginatedUsers;
+                IEnumerator<IUser> usersEnumerator;
                 int pagesCount;
 
                 throw new NotImplementedException();
 
-                return new PrvPageView<IUser>(pageSize, page, pagesCount, paginatedUsers);
+                usersEnumerator = paginatedUsers.GetEnumerator();
+
+                return new PageView<IUser>(pageSize, page, pagesCount, usersEnumerator);
             }
 
             IEnumerator IEnumerable.GetEnumerator()

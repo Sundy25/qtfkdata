@@ -78,7 +78,6 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void currencyTestMethod1()
         {
-            int expenseAmountsCount;
             IPageView<ExpenseAmount> expenseAmountPage;
 
             this.db.transact(() =>
@@ -120,7 +119,6 @@ namespace QTFK.Data.Tests
                 Console.WriteLine($"{expense.Concept} - {expense.Date}");
             }
 
-            expenseAmountsCount = this.db.ExpenseAmounts.Count;
             expenseAmountPage = this.db.ExpenseAmounts.paginate(10, 0);
 
             Console.WriteLine($"Current Page: {expenseAmountPage.CurrentPage}");
