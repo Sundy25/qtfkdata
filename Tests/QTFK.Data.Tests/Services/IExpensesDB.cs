@@ -6,13 +6,11 @@ namespace QTFK.Data.Tests.Services
     public interface IExpensesDB : IDB
     {
         IUserCrud Users { get; }
-        IFullTable<IExpense> Expenses { get; }
+        ITable<IExpense> Expenses { get; }
         IView<IPayment> Payments { get; }
         ICategoryCrud Categories { get; }
 
-        IFullTable<ICurrencyConversion> CurrencyExchanges { get; }
-        IFullTable<ICurrency> Currencies { get; }
-
-        ExpenseAmountView ExpenseAmounts { get; }
+        ITable<ICurrencyConversion> CurrencyExchanges { get; }
+        ITable<ICurrency> Currencies { get; }
     }
 }

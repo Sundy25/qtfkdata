@@ -78,8 +78,6 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void currencyTestMethod1()
         {
-            IPageView<ExpenseAmount> expenseAmountPage;
-
             this.db.transact(() =>
             {
                 ICurrency euroCurrency, dollardCurrency;
@@ -118,22 +116,6 @@ namespace QTFK.Data.Tests
             {
                 Console.WriteLine($"{expense.Concept} - {expense.Date}");
             }
-
-            expenseAmountPage = this.db.ExpenseAmounts.paginate(10, 0);
-
-            Console.WriteLine($"Current Page: {expenseAmountPage.CurrentPage}");
-            Console.WriteLine($"Total Pages: {expenseAmountPage.PagesCount}");
-            Console.WriteLine($"Page size: {expenseAmountPage.PageSize}");
-            foreach (ExpenseAmount amount in expenseAmountPage)
-            {
-                Console.WriteLine($"{amount.Concept} - {amount.Amount} - {amount.TotalContributors}");
-            }
-
-            foreach (ExpenseAmount amount in this.db.ExpenseAmounts.paginate(10, 1))
-            {
-                Console.WriteLine($"{amount.Concept} - {amount.Amount} - {amount.TotalContributors}");
-            }
-
         }
     }
 }

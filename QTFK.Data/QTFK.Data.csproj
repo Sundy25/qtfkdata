@@ -67,7 +67,6 @@
     <Compile Include="Services\IEngineFeatures.cs" />
     <Compile Include="Services\IEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\AbstractView.cs" />
     <Compile Include="Services\DbFactory\IColumnMetaData.cs" />
     <Compile Include="Services\DbFactory\IDbMetadata.cs" />
     <Compile Include="Services\DbFactory\DefaultMetadataBuilder.cs" />
@@ -82,7 +81,6 @@
     <Compile Include="Services\IDB.cs" />
     <Compile Include="Services\IPageView.cs" />
     <Compile Include="Services\IPaginable.cs" />
-    <Compile Include="Services\IFullTable.cs" />
     <Compile Include="Services\IView.cs" />
     <Compile Include="Services\ITable.cs" />
     <Compile Include="Services\PageView.cs" />

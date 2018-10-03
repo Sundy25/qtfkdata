@@ -4,6 +4,6 @@ namespace SimpleDB1.DataBases.Sample1
 {
     public interface IUsersDB : IDB
     {
-        IFullTable<IUser> Users { get; }
+        ITable<IUser> Users { get; }
     }
 }
