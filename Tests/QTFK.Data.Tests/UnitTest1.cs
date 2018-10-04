@@ -117,5 +117,20 @@ namespace QTFK.Data.Tests
                 Console.WriteLine($"{expense.Concept} - {expense.Date}");
             }
         }
+
+        [TestMethod]
+        public void paginationTests1()
+        {
+            IPageView<IExpense>[] pages;
+            
+            pages = this.db.Expenses.getPages(pageSize: 10);
+
+            Assert.AreEqual(3, pages.Length);
+            Assert.AreEqual(10, pages[0].Count());
+            Assert.AreEqual(10, pages[1].Count());
+            Assert.AreEqual(3, pages[2].Count());
+            throw new NotImplementedException();
+        }
+
     }
 }

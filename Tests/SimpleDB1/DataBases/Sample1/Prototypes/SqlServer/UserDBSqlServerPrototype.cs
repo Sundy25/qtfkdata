@@ -44,17 +44,9 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.SqlServer
                 throw new NotImplementedException();
             }
 
-            public IPageView<IUser> paginate(int pageSize, int page)
+            public IPageView<IUser>[] getPages(int pageSize)
             {
-                IEnumerable<IUser> paginatedUsers;
-                IEnumerator<IUser> usersEnumerator;
-                int pagesCount;
-
                 throw new NotImplementedException();
-
-                usersEnumerator = paginatedUsers.GetEnumerator();
-
-                return new PageView<IUser>(pageSize, page, pagesCount, usersEnumerator);
             }
 
             IEnumerator IEnumerable.GetEnumerator()

@@ -20,33 +20,6 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.InMemory
             public bool SupportsStoredProcedures { get; }
         }
 
-        private class PrvPageView<T> : IPageView<T>
-        {
-            private readonly IEnumerable<T> items;
-
-            public PrvPageView(int pageSize, int page, int pagesCount, IEnumerable<T> items)
-            {
-                this.PageSize = pageSize;
-                this.CurrentPage = page;
-                this.PagesCount = pagesCount;
-                this.items = items;
-            }
-
-            public int PagesCount { get; }
-            public int CurrentPage { get; }
-            public int PageSize { get; }
-
-            public IEnumerator<T> GetEnumerator()
-            {
-                return this.items.GetEnumerator();
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this.items.GetEnumerator();
-            }
-        }
-
         private class PrvUsersView : IView<IUser>
         {
             private readonly IList<IUser> users;
@@ -69,18 +42,29 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.InMemory
                 return this.users.GetEnumerator();
             }
 
-            public IPageView<IUser> paginate(int pageSize, int page)
+            public IPageView<IUser>[] getPages(int pageSize)
             {
-                int pagesCount, offset;
-                IEnumerable<IUser> paginatedUsers;
+                IPageView<IUser>[] pagesResult;
+                int pagesCount;
 
-                offset = pageSize * page;
                 pagesCount = (int)Math.Ceiling((decimal)this.users.Count / pageSize);
-                paginatedUsers = this.users
-                    .Skip(offset)
-                    .Take(pageSize);
+                pagesResult = new IPageView<IUser>[pagesCount];
 
-                return new PrvPageView<IUser>(pageSize, page, pagesCount, paginatedUsers);
+                for (int i = 0; i < pagesCount; i++)
+                {
+                    int offset;
+                    IEnumerator<IUser> paginatedUsers;
+
+                    offset = pagesCount * i;
+                    paginatedUsers = this.users
+                        .Skip(offset)
+                        .Take(pageSize)
+                        .GetEnumerator();
+
+                    pagesResult[i] = new PageView<IUser>(paginatedUsers);
+                }
+
+                return pagesResult;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
