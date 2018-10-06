@@ -8,8 +8,7 @@ using System.Linq;
 using QTFK.Services.DbFactory;
 using QTFK.Services.DBIO;
 using System.Configuration;
-using QTFK.Models;
-using QTFK.Services.Loggers;
+using QTFK.Extensions;
 
 namespace QTFK.Data.Tests
 {
@@ -121,15 +120,15 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void paginationTests1()
         {
-            IPageView<IExpense>[] pages;
+            IPageCollection<IExpense> pages;
             
             pages = this.db.Expenses.getPages(pageSize: 10);
 
-            Assert.AreEqual(3, pages.Length);
-            Assert.AreEqual(10, pages[0].Count());
-            Assert.AreEqual(10, pages[1].Count());
-            Assert.AreEqual(3, pages[2].Count());
-            throw new NotImplementedException();
+            Assert.AreEqual(3, pages.Count);
+            Assert.AreEqual(10, pages[0].Count);
+            Assert.AreEqual(10, pages[1].Count);
+            Assert.AreEqual(3, pages[2].Count);
+            throw new NotImplementedException("This test method needs more test code.");
         }
 
     }

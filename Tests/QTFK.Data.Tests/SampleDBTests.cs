@@ -5,6 +5,7 @@ using QTFK.Services;
 using QTFK.Services.DbFactory;
 using SimpleDB1.DataBases.Empty;
 using SimpleDB1.DataBases.Sample1;
+using QTFK.Extensions;
 
 namespace QTFK.Data.Tests
 {
@@ -56,14 +57,14 @@ namespace QTFK.Data.Tests
         {
             IReadonlyUsersDB db;
             IUser[] allUsers;
-            IPageView<IUser>[] pages;
+            IPageCollection<IUser> pages;
 
             //db = prv_createDb<IReadonlyUsersDB>();
             db = new SimpleDB1.DataBases.Sample1.Prototypes.InMemory.UserDBInMemoryPrototype();
             Assert.AreEqual(0, db.Users.Count);
 
             pages = db.Users.getPages(100);
-            Assert.AreEqual(0, pages.Length);
+            Assert.AreEqual(0, pages.Count);
 
             allUsers = db.Users.ToArray();
             Assert.AreEqual(0, allUsers.Length);

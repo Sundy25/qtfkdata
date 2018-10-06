@@ -42,36 +42,49 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.InMemory
                 return this.users.GetEnumerator();
             }
 
-            public IPageView<IUser>[] getPages(int pageSize)
+            IPageCollection<IUser> IView<IUser>.getPages(int pageSize)
             {
-                IPageView<IUser>[] pagesResult;
-                int pagesCount;
+                PageCollection<IUser> pageCollection;
+                int pagesCount, lastPageSize;
+                Func<IEnumerator<IUser>>[] enumeratorCreatorDelegates;
 
-                pagesCount = (int)Math.Ceiling((decimal)this.users.Count / pageSize);
-                pagesResult = new IPageView<IUser>[pagesCount];
+
+                pagesCount = Math.DivRem(this.users.Count, pageSize, out lastPageSize);
+                if (lastPageSize > 0)
+                    pagesCount++;
+
+                enumeratorCreatorDelegates = new Func<IEnumerator<IUser>>[pagesCount];
 
                 for (int i = 0; i < pagesCount; i++)
                 {
                     int offset;
-                    IEnumerator<IUser> paginatedUsers;
+                    Func<IEnumerator<IUser>> enumeratorCreatorDelegate;
 
-                    offset = pagesCount * i;
-                    paginatedUsers = this.users
-                        .Skip(offset)
-                        .Take(pageSize)
-                        .GetEnumerator();
+                    offset = pageSize * i;
+                    enumeratorCreatorDelegate = () =>
+                    {
+                        IEnumerator<IUser> enumerator;
 
-                    pagesResult[i] = new PageView<IUser>(paginatedUsers);
+                        enumerator = this.users
+                            .Skip(offset)
+                            .Take(pageSize)
+                            .GetEnumerator();
+
+                        return enumerator;
+                    };
+
+                    enumeratorCreatorDelegates[i] = enumeratorCreatorDelegate;
                 }
 
-                return pagesResult;
+                pageCollection = new PageCollection<IUser>(enumeratorCreatorDelegates, pageSize, lastPageSize);
+
+                return pageCollection;
             }
 
             IEnumerator IEnumerable.GetEnumerator()
             {
                 return this.users.GetEnumerator();
             }
-
         }
 
         public UserDBInMemoryPrototype()

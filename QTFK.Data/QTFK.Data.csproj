@@ -62,6 +62,7 @@
     <Compile Include="Attributes\ColumnAttribute.cs" />
     <Compile Include="Attributes\ForeignAttribute.cs" />
     <Compile Include="Attributes\IdAttribute.cs" />
+    <Compile Include="Extensions\DbExtensions.cs" />
     <Compile Include="Services\DbFactory\IClassMetaData.cs" />
     <Compile Include="Services\DbFactory\IViewMetaData.cs" />
     <Compile Include="Services\IEngineFeatures.cs" />
@@ -79,10 +80,11 @@
     <Compile Include="Services\DbFactory\RelationShipKind.cs" />
     <Compile Include="Services\DbFactory\SqlServerDbBuilder.cs" />
     <Compile Include="Services\IDB.cs" />
+    <Compile Include="Services\IPageCollection.cs" />
     <Compile Include="Services\IPageView.cs" />
     <Compile Include="Services\IView.cs" />
     <Compile Include="Services\ITable.cs" />
-    <Compile Include="Services\PageView.cs" />
+    <Compile Include="Services\PageCollection.cs" />
   </ItemGroup>
   <ItemGroup>
     <Folder Include="Models\" />

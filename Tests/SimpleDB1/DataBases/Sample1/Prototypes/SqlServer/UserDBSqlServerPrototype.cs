@@ -44,7 +44,7 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.SqlServer
                 throw new NotImplementedException();
             }
 
-            public IPageView<IUser>[] getPages(int pageSize)
+            public IPageCollection<IUser> getPages(int pageSize)
             {
                 throw new NotImplementedException();
             }
