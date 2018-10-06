@@ -38,7 +38,7 @@ namespace QTFK.Data.Tests
             string connectionString;
 
             connectionString = ConfigurationManager.ConnectionStrings["tests"]?.ConnectionString;
-            Assert.IsTrue(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
+            Assert.IsFalse(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
             this.driver = new SQLServerDBIO(connectionString);
 
         }
