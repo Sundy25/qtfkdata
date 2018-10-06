@@ -1,9 +1,5 @@
 ﻿using QTFK.Services;
 using System;
-using System.Collections.Generic;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace QTFK.Extensions
 {
@@ -21,6 +17,18 @@ namespace QTFK.Extensions
                 setterDelegate(e);
                 return true;
             });
+
+            return entity;
+        }
+
+
+        public static T create<T>(this ITable<T> table) where T : IEntity
+        {
+            T entity;
+
+            Asserts.isSomething(table, $"Parameter '{table}' cannot be null.");
+
+            entity = table.create(e => true);
 
             return entity;
         }

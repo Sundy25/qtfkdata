@@ -74,7 +74,7 @@ namespace QTFK.Data.Tests
         public void TestWriteUsersDB()
         {
             IUsersDB db;
-            IUser user;
+            IUser user, emptyUser;
             IUser[] allUsers;
             int deletedUsers;
 
@@ -95,6 +95,13 @@ namespace QTFK.Data.Tests
             Assert.AreEqual(new DateTime(1955, 11, 12), user.BirthDate);
             Assert.AreEqual("Pepe", user.Name);
             Assert.IsTrue(user.IsEnabled);
+
+            emptyUser = db.Users.create();
+            Assert.IsTrue(emptyUser.Id != 0);
+            Assert.AreNotEqual(emptyUser.Id, user.Id);
+            Assert.AreEqual(new DateTime(), emptyUser.BirthDate);
+            Assert.AreEqual(null, emptyUser.Name);
+            Assert.IsFalse(emptyUser.IsEnabled);
 
             allUsers = db.Users.ToArray();
             Assert.AreEqual(1, allUsers.Length);
