@@ -1,6 +1,4 @@
-﻿using System.Collections.Generic;
-using QTFK.Attributes;
-using QTFK.Models;
+﻿using QTFK.Attributes;
 using QTFK.Services;
 
 namespace QTFK.Data.Tests.Models

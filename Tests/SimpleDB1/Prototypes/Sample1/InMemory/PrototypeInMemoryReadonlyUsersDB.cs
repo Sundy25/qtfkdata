@@ -43,6 +43,11 @@ namespace SimpleDB1.Prototypes.Sample1.InMemory
                 return this.users.GetEnumerator();
             }
 
+            IEnumerator IEnumerable.GetEnumerator()
+            {
+                return this.users.GetEnumerator();
+            }
+
             IPageCollection<IUser> IView<IUser>.getPages(int pageSize)
             {
                 PageCollection<IUser> pageCollection;
@@ -80,11 +85,6 @@ namespace SimpleDB1.Prototypes.Sample1.InMemory
                 pageCollection = new PageCollection<IUser>(enumeratorCreatorDelegates, pageSize, lastPageSize);
 
                 return pageCollection;
-            }
-
-            IEnumerator IEnumerable.GetEnumerator()
-            {
-                return this.users.GetEnumerator();
             }
         }
 

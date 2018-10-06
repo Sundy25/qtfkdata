@@ -1,6 +1,8 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.Linq;
+using QTFK.Extensions.DBIO;
 using QTFK.Services;
 using QTFK.Services.DBIO;
 using SimpleDB1.DataBases.Sample1;
@@ -38,19 +40,36 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
                 this.dbio = dbio;
             }
 
-            public int Count { get; }
+            public int Count
+            {
+                get
+                {
+                    int rowsCount;
+                    string query;
+
+                    query = prv_getSelectCountQuery();
+                    rowsCount = this.dbio.GetScalar<int>(query);
+
+                    return rowsCount;
+                }
+            }
+
+            private string prv_getSelectCountQuery()
+            {
+                throw new NotImplementedException();
+            }
 
             public IEnumerator<IUser> GetEnumerator()
             {
                 throw new NotImplementedException();
             }
 
-            public IPageCollection<IUser> getPages(int pageSize)
+            IEnumerator IEnumerable.GetEnumerator()
             {
                 throw new NotImplementedException();
             }
 
-            IEnumerator IEnumerable.GetEnumerator()
+            public IPageCollection<IUser> getPages(int pageSize)
             {
                 throw new NotImplementedException();
             }
