@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
 using QTFK.Services;
+using SimpleDB1.DataBases.Sample1;
 
-namespace SimpleDB1.DataBases.Sample1.Prototypes.InMemory
+namespace SimpleDB1.Prototypes.Sample1.InMemory
 {
-    public class UserDBInMemoryPrototype : IReadonlyUsersDB
+    public class PrototypeInMemoryReadonlyUsersDB : IReadonlyUsersDB
     {
         private class PrvEngineFeatures : IEngineFeatures
         {
@@ -87,7 +88,7 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.InMemory
             }
         }
 
-        public UserDBInMemoryPrototype()
+        public PrototypeInMemoryReadonlyUsersDB()
         {
             this.EngineFeatures = new PrvEngineFeatures();
             this.Users = new PrvUsersView();

@@ -1,10 +1,11 @@
 ﻿using System;
 using QTFK.Services;
 using QTFK.Services.DBIO;
+using SimpleDB1.DataBases.Empty;
 
-namespace SimpleDB1.DataBases.Empty.Prototypes.SqlServer
+namespace SimpleDB1.Prototypes.Empty.SqlServer
 {
-    public class EmptySqlServerPrototype : IEmptyDB
+    public class PrototypeSqlServerEmptyDB : IEmptyDB
     {
         private class PrvEngineFeatures : IEngineFeatures
         {
@@ -19,7 +20,7 @@ namespace SimpleDB1.DataBases.Empty.Prototypes.SqlServer
 
         private readonly ISqlServerDBIO dbio;
 
-        public EmptySqlServerPrototype(ISqlServerDBIO dbio)
+        public PrototypeSqlServerEmptyDB(ISqlServerDBIO dbio)
         {
             this.EngineFeatures = new PrvEngineFeatures();
             this.dbio = dbio;

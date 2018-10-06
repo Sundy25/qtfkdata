@@ -3,10 +3,11 @@ using System.Collections;
 using System.Collections.Generic;
 using QTFK.Services;
 using QTFK.Services.DBIO;
+using SimpleDB1.DataBases.Sample1;
 
-namespace SimpleDB1.DataBases.Sample1.Prototypes.SqlServer
+namespace SimpleDB1.Prototypes.Sample1.SqlServer
 {
-    public class UserDBSqlServerPrototype : IReadonlyUsersDB
+    public class PrototypeSqlServerReadonlyUsersDB : IReadonlyUsersDB
     {
         private class PrvEngineFeatures : IEngineFeatures
         {
@@ -57,7 +58,7 @@ namespace SimpleDB1.DataBases.Sample1.Prototypes.SqlServer
 
         private readonly ISqlServerDBIO dbio;
 
-        public UserDBSqlServerPrototype(ISqlServerDBIO dbio)
+        public PrototypeSqlServerReadonlyUsersDB(ISqlServerDBIO dbio)
         {
             this.EngineFeatures = new PrvEngineFeatures();
             this.dbio = dbio;

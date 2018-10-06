@@ -1,9 +1,10 @@
 ﻿using System;
 using QTFK.Services;
+using SimpleDB1.DataBases.Empty;
 
-namespace SimpleDB1.DataBases.Empty.Prototypes.InMemory
+namespace SimpleDB1.Prototypes.Empty.InMemory
 {
-    public class EmptyInMemoryPrototype : IEmptyDB
+    public class PrototypeInMemoryEmptyDB : IEmptyDB
     {
         private class PrvEngineFeatures : IEngineFeatures
         {
@@ -16,7 +17,7 @@ namespace SimpleDB1.DataBases.Empty.Prototypes.InMemory
             public bool SupportsStoredProcedures { get; }
         }
 
-        public EmptyInMemoryPrototype()
+        public PrototypeInMemoryEmptyDB()
         {
             this.EngineFeatures = new PrvEngineFeatures();
         }

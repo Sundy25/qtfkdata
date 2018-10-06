@@ -51,13 +51,13 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBases\Empty\IEmptyDB.cs" />
-    <Compile Include="DataBases\Empty\Prototypes\InMemory\EmptyInMemoryPrototype.cs" />
-    <Compile Include="DataBases\Empty\Prototypes\SqlServer\EmptySqlServerPrototype.cs" />
+    <Compile Include="Prototypes\Empty\InMemory\PrototypeInMemoryEmptyDB.cs" />
+    <Compile Include="Prototypes\Empty\SqlServer\PrototypeSqlServerEmptyDB.cs" />
     <Compile Include="DataBases\Sample1\IReadonlyUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUsersDB.cs" />
     <Compile Include="DataBases\Sample1\IUser.cs" />
-    <Compile Include="DataBases\Sample1\Prototypes\InMemory\UserDBInMemoryPrototype.cs" />
-    <Compile Include="DataBases\Sample1\Prototypes\SqlServer\UserDBSqlServerPrototype.cs" />
+    <Compile Include="Prototypes\Sample1\InMemory\PrototypeInMemoryReadonlyUsersDB.cs" />
+    <Compile Include="Prototypes\Sample1\SqlServer\PrototypeSqlServerReadonlyUsersDB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
   </ItemGroup>
   <ItemGroup>

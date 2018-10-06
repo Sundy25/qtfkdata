@@ -6,6 +6,7 @@ using QTFK.Services.DbFactory;
 using SimpleDB1.DataBases.Empty;
 using SimpleDB1.DataBases.Sample1;
 using QTFK.Extensions;
+using SimpleDB1.Prototypes.Sample1.InMemory;
 
 namespace QTFK.Data.Tests
 {
@@ -60,7 +61,7 @@ namespace QTFK.Data.Tests
             IPageCollection<IUser> pages;
 
             //db = prv_createDb<IReadonlyUsersDB>();
-            db = new SimpleDB1.DataBases.Sample1.Prototypes.InMemory.UserDBInMemoryPrototype();
+            db = new PrototypeInMemoryReadonlyUsersDB();
             Assert.AreEqual(0, db.Users.Count);
 
             pages = db.Users.getPages(100);
