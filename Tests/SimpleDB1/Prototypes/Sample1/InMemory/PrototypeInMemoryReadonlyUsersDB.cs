@@ -48,7 +48,7 @@ namespace SimpleDB1.Prototypes.Sample1.InMemory
                 return this.users.GetEnumerator();
             }
 
-            IPageCollection<IUser> IView<IUser>.getPages(int pageSize)
+            public IPageCollection<IUser> getPages(int pageSize)
             {
                 PageCollection<IUser> pageCollection;
                 int pagesCount, lastPageSize;

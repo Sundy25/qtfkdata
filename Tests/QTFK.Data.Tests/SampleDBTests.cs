@@ -7,13 +7,15 @@ using SimpleDB1.DataBases.Empty;
 using SimpleDB1.DataBases.Sample1;
 using QTFK.Extensions;
 using SimpleDB1.Prototypes.Sample1.InMemory;
+using SimpleDB1.Prototypes.Sample1.SqlServer;
+using System.Configuration;
+using QTFK.Services.DBIO;
 
 namespace QTFK.Data.Tests
 {
     [TestClass]
     public class SampleDBTests
     {
-
         private static T prv_createDb<T>() where T: class, IDB
         {
             T db;
@@ -27,6 +29,18 @@ namespace QTFK.Data.Tests
             db = dbBuilder.createDb(dbMetadata);
 
             return db;
+        }
+
+        private readonly SQLServerDBIO driver;
+
+        public SampleDBTests()
+        {
+            string connectionString;
+
+            connectionString = ConfigurationManager.ConnectionStrings["tests"]?.ConnectionString;
+            Assert.IsTrue(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
+            this.driver = new SQLServerDBIO(connectionString);
+
         }
 
         [TestMethod]
@@ -61,7 +75,7 @@ namespace QTFK.Data.Tests
             IPageCollection<IUser> pages;
 
             //db = prv_createDb<IReadonlyUsersDB>();
-            db = new PrototypeInMemoryReadonlyUsersDB();
+            db = new PrototypeSqlServerReadonlyUsersDB(this.driver);
             Assert.AreEqual(0, db.Users.Count);
 
             pages = db.Users.getPages(100);

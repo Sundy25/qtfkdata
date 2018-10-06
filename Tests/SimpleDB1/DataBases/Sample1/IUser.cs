@@ -9,6 +9,7 @@ namespace SimpleDB1.DataBases.Sample1
         [Id]
         int Id { get; }
 
+        [DefaulOrder]
         string Name { get; set; }
         DateTime BirthDate { get; set; }
         bool IsEnabled { get; set; }
