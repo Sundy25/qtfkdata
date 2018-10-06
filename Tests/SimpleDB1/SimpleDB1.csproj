@@ -34,11 +34,11 @@
   <ItemGroup>
     <Reference Include="QTFK.DB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\libs\qtfk.1.5.0\QTFK.DB.dll</HintPath>
+      <HintPath>..\..\libs\qtfk.1.6.0\QTFK.DB.dll</HintPath>
     </Reference>
     <Reference Include="QTFK.Services.DBIO.SQLServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
       <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\libs\qtfk.1.5.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
+      <HintPath>..\..\libs\qtfk.1.6.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
