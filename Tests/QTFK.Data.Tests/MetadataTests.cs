@@ -8,12 +8,12 @@ using QTFK.Services.DbFactory;
 namespace QTFK.Data.Tests
 {
     [TestClass]
-    public class UnitTest2
+    public class MetadataTests
     {
         IDbMetadata<IExpensesDB> dbMetadata;
         IMetadataBuilder metadataBuilder;
 
-        public UnitTest2()
+        public MetadataTests()
         {
             this.metadataBuilder = new DefaultMetadataBuilder();
             this.dbMetadata = this.metadataBuilder.scan<IExpensesDB>();

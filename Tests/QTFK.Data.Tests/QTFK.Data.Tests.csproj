@@ -75,7 +75,7 @@
     <Compile Include="Services\IExpensesDB.cs" />
     <Compile Include="Services\IUserCrud.cs" />
     <Compile Include="UnitTest1.cs" />
-    <Compile Include="UnitTest2.cs" />
+    <Compile Include="MetadataTests.cs" />
     <Compile Include="InMemoryTests.cs" />
     <Compile Include="SampleDBTests.cs" />
   </ItemGroup>
