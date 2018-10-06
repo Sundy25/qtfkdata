@@ -10,6 +10,7 @@ using SimpleDB1.Prototypes.Sample1.InMemory;
 using SimpleDB1.Prototypes.Sample1.SqlServer;
 using System.Configuration;
 using QTFK.Services.DBIO;
+using System.Collections.Generic;
 
 namespace QTFK.Data.Tests
 {
@@ -71,6 +72,7 @@ namespace QTFK.Data.Tests
         public void TestReadonlyUserDB()
         {
             IReadonlyUsersDB db;
+            IEnumerable<IUser> enumerableUsers;
             IUser[] allUsers;
             IPageCollection<IUser> pages;
 
@@ -81,7 +83,8 @@ namespace QTFK.Data.Tests
             pages = db.Users.getPages(100);
             Assert.AreEqual(0, pages.Count);
 
-            allUsers = db.Users.ToArray();
+            enumerableUsers = db.Users;
+            allUsers = enumerableUsers.ToArray();
             Assert.AreEqual(0, allUsers.Length);
         }
 
