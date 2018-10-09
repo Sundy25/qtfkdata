@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="Data\Factory\SqlServerDbBuilder.cs" />
+    <Compile Include="Data\Storage\ISqlServerStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\Storage\SqlServerStorage.cs" />
   </ItemGroup>

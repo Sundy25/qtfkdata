@@ -1,6 +1,8 @@
-﻿namespace QTFK.Data.Storage
+﻿using System;
+
+namespace QTFK.Data.Storage
 {
-    public interface IStorage : IStorageOperator
+    public interface IStorage : IStorageOperator, IDisposable
     {
         ITransaction beginTransaction();
     }

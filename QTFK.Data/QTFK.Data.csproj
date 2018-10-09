@@ -7,7 +7,7 @@
     <ProjectGuid>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QTFK.Data</RootNamespace>
+    <RootNamespace>QTFK</RootNamespace>
     <AssemblyName>QTFK.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -84,9 +84,8 @@
     <Compile Include="Data\IDB.cs" />
     <Compile Include="Data\IPageCollection.cs" />
     <Compile Include="Data\IPageView.cs" />
-    <Compile Include="Data\Storage\IQuery.cs" />
+    <Compile Include="Data\Storage\Query.cs" />
     <Compile Include="Data\Storage\IRecord.cs" />
-    <Compile Include="Data\Storage\ISqlServerStorage.cs" />
     <Compile Include="Data\Storage\IStorage.cs" />
     <Compile Include="Data\Storage\IStorageOperator.cs" />
     <Compile Include="Data\Storage\ITransaction.cs" />
