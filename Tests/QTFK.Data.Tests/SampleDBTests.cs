@@ -1,16 +1,15 @@
 ﻿using System;
 using System.Linq;
 using Microsoft.VisualStudio.TestTools.UnitTesting;
-using QTFK.Services;
-using QTFK.Services.DbFactory;
 using SimpleDB1.DataBases.Empty;
 using SimpleDB1.DataBases.Sample1;
-using QTFK.Extensions;
-using SimpleDB1.Prototypes.Sample1.InMemory;
 using SimpleDB1.Prototypes.Sample1.SqlServer;
 using System.Configuration;
 using QTFK.Services.DBIO;
 using System.Collections.Generic;
+using QTFK.Data.Factory;
+using QTFK.Data.Factory.Metadata;
+using QTFK.Data.Extensions;
 
 namespace QTFK.Data.Tests
 {
@@ -78,14 +77,14 @@ namespace QTFK.Data.Tests
 
             //db = prv_createDb<IReadonlyUsersDB>();
             db = new PrototypeSqlServerReadonlyUsersDB(this.driver);
-            Assert.AreEqual(0, db.Users.Count);
+            Assert.AreEqual(2, db.Users.Count);
 
-            pages = db.Users.getPages(100);
-            Assert.AreEqual(0, pages.Count);
+            pages = db.Users.getPages(1);
+            Assert.AreEqual(2, pages.Count);
 
             enumerableUsers = db.Users;
             allUsers = enumerableUsers.ToArray();
-            Assert.AreEqual(0, allUsers.Length);
+            Assert.AreEqual(2, allUsers.Length);
         }
 
         [TestMethod]

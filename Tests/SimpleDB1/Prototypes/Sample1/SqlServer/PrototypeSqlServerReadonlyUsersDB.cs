@@ -1,13 +1,9 @@
 ﻿using System;
-using System.Collections;
-using System.Collections.Generic;
 using System.Data;
-using System.Linq;
-using QTFK;
-using QTFK.Abstracts;
+using QTFK.Data;
+using QTFK.Data.Abstracts;
 using QTFK.Extensions.DataReader;
 using QTFK.Extensions.DBIO;
-using QTFK.Services;
 using QTFK.Services.DBIO;
 using SimpleDB1.DataBases.Sample1;
 

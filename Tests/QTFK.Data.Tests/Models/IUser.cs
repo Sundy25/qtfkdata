@@ -1,8 +1,5 @@
 ﻿using System;
-using System.Collections.Generic;
-using QTFK.Attributes;
-using QTFK.Models;
-using QTFK.Services;
+using QTFK.Data.Attributes;
 
 namespace QTFK.Data.Tests.Models
 {

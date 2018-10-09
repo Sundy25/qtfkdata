@@ -80,6 +80,10 @@
     <Compile Include="SampleDBTests.cs" />
   </ItemGroup>
   <ItemGroup>
+    <ProjectReference Include="..\..\QTFK.Data.SqlServer\QTFK.Data.SqlServer.csproj">
+      <Project>{99d828bf-7c37-474b-a46f-6010e19d2a72}</Project>
+      <Name>QTFK.Data.SqlServer</Name>
+    </ProjectReference>
     <ProjectReference Include="..\..\QTFK.Data\QTFK.Data.csproj">
       <Project>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</Project>
       <Name>QTFK.Data</Name>

@@ -7,7 +7,7 @@
     <ProjectGuid>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QTFK</RootNamespace>
+    <RootNamespace>QTFK.Data</RootNamespace>
     <AssemblyName>QTFK.Data</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -60,38 +60,41 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Abstracts\AbstractSqlServerView.cs" />
-    <Compile Include="Attributes\ColumnAttribute.cs" />
-    <Compile Include="Attributes\DefaulOrder.cs" />
-    <Compile Include="Attributes\ForeignAttribute.cs" />
-    <Compile Include="Attributes\IdAttribute.cs" />
-    <Compile Include="Extensions\DbExtensions.cs" />
-    <Compile Include="Services\DbFactory\IClassMetaData.cs" />
-    <Compile Include="Services\DbFactory\IViewMetaData.cs" />
-    <Compile Include="Services\IEngineFeatures.cs" />
-    <Compile Include="Services\IEntity.cs" />
+    <Compile Include="Data\Abstracts\AbstractSqlServerView.cs" />
+    <Compile Include="Data\Attributes\ColumnAttribute.cs" />
+    <Compile Include="Data\Attributes\DefaulOrder.cs" />
+    <Compile Include="Data\Attributes\ForeignAttribute.cs" />
+    <Compile Include="Data\Attributes\IdAttribute.cs" />
+    <Compile Include="Data\Extensions\DbExtensions.cs" />
+    <Compile Include="Data\Factory\Metadata\IClassMetaData.cs" />
+    <Compile Include="Data\Factory\Metadata\IViewMetaData.cs" />
+    <Compile Include="Data\IEngineFeatures.cs" />
+    <Compile Include="Data\IEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Services\DbFactory\IColumnMetaData.cs" />
-    <Compile Include="Services\DbFactory\IDbMetadata.cs" />
-    <Compile Include="Services\DbFactory\DefaultMetadataBuilder.cs" />
-    <Compile Include="Services\DbFactory\IDbBuilder.cs" />
-    <Compile Include="Services\DbFactory\IEntityMetaData.cs" />
-    <Compile Include="Services\DbFactory\IMetadataBuilder.cs" />
-    <Compile Include="Services\DbFactory\IMetaData.cs" />
-    <Compile Include="Services\DbFactory\InMemoryDbBuilder.cs" />
-    <Compile Include="Services\DbFactory\IRelationShipMetaData.cs" />
-    <Compile Include="Services\DbFactory\RelationShipKind.cs" />
-    <Compile Include="Services\DbFactory\SqlServerDbBuilder.cs" />
-    <Compile Include="Services\IDB.cs" />
-    <Compile Include="Services\IPageCollection.cs" />
-    <Compile Include="Services\IPageView.cs" />
-    <Compile Include="Services\IView.cs" />
-    <Compile Include="Services\ITable.cs" />
-    <Compile Include="Services\PageCollection.cs" />
+    <Compile Include="Data\Factory\Metadata\IColumnMetaData.cs" />
+    <Compile Include="Data\Factory\Metadata\IDbMetadata.cs" />
+    <Compile Include="Data\Factory\DefaultMetadataBuilder.cs" />
+    <Compile Include="Data\Factory\IDbBuilder.cs" />
+    <Compile Include="Data\Factory\Metadata\IEntityMetaData.cs" />
+    <Compile Include="Data\Factory\IMetadataBuilder.cs" />
+    <Compile Include="Data\Factory\Metadata\IMetaData.cs" />
+    <Compile Include="Data\Factory\InMemoryDbBuilder.cs" />
+    <Compile Include="Data\Factory\Metadata\IRelationShipMetaData.cs" />
+    <Compile Include="Data\Factory\Metadata\RelationShipKind.cs" />
+    <Compile Include="Data\IDB.cs" />
+    <Compile Include="Data\IPageCollection.cs" />
+    <Compile Include="Data\IPageView.cs" />
+    <Compile Include="Data\Storage\IQuery.cs" />
+    <Compile Include="Data\Storage\IRecord.cs" />
+    <Compile Include="Data\Storage\ISqlServerStorage.cs" />
+    <Compile Include="Data\Storage\IStorage.cs" />
+    <Compile Include="Data\Storage\IStorageOperator.cs" />
+    <Compile Include="Data\Storage\ITransaction.cs" />
+    <Compile Include="Data\IView.cs" />
+    <Compile Include="Data\ITable.cs" />
+    <Compile Include="Data\Concretes\PageCollection.cs" />
   </ItemGroup>
-  <ItemGroup>
-    <Folder Include="Models\" />
-  </ItemGroup>
+  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
        Other similar extension points exist, see Microsoft.Common.targets.

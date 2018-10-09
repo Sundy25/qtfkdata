@@ -1,6 +1,7 @@
 ﻿using Microsoft.VisualStudio.TestTools.UnitTesting;
+using QTFK.Data.Factory;
+using QTFK.Data.Factory.Metadata;
 using QTFK.Data.Tests.Services;
-using QTFK.Services.DbFactory;
 
 namespace QTFK.Data.Tests
 {

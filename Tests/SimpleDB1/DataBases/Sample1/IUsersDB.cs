@@ -1,4 +1,5 @@
-﻿using QTFK.Services;
+﻿using QTFK.Data;
+using QTFK.Services;
 
 namespace SimpleDB1.DataBases.Sample1
 {

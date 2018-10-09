@@ -5,10 +5,11 @@ using QTFK.Data.Tests.Models;
 using QTFK.Data.Tests.Services;
 using QTFK.Services;
 using System.Linq;
-using QTFK.Services.DbFactory;
 using QTFK.Services.DBIO;
 using System.Configuration;
-using QTFK.Extensions;
+using QTFK.Data.Factory;
+using QTFK.Data.Factory.Metadata;
+using QTFK.Data.Extensions;
 
 namespace QTFK.Data.Tests
 {

@@ -1,5 +1,4 @@
-﻿using QTFK.Attributes;
-using QTFK.Services;
+﻿using QTFK.Data.Attributes;
 
 namespace QTFK.Data.Tests.Models
 {

@@ -2,6 +2,8 @@
 using System.Collections;
 using System.Collections.Generic;
 using System.Linq;
+using QTFK.Data;
+using QTFK.Data.Concretes;
 using QTFK.Services;
 using SimpleDB1.DataBases.Sample1;
 

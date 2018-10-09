@@ -11,6 +11,8 @@ Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data.Tests", "Tests\QT
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "SimpleDB1", "Tests\SimpleDB1\SimpleDB1.csproj", "{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}"
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "QTFK.Data.SqlServer", "QTFK.Data.SqlServer\QTFK.Data.SqlServer.csproj", "{99D828BF-7C37-474B-A46F-6010E19D2A72}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -29,6 +31,10 @@ Global
 		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{F19FA47E-9E0F-472E-9A31-D40B2B2D4F04}.Release|Any CPU.Build.0 = Release|Any CPU
+		{99D828BF-7C37-474B-A46F-6010E19D2A72}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{99D828BF-7C37-474B-A46F-6010E19D2A72}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{99D828BF-7C37-474B-A46F-6010E19D2A72}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{99D828BF-7C37-474B-A46F-6010E19D2A72}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
