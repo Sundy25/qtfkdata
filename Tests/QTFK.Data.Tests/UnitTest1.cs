@@ -10,6 +10,7 @@ using System.Configuration;
 using QTFK.Data.Factory;
 using QTFK.Data.Factory.Metadata;
 using QTFK.Data.Extensions;
+using QTFK.Data.Storage;
 
 namespace QTFK.Data.Tests
 {
@@ -22,7 +23,7 @@ namespace QTFK.Data.Tests
         {
             IMetadataBuilder metadataBuilder;
             IDbBuilder dbBuilder;
-            IDBIO driver;
+            IStorage driver;
             IDbMetadata<IExpensesDB> dbMetadata;
             string connectionString;
 
@@ -30,7 +31,7 @@ namespace QTFK.Data.Tests
             Assert.IsTrue(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
 
             metadataBuilder = new DefaultMetadataBuilder();
-            driver = new SQLServerDBIO(connectionString);
+            driver = new SqlServerStorage(connectionString);
             dbBuilder = new SqlServerDbBuilder(driver);
 
             dbMetadata = metadataBuilder.scan<IExpensesDB>();

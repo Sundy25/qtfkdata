@@ -60,7 +60,6 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Abstracts\AbstractSqlServerView.cs" />
     <Compile Include="Data\Attributes\ColumnAttribute.cs" />
     <Compile Include="Data\Attributes\DefaulOrder.cs" />
     <Compile Include="Data\Attributes\ForeignAttribute.cs" />

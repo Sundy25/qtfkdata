@@ -10,6 +10,7 @@ using System.Collections.Generic;
 using QTFK.Data.Factory;
 using QTFK.Data.Factory.Metadata;
 using QTFK.Data.Extensions;
+using QTFK.Data.Storage;
 
 namespace QTFK.Data.Tests
 {
@@ -31,7 +32,7 @@ namespace QTFK.Data.Tests
             return db;
         }
 
-        private readonly SQLServerDBIO driver;
+        private readonly SqlServerStorage driver;
 
         public SampleDBTests()
         {
@@ -39,7 +40,7 @@ namespace QTFK.Data.Tests
 
             connectionString = ConfigurationManager.ConnectionStrings["tests"]?.ConnectionString;
             Assert.IsFalse(string.IsNullOrWhiteSpace(connectionString), $"Invalid 'tests' connection string in app.config");
-            this.driver = new SQLServerDBIO(connectionString);
+            this.driver = new SqlServerStorage(connectionString);
 
         }
 

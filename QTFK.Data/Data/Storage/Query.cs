@@ -14,6 +14,7 @@ namespace QTFK.Data.Storage
 
         public Query(string query)
         {
+            prv_setInstruction(query);
             this.Parameters = new Dictionary<string, object>();
         }
 

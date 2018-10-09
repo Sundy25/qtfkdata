@@ -1,48 +1,48 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.Data;
 using QTFK.Data.Concretes;
-using QTFK.Extensions.DBIO;
-using QTFK.Services;
+using QTFK.Data.Storage;
+using System.Linq;
 
 namespace QTFK.Data.Abstracts
 {
-    public abstract class AbstractSqlServerView<TEntity, TDBIO> : IView<TEntity> 
+    public abstract class AbstractSqlServerView<TEntity, TStorage> : IView<TEntity> 
         where TEntity : IEntity
-        where TDBIO : IDBIO
+        where TStorage : ISqlServerStorage
     {
-        private static IEnumerator<TEntity> prv_getEnumerator(TDBIO dbio, string query, Func<IDataRecord, TEntity> entityMapFunction)
+        private static IEnumerator<TEntity> prv_getEnumerator(TStorage storage, string query, Func<IRecord, TEntity> entityMapFunction)
         {
             IEnumerator<TEntity> enumerator;
 
-            enumerator = dbio
-                .Get<TEntity>(query, entityMapFunction)
+            enumerator = storage
+                .read(query)
+                .Select<IRecord, TEntity>(entityMapFunction)
                 .GetEnumerator();
 
             return enumerator;
         }
 
-        private readonly TDBIO dbio;
+        private readonly TStorage storage;
 
         private IEnumerator<TEntity> prv_getEnumerator()
         {
             string query;
 
             query = prv_getSelectQuery();
-            return prv_getEnumerator(this.dbio, query, prv_mapEntity);
+            return prv_getEnumerator(this.storage, query, prv_mapEntity);
         }
 
         protected abstract string prv_getSelectCountQuery();
         protected abstract string prv_getSelectQuery();
-        protected abstract TEntity prv_mapEntity(IDataRecord record);
+        protected abstract TEntity prv_mapEntity(IRecord record);
         protected abstract string prv_getPageSelectQuery(int offset, int pageSize, string orderByColumns, string orderByDirection);
         protected abstract string prv_getDefaultOrderByDirection();
         protected abstract string prv_getDefaultOrderByColumns();
 
-        public AbstractSqlServerView(TDBIO dbio)
+        public AbstractSqlServerView(TStorage storage)
         {
-            this.dbio = dbio;
+            this.storage = storage;
         }
 
         public int Count
@@ -53,7 +53,7 @@ namespace QTFK.Data.Abstracts
                 string query;
 
                 query = prv_getSelectCountQuery();
-                rowsCount = this.dbio.GetScalar<int>(query);
+                rowsCount = this.storage.readSingle<int>(query);
 
                 return rowsCount;
             }
@@ -80,7 +80,7 @@ namespace QTFK.Data.Abstracts
                 orderByColumns = prv_getDefaultOrderByColumns();
                 orderByDirection = prv_getDefaultOrderByDirection();
                 query = prv_getPageSelectQuery(offset, pageSize, orderByColumns, orderByDirection);
-                enumeratorCreatorDelegates[i] = () => prv_getEnumerator(this.dbio, query, prv_mapEntity);
+                enumeratorCreatorDelegates[i] = () => prv_getEnumerator(this.storage, query, prv_mapEntity);
             }
 
             pageCollection = new PageCollection<TEntity>(enumeratorCreatorDelegates, pageSize, lastPageSize);

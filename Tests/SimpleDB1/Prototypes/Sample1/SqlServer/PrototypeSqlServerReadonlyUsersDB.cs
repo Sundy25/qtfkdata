@@ -1,10 +1,7 @@
 ﻿using System;
-using System.Data;
 using QTFK.Data;
 using QTFK.Data.Abstracts;
-using QTFK.Extensions.DataReader;
-using QTFK.Extensions.DBIO;
-using QTFK.Services.DBIO;
+using QTFK.Data.Storage;
 using SimpleDB1.DataBases.Sample1;
 
 namespace SimpleDB1.Prototypes.Sample1.SqlServer
@@ -31,7 +28,7 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
             public bool IsEnabled { get; set; }
         }
 
-        private class PrvUsersView : AbstractSqlServerView<IUser, ISqlServerDBIO>
+        private class PrvUsersView : AbstractSqlServerView<IUser, ISqlServerStorage>
         {
             protected override string prv_getDefaultOrderByColumns()
             {
@@ -75,29 +72,29 @@ FROM [user]
 ;";
             }
 
-            protected override IUser prv_mapEntity(IDataRecord record)
+            protected override IUser prv_mapEntity(IRecord record)
             {
                 return new PrvUser
                 {
-                    Id = record.Get<int>("id"),
-                    Name = record.Get<string>("name"),
-                    BirthDate = record.Get<DateTime>("birthDate"),
-                    IsEnabled = record.Get<bool>("isEnabled"),
+                    Id = record.get<int>("id"),
+                    Name = record.get<string>("name"),
+                    BirthDate = record.get<DateTime>("birthDate"),
+                    IsEnabled = record.get<bool>("isEnabled"),
                 };
             }
 
-            public PrvUsersView(ISqlServerDBIO dbio) : base(dbio)
+            public PrvUsersView(ISqlServerStorage storage) : base(storage)
             {
             }
         }
 
-        private readonly ISqlServerDBIO dbio;
+        private readonly ISqlServerStorage storage;
 
-        public PrototypeSqlServerReadonlyUsersDB(ISqlServerDBIO dbio)
+        public PrototypeSqlServerReadonlyUsersDB(ISqlServerStorage storage)
         {
             this.EngineFeatures = new PrvEngineFeatures();
-            this.dbio = dbio;
-            this.Users = new PrvUsersView(dbio);
+            this.storage = storage;
+            this.Users = new PrvUsersView(storage);
         }
 
         public IView<IUser> Users { get; }
@@ -105,17 +102,24 @@ FROM [user]
 
         public void transact(Func<bool> transactionBlock)
         {
-            this.dbio.Set(command =>
+            throw new NotImplementedException();
+
+            ITransaction transaction;
+            bool blockResult;
+
+            transaction = this.storage.beginTransaction();
+
+            blockResult = transactionBlock();
+
+            if (blockResult == true)
             {
-                bool blockResult;
+                transaction.commit();
+            }
+            else
+            {
+                transaction.rollback();
+            }
 
-                blockResult = transactionBlock();
-
-                if (blockResult == false)
-                    command.Transaction.Rollback();
-
-                return 0;
-            });
         }
 
     }

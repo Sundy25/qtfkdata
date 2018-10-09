@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Abstracts\AbstractSqlServerView.cs" />
     <Compile Include="Data\Factory\SqlServerDbBuilder.cs" />
     <Compile Include="Data\Storage\ISqlServerStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
