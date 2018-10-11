@@ -24,7 +24,7 @@ namespace QTFK.Data.Abstracts
             return enumerator;
         }
 
-        private readonly TStorage storage;
+        protected readonly TStorage storage;
 
         private IEnumerator<TEntity> prv_getEnumerator()
         {

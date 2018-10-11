@@ -7,7 +7,7 @@
     <ProjectGuid>{99D828BF-7C37-474B-A46F-6010E19D2A72}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
-    <RootNamespace>QTFK.Data.SqlServer</RootNamespace>
+    <RootNamespace>QTFK</RootNamespace>
     <AssemblyName>QTFK.Data.SqlServer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
@@ -54,6 +54,7 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Data\Abstracts\AbstractSqlServerTable.cs" />
     <Compile Include="Data\Abstracts\AbstractSqlServerView.cs" />
     <Compile Include="Data\Factory\SqlServerDbBuilder.cs" />
     <Compile Include="Data\Storage\ISqlServerStorage.cs" />
