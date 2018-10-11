@@ -5,7 +5,6 @@ using SimpleDB1.DataBases.Empty;
 using SimpleDB1.DataBases.Sample1;
 using SimpleDB1.Prototypes.Sample1.SqlServer;
 using System.Configuration;
-using QTFK.Services.DBIO;
 using System.Collections.Generic;
 using QTFK.Data.Factory;
 using QTFK.Data.Factory.Metadata;
@@ -72,20 +71,36 @@ namespace QTFK.Data.Tests
         public void TestReadonlyUserDB()
         {
             IReadonlyUsersDB db;
-            IEnumerable<IUser> enumerableUsers;
-            IUser[] allUsers;
+            IEnumerable<IUser> users;
+            IUser[] usersArray;
             IPageCollection<IUser> pages;
+            IPageView<IUser> page;
 
             //db = prv_createDb<IReadonlyUsersDB>();
             db = new PrototypeSqlServerReadonlyUsersDB(this.driver);
-            Assert.AreEqual(2, db.Users.Count);
+            Assert.AreEqual(5, db.Users.Count);
 
-            pages = db.Users.getPages(1);
-            Assert.AreEqual(2, pages.Count);
+            pages = db.Users.getPages(2);
+            Assert.AreEqual(3, pages.Count);
 
-            enumerableUsers = db.Users;
-            allUsers = enumerableUsers.ToArray();
-            Assert.AreEqual(2, allUsers.Length);
+            users = db.Users;
+            usersArray = users.ToArray();
+            Assert.AreEqual(5, usersArray.Length);
+
+            page = pages[0];
+            Assert.AreEqual(2, page.Count);
+            usersArray = page.ToArray();
+            Assert.AreEqual(2, usersArray.Length);
+
+            page = pages[1];
+            Assert.AreEqual(2, page.Count);
+            usersArray = page.ToArray();
+            Assert.AreEqual(2, usersArray.Length);
+
+            page = pages[2];
+            Assert.AreEqual(1, page.Count);
+            usersArray = page.ToArray();
+            Assert.AreEqual(1, usersArray.Length);
         }
 
         [TestMethod]
