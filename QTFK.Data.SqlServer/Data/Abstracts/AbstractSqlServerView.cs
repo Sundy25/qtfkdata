@@ -4,10 +4,11 @@ using System.Collections.Generic;
 using QTFK.Data.Concretes;
 using QTFK.Data.Storage;
 using System.Linq;
+using QTFK.Data.Extensions.Storages;
 
 namespace QTFK.Data.Abstracts
 {
-    public abstract class AbstractSqlServerView<TEntity, TStorage> : IView<TEntity> 
+    public abstract class AbstractSqlServerView<TEntity, TStorage> : IView<TEntity>
         where TEntity : IEntity
         where TStorage : ISqlServerStorage
     {
@@ -36,9 +37,7 @@ namespace QTFK.Data.Abstracts
         protected abstract string prv_getSelectCountQuery();
         protected abstract string prv_getSelectQuery();
         protected abstract TEntity prv_mapEntity(IRecord record);
-        protected abstract string prv_getPageSelectQuery(int offset, int pageSize, string orderByColumns, string orderByDirection);
-        protected abstract string prv_getDefaultOrderByDirection();
-        protected abstract string prv_getDefaultOrderByColumns();
+        protected abstract string prv_getPageSelectQuery(int offset, int pageSize);
 
         public AbstractSqlServerView(TStorage storage)
         {
@@ -74,12 +73,10 @@ namespace QTFK.Data.Abstracts
             for (int i = 0; i < pagesCount; i++)
             {
                 int offset;
-                string query, orderByColumns, orderByDirection;
+                string query;
 
-                offset = pageSize * i;
-                orderByColumns = prv_getDefaultOrderByColumns();
-                orderByDirection = prv_getDefaultOrderByDirection();
-                query = prv_getPageSelectQuery(offset, pageSize, orderByColumns, orderByDirection);
+                offset = (pageSize * i) + 1;
+                query = prv_getPageSelectQuery(offset, pageSize);
                 enumeratorCreatorDelegates[i] = () => prv_getEnumerator(this.storage, query, prv_mapEntity);
             }
 

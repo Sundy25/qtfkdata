@@ -8,14 +8,19 @@ namespace QTFK.Data.Concretes
     {
         private class PrvPageView : IPageView<T>
         {
-            private readonly IEnumerator<T> enumerator;
+            private readonly Func<IEnumerator<T>> enumeratorDelegate;
 
-            public PrvPageView(IEnumerator<T> enumerator, int pageSize)
+            private IEnumerator<T> prv_getEnumerator()
             {
-                Asserts.isSomething(enumerator, $"Constructor parameter '{enumerator}' cannot be null.");
+                return this.enumeratorDelegate();
+            }
+
+            public PrvPageView(Func<IEnumerator<T>> enumeratorDelegate, int pageSize)
+            {
+                Asserts.isSomething(enumeratorDelegate, $"Constructor parameter '{enumeratorDelegate}' cannot be null.");
                 Asserts.check(pageSize >= 0, $"Constructor parameter '{pageSize}' must be greater or equal than zero.");
 
-                this.enumerator = enumerator;
+                this.enumeratorDelegate = enumeratorDelegate;
                 this.Count = pageSize;
             }
 
@@ -23,12 +28,12 @@ namespace QTFK.Data.Concretes
 
             public IEnumerator<T> GetEnumerator()
             {
-                return this.enumerator;
+                return prv_getEnumerator();
             }
 
             IEnumerator IEnumerable.GetEnumerator()
             {
-                return this.enumerator;
+                return prv_getEnumerator();
             }
         }
 
@@ -54,7 +59,6 @@ namespace QTFK.Data.Concretes
             {
                 PrvPageView pageView;
                 Func<IEnumerator<T>> enumeratorCreator;
-                IEnumerator<T> enumerator;
                 int currentPageSize;
 
                 Asserts.check(0 <= index && index < this.Count, $"Index operator value is out of range.");
@@ -67,8 +71,7 @@ namespace QTFK.Data.Concretes
                 enumeratorCreator = this.enumeratorCreatorDelegates[index];
                 Asserts.isSomething(enumeratorCreator, $"Constructor paramater '{nameof(this.enumeratorCreatorDelegates)}[{index}]' cannot be null.");
 
-                enumerator = enumeratorCreator();
-                pageView = new PrvPageView(enumerator, currentPageSize);
+                pageView = new PrvPageView(enumeratorCreator, currentPageSize);
 
                 return pageView;
             }

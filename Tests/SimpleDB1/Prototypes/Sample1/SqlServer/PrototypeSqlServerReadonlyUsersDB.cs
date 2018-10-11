@@ -30,31 +30,21 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 
         private class PrvUsersView : AbstractSqlServerView<IUser, ISqlServerStorage>
         {
-            protected override string prv_getDefaultOrderByColumns()
-            {
-                return "name";
-            }
-
-            protected override string prv_getDefaultOrderByDirection()
-            {
-                return "ASC";
-            }
-
-            protected override string prv_getPageSelectQuery(int offset, int pageSize, string orderByColumns, string orderByDirection)
+            protected override string prv_getPageSelectQuery(int offset, int pageSize)
             {
                 string subQuery, superQuery;
 
                 subQuery = $@"
 SELECT  [id], [name], [birthDate], [isEnabled] 
-        ROW_NUMBER() OVER ( ORDER BY {orderByColumns} {orderByDirection} ) AS [__row]
+        , ROW_NUMBER() OVER ( ORDER BY [name] ASC ) AS [__row]
 FROM [user]
-;";
+";
 
                 superQuery = $@"
 SELECT *
-FROM ({subQuery})
+FROM ({subQuery}) as __s
 WHERE {offset} <= [__row] AND [__row] < {offset + pageSize} 
-;";
+";
 
                 return superQuery;
             }
@@ -69,7 +59,7 @@ WHERE {offset} <= [__row] AND [__row] < {offset + pageSize}
                 return $@"
 SELECT [id], [name], [birthDate], [isEnabled] 
 FROM [user]
-;";
+";
             }
 
             protected override IUser prv_mapEntity(IRecord record)
@@ -102,24 +92,17 @@ FROM [user]
 
         public void transact(Func<bool> transactionBlock)
         {
-            throw new NotImplementedException();
-
-            ITransaction transaction;
-            bool blockResult;
-
-            transaction = this.storage.beginTransaction();
-
-            blockResult = transactionBlock();
-
-            if (blockResult == true)
+            using (IStorageTransaction transaction = this.storage.beginTransaction())
             {
-                transaction.commit();
-            }
-            else
-            {
-                transaction.rollback();
-            }
+                bool commit;
 
+                commit = transactionBlock();
+
+                if (commit)
+                    transaction.commit();
+                else
+                    transaction.rollback();
+            }
         }
 
     }
