@@ -7,6 +7,8 @@ namespace QTFK.Data.Abstracts
         where TEntity : class, IEntity, new()
         where TStorage : ISqlServerStorage
     {
+        protected abstract Query prv_getInsertQuery(TEntity entity);
+
         public AbstractSqlServerTable(TStorage storage) : base(storage)
         {
         }
@@ -21,6 +23,9 @@ namespace QTFK.Data.Abstracts
 
             if(submit)
             {
+                Query query;
+
+                query = prv_getInsertQuery(entity);
                 throw new NotImplementedException();
             }
             else
