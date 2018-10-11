@@ -65,6 +65,7 @@
     <Compile Include="Data\Attributes\ForeignAttribute.cs" />
     <Compile Include="Data\Attributes\IdAttribute.cs" />
     <Compile Include="Data\Extensions\DbExtensions.cs" />
+    <Compile Include="Data\Extensions\Storages\StorageExtensions.cs" />
     <Compile Include="Data\Factory\Metadata\IClassMetaData.cs" />
     <Compile Include="Data\Factory\Metadata\IViewMetaData.cs" />
     <Compile Include="Data\IEngineFeatures.cs" />
@@ -86,8 +87,7 @@
     <Compile Include="Data\Storage\Query.cs" />
     <Compile Include="Data\Storage\IRecord.cs" />
     <Compile Include="Data\Storage\IStorage.cs" />
-    <Compile Include="Data\Storage\IStorageOperator.cs" />
-    <Compile Include="Data\Storage\ITransaction.cs" />
+    <Compile Include="Data\Storage\IStorageTransaction.cs" />
     <Compile Include="Data\IView.cs" />
     <Compile Include="Data\ITable.cs" />
     <Compile Include="Data\Concretes\PageCollection.cs" />

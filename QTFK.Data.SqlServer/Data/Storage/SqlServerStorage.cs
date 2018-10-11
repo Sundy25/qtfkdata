@@ -12,9 +12,9 @@ namespace QTFK.Data.Storage
     {
         private class PrvRecord : IRecord
         {
-            private readonly SqlDataReader reader;
+            private readonly IDataReader reader;
 
-            public PrvRecord(SqlDataReader reader)
+            public PrvRecord(IDataReader reader)
             {
                 this.reader = reader;
             }
@@ -40,16 +40,19 @@ namespace QTFK.Data.Storage
 
         private class PrvReader : IEnumerable<IRecord>
         {
-            private readonly SqlCommand command;
+            private readonly IDbCommand command;
             private bool used;
 
             private IEnumerator<IRecord> prv_getEnumerator()
             {
                 Asserts.check(this.used == false, $"Reader has already been used.");
 
-                using (SqlDataReader reader = this.command.ExecuteReader())
+                using (IDataReader reader = this.command.ExecuteReader())
                 {
-                    IRecord record = new PrvRecord(reader);
+                    IRecord record;
+
+                    this.used = true;
+                    record = new PrvRecord(reader);
 
                     while (reader.Read())
                         yield return record;
@@ -59,7 +62,7 @@ namespace QTFK.Data.Storage
                 }
             }
 
-            public PrvReader(SqlCommand command)
+            public PrvReader(IDbCommand command)
             {
                 this.command = command;
                 this.used = false;
@@ -77,10 +80,9 @@ namespace QTFK.Data.Storage
 
         }
 
-        private class PrvTransaction : ITransaction
+        private class PrvTransaction : IStorageTransaction
         {
             private IDbTransaction transaction;
-            private readonly IStorage storage;
             private bool disposed;
 
             private void prv_rollback()
@@ -90,10 +92,9 @@ namespace QTFK.Data.Storage
                 this.transaction = null;
             }
 
-            public PrvTransaction(IDbTransaction transaction, IStorage sqlServerStorage)
+            public PrvTransaction(IDbTransaction transaction)
             {
                 this.transaction = transaction;
-                this.storage = sqlServerStorage;
             }
 
             public void commit()
@@ -119,17 +120,54 @@ namespace QTFK.Data.Storage
 
             public IEnumerable<IRecord> read(Query query)
             {
-                return this.storage.read(query);
+                IDbCommand command;
+
+                Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+
+                command = this.transaction.Connection.CreateCommand();
+                command.Transaction = this.transaction;
+                command.CommandText = query.Instruction;
+                command.addParameters(query.Parameters);
+
+                return new PrvReader(command);
             }
 
             public T readSingle<T>(Query query) where T : struct
             {
-                return this.storage.readSingle<T>(query);
+                T value;
+
+                Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+
+                value = default(T);
+                
+                using (IDbCommand command = this.transaction.Connection.CreateCommand())
+                {
+                    command.Transaction = this.transaction;
+                    command.CommandText = query.Instruction;
+                    command.addParameters(query.Parameters);
+                    value = (T)command.ExecuteScalar();
+                }
+
+                return value;
             }
 
             public int write(Query query)
             {
-                return this.storage.write(query);
+                int affectedRows;
+
+                Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+
+                affectedRows = 0;
+
+                using (IDbCommand command = this.transaction.Connection.CreateCommand())
+                {
+                    command.Transaction = this.transaction;
+                    command.CommandText = query.Instruction;
+                    command.addParameters(query.Parameters);
+                    affectedRows = command.ExecuteNonQuery();
+                }
+
+                return affectedRows;
             }
         }
 
@@ -142,7 +180,7 @@ namespace QTFK.Data.Storage
             this.connection = new SqlConnection(connectionString);
         }
 
-        public ITransaction beginTransaction()
+        public IStorageTransaction beginTransaction()
         {
             SqlTransaction transaction;
 
@@ -151,7 +189,7 @@ namespace QTFK.Data.Storage
 
             transaction = this.connection.BeginTransaction($"Transaction{DateTime.UtcNow.Ticks}");
 
-            return new PrvTransaction(transaction, this);
+            return new PrvTransaction(transaction);
         }
 
         public void Dispose()
@@ -166,62 +204,5 @@ namespace QTFK.Data.Storage
             this.disposed = true;
         }
 
-        public IEnumerable<IRecord> read(Query query)
-        {
-            SqlCommand command;
-
-            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
-
-            if (this.connection.State == System.Data.ConnectionState.Closed)
-                this.connection.Open();
-
-            command = this.connection.CreateCommand();
-            command.CommandText = query.Instruction;
-            command.addParameters(query.Parameters);
-
-            return new PrvReader(command);
-        }
-
-        public T readSingle<T>(Query query) where T : struct
-        {
-            T value;
-
-            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
-
-            value = default(T);
-
-            if (this.connection.State == System.Data.ConnectionState.Closed)
-                this.connection.Open();
-
-            using (SqlCommand command = this.connection.CreateCommand())
-            {
-                command.CommandText = query.Instruction;
-                command.addParameters(query.Parameters);
-                value = (T)command.ExecuteScalar();
-            }
-
-            return value;
-        }
-
-        public int write(Query query)
-        {
-            int affectedRows;
-
-            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
-
-            affectedRows = 0;
-
-            if (this.connection.State == System.Data.ConnectionState.Closed)
-                this.connection.Open();
-
-            using (SqlCommand command = this.connection.CreateCommand())
-            {
-                command.CommandText = query.Instruction;
-                command.addParameters(query.Parameters);
-                affectedRows = command.ExecuteNonQuery();
-            }
-
-            return affectedRows;
-        }
     }
 }
