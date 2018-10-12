@@ -93,22 +93,5 @@ FROM [user]
 
         public IView<IUser> Users { get; }
         public IEngineFeatures EngineFeatures { get; }
-
-        public void transact(Func<bool> transactionBlock)
-        {
-            throw new NotSupportedException();
-            //using (IStorageTransaction transaction = this.storage.getTransaction())
-            //{
-            //    bool commit;
-
-            //    commit = transactionBlock();
-
-            //    if (commit)
-            //        transaction.commit();
-            //    else
-            //        transaction.rollback();
-            //}
-        }
-
     }
 }
