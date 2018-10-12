@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Linq;
 using QTFK.Data.Storage;
 
 namespace QTFK.Data.Abstracts
@@ -8,8 +9,10 @@ namespace QTFK.Data.Abstracts
         where TStorage : ISqlServerStorage
     {
         protected abstract Query prv_getInsertQuery(TEntity entity);
-        protected abstract bool prv_entityHasAutoKey();
-        protected abstract Query prv_getNewAutoKeySelectQuery();
+        protected abstract bool prv_getSelectQueryIfEntityHasAutoKeyColumn(IStorageTransaction transaction, TEntity entity, out Query selectQuery);
+        protected abstract Query prv_getDeleteQuery(TEntity item);
+        protected abstract Query prv_getDeleteAllQuery();
+        protected abstract Query prv_getUpdateQuery(TEntity item);
 
         public AbstractSqlServerTable(TStorage storage) : base(storage)
         {
@@ -37,36 +40,71 @@ namespace QTFK.Data.Abstracts
                     insertResult = transaction.write(query);
                     Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
 
-                    hasAutoKey = prv_entityHasAutoKey();
+                    //newId = transaction.readSingle<int>("SELECT SCOPE_IDENTITY()");
+                    hasAutoKey = prv_getSelectQueryIfEntityHasAutoKeyColumn(transaction, entity, out query);
 
                     if(hasAutoKey)
                     {
-                        query = prv_getNewAutoKeySelectQuery();
+                        entity = transaction
+                            .read(query)
+                            .Select<IRecord, TEntity>(prv_mapEntity)
+                            .Single<TEntity>();
                     }
+                    transaction.commit();
                 }
-
-                throw new NotImplementedException();
             }
             else
             {
-                return null;
+                entity = null;
             }
+
+            return entity;
         }
+
 
         public void delete(TEntity item)
         {
-            throw new NotImplementedException();
+            using (IStorageTransaction transaction = this.storage.beginTransaction())
+            {
+                Query query;
+                int deletedItems;
+
+                query = prv_getDeleteQuery(item);
+                deletedItems = transaction.write(query);
+                Asserts.check(deletedItems == 1, $"Expected only one affected row after delete statement execution.");
+
+                transaction.commit();
+            }
         }
 
         public int deleteAll()
         {
+            Query query;
+            int deletedItems;
 
-            throw new NotImplementedException();
+            using (IStorageTransaction transaction = this.storage.beginTransaction())
+            {
+                query = prv_getDeleteAllQuery();
+                deletedItems = transaction.write(query);
+                transaction.commit();
+            }
+
+            return deletedItems;
         }
 
         public void update(TEntity item)
         {
-            throw new NotImplementedException();
+            Query query;
+            int updatedItems;
+
+            using (IStorageTransaction transaction = this.storage.beginTransaction())
+            {
+                query = prv_getUpdateQuery(item);
+                updatedItems = transaction.write(query);
+                Asserts.check(updatedItems == 1, $"Expected only one affected row after delete statement execution.");
+
+                transaction.commit();
+            }
         }
     }
 }
