@@ -63,6 +63,7 @@
     <Compile Include="Prototypes\Sample1\InMemory\PrototypeInMemoryReadonlyUsersDB.cs" />
     <Compile Include="Prototypes\Sample1\SqlServer\PrototypeSqlServerReadonlyUsersDB.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Prototypes\Sample1\SqlServer\PrototypeSqlServerUsersDB.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\..\QTFK.Data.SqlServer\QTFK.Data.SqlServer.csproj">

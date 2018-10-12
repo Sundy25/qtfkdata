@@ -5,7 +5,7 @@ using QTFK.Data.Storage;
 namespace QTFK.Data.Abstracts
 {
     public abstract class AbstractSqlServerTable<TEntity, TStorage> : AbstractSqlServerView<TEntity, TStorage>, ITable<TEntity>
-        where TEntity : class, IEntity, new()
+        where TEntity : class, IEntity
         where TStorage : ISqlServerStorage
     {
         protected abstract Query prv_getInsertQuery(TEntity entity);
@@ -13,6 +13,7 @@ namespace QTFK.Data.Abstracts
         protected abstract Query prv_getDeleteQuery(TEntity item);
         protected abstract Query prv_getDeleteAllQuery();
         protected abstract Query prv_getUpdateQuery(TEntity item);
+        protected abstract TEntity prv_getNewEntity();
 
         public AbstractSqlServerTable(TStorage storage) : base(storage)
         {
@@ -23,7 +24,7 @@ namespace QTFK.Data.Abstracts
             TEntity entity;
             bool submit;
 
-            entity = new TEntity();
+            entity = prv_getNewEntity();
             submit = item(entity);
 
             if (submit)
@@ -52,7 +53,6 @@ namespace QTFK.Data.Abstracts
 
             return entity;
         }
-
 
         public void delete(TEntity item)
         {
