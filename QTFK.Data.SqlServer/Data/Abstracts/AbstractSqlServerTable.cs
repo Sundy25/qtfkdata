@@ -8,6 +8,8 @@ namespace QTFK.Data.Abstracts
         where TStorage : ISqlServerStorage
     {
         protected abstract Query prv_getInsertQuery(TEntity entity);
+        protected abstract bool prv_entityHasAutoKey();
+        protected abstract Query prv_getNewAutoKeySelectQuery();
 
         public AbstractSqlServerTable(TStorage storage) : base(storage)
         {
@@ -23,9 +25,26 @@ namespace QTFK.Data.Abstracts
 
             if(submit)
             {
-                Query query;
 
-                query = prv_getInsertQuery(entity);
+                using (IStorageTransaction transaction = this.storage.beginTransaction())
+                {
+                    Query query;
+                    int insertResult;
+                    bool hasAutoKey;
+
+                    query = prv_getInsertQuery(entity);
+
+                    insertResult = transaction.write(query);
+                    Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
+
+                    hasAutoKey = prv_entityHasAutoKey();
+
+                    if(hasAutoKey)
+                    {
+                        query = prv_getNewAutoKeySelectQuery();
+                    }
+                }
+
                 throw new NotImplementedException();
             }
             else
