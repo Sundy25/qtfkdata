@@ -28,21 +28,5 @@ namespace SimpleDB1.Prototypes.Empty.SqlServer
         }
 
         public IEngineFeatures EngineFeatures { get; }
-
-        public void transact(Func<bool> transactionBlock)
-        {
-            this.dbio.Set(command =>
-            {
-                bool blockResult;
-
-                blockResult = transactionBlock();
-
-                if (blockResult == false)
-                    command.Transaction.Rollback();
-
-                return 0;
-            });
-        }
-
     }
 }

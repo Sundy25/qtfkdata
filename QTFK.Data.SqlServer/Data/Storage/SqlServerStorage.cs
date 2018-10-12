@@ -60,6 +60,8 @@ namespace QTFK.Data.Storage
                     if (!reader.IsClosed)
                         reader.Close();
                 }
+
+                this.command.Dispose();
             }
 
             public PrvReader(IDbCommand command)
@@ -80,144 +82,131 @@ namespace QTFK.Data.Storage
 
         }
 
-        private class PrvTransaction : IStorageTransaction, IDisposable
-        {
-            private IDbTransaction transaction;
-
-            private void prv_rollback()
-            {
-                Asserts.isSomething(this.transaction, $"The transaction has been used.");
-                this.transaction.Rollback();
-                this.transaction = null;
-            }
-
-            public PrvTransaction(IDbTransaction transaction)
-            {
-                this.transaction = transaction;
-                this.Disposed = false;
-            }
-
-            public void commit()
-            {
-                Asserts.isSomething(this.transaction, $"The transaction has been used.");
-                this.transaction.Commit();
-                this.transaction = null;
-            }
-
-            public void rollback()
-            {
-                prv_rollback();
-            }
-
-            public void Dispose()
-            {
-                Asserts.check(this.Disposed == false, $"This transaction has been disposed.");
-                if (this.transaction != null)
-                    prv_rollback();
-
-                this.Disposed = true;
-            }
-
-            public bool Disposed { get; private set; }
-
-            public IEnumerable<IRecord> read(Query query)
-            {
-                IDbCommand command;
-
-                Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
-
-                command = this.transaction.Connection.CreateCommand();
-                command.Transaction = this.transaction;
-                command.CommandText = query.Instruction;
-                command.addParameters(query.Parameters);
-
-                return new PrvReader(command);
-            }
-
-            public T readSingle<T>(Query query) where T : struct
-            {
-                T value;
-
-                Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
-
-                value = default(T);
-
-                using (IDbCommand command = this.transaction.Connection.CreateCommand())
-                {
-                    command.Transaction = this.transaction;
-                    command.CommandText = query.Instruction;
-                    command.addParameters(query.Parameters);
-                    value = (T)command.ExecuteScalar();
-                }
-
-                return value;
-            }
-
-            public int write(Query query)
-            {
-                int affectedRows;
-
-                Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
-
-                affectedRows = 0;
-
-                using (IDbCommand command = this.transaction.Connection.CreateCommand())
-                {
-                    command.Transaction = this.transaction;
-                    command.CommandText = query.Instruction;
-                    command.addParameters(query.Parameters);
-                    affectedRows = command.ExecuteNonQuery();
-                }
-
-                return affectedRows;
-            }
-        }
-
         private bool disposed;
-        private SqlConnection connection;
-        private PrvTransaction transaction;
+        private IDbConnection connection;
+        private IDbTransaction transaction;
+        private bool commited;
 
-        public SqlServerStorage(string connectionString)
+        private void prv_checkTransaction()
         {
-            Asserts.isFilled(connectionString, "Argument 'connectionString' cannot be empty");
-            this.connection = new SqlConnection(connectionString);
-            this.transaction = null;
+            Asserts.check(this.disposed == false, "Object disposed.");
+            Asserts.check(this.commited == false, "Transaction already commited.");
+
+            if (this.connection.State == ConnectionState.Closed)
+                this.connection.Open();
+
+            if (this.transaction == null)
+                this.transaction = this.connection.BeginTransaction();
         }
 
-        public IStorageTransaction getTransaction()
+        private void prv_dispose()
         {
-            if (this.transaction == null || this.transaction.Disposed)
+            if (this.transaction != null)
             {
-                SqlTransaction sqlTransaction;
+                if (this.commited == false)
+                    this.transaction.Rollback();
 
-                this.transaction = null;
-
-                if (this.connection.State == ConnectionState.Closed)
-                    this.connection.Open();
-
-                sqlTransaction = this.connection.BeginTransaction($"Transaction{DateTime.UtcNow.Ticks}");
-                this.transaction = new PrvTransaction(sqlTransaction);
-            }
-
-            return this.transaction;
-        }
-
-        public void Dispose()
-        {
-            Asserts.check(this.disposed == false, "Object has been already disposed.");
-
-            if (this.transaction != null && this.transaction.Disposed == false)
                 this.transaction.Dispose();
-
+                this.transaction = null;
+            }
 
             if (this.connection.State != ConnectionState.Closed)
             {
                 this.connection.Close();
                 this.connection.Dispose();
             }
-            this.transaction = null;
             this.connection = null;
             this.disposed = true;
+        }
+
+        ~SqlServerStorage()
+        {
+            prv_dispose();
+        }
+
+        public SqlServerStorage(string connectionString)
+        {
+            Asserts.isFilled(connectionString, "Argument 'connectionString' cannot be empty");
+            this.connection = new SqlConnection(connectionString);
+            this.transaction = null;
+            this.commited = false;
+            this.disposed = false;
+        }
+
+        public IEnumerable<IRecord> read(Query query)
+        {
+            IDbCommand command;
+
+            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+
+            prv_checkTransaction();
+
+            command = this.transaction.Connection.CreateCommand();
+            command.Transaction = this.transaction;
+            command.CommandText = query.Instruction;
+            command.addParameters(query.Parameters);
+
+            return new PrvReader(command);
+        }
+
+        public T readSingle<T>(Query query) where T : struct
+        {
+            T value;
+
+            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+
+            value = default(T);
+            prv_checkTransaction();
+
+            using (IDbCommand command = this.transaction.Connection.CreateCommand())
+            {
+                command.Transaction = this.transaction;
+                command.CommandText = query.Instruction;
+                command.addParameters(query.Parameters);
+                value = (T)command.ExecuteScalar();
+            }
+
+            return value;
+        }
+
+        public int write(Query query)
+        {
+            int affectedRows;
+
+            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+
+            affectedRows = 0;
+            prv_checkTransaction();
+
+            using (IDbCommand command = this.transaction.Connection.CreateCommand())
+            {
+                command.Transaction = this.transaction;
+                command.CommandText = query.Instruction;
+                command.addParameters(query.Parameters);
+                affectedRows = command.ExecuteNonQuery();
+            }
+
+            return affectedRows;
+        }
+
+        public void commit()
+        {
+            Asserts.check(this.disposed == false, "Object disposed.");
+            Asserts.check(this.commited == false, "Transaction already commited.");
+            Asserts.check(this.connection.State == ConnectionState.Open, "Connection is not open.");
+            Asserts.isSomething(this.transaction, "Transaction is null!");
+
+            this.transaction.Commit();
+            this.transaction.Dispose();
+            this.transaction = null;
+            this.commited = true;
+        }
+
+        public void Dispose()
+        {
+            Asserts.check(this.disposed == false, "Object has been already disposed.");
+
+            prv_dispose();
         }
 
     }

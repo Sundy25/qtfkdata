@@ -43,6 +43,12 @@ namespace QTFK.Data.Tests
 
         }
 
+        [TestCleanup]
+        public void TestCleanup()
+        {
+            this.driver.commit();
+        }
+
         [TestMethod]
         public void TestEmptyDB()
         {
@@ -52,19 +58,6 @@ namespace QTFK.Data.Tests
             Assert.IsInstanceOfType(db, typeof(IEmptyDB));
             Assert.IsFalse(db.EngineFeatures.SupportsTransactions);
             Assert.IsFalse(db.EngineFeatures.SupportsStoredProcedures);
-
-            try
-            {
-                db.transact(() =>
-                {
-                    return true;
-                });
-                Assert.Fail();
-            }
-            catch (NotSupportedException)
-            {
-            }
-
         }
 
         [TestMethod]

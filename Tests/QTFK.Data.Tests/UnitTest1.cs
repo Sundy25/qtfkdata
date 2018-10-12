@@ -42,30 +42,24 @@ namespace QTFK.Data.Tests
         public void userTestMethod1()
         {
             IEnumerable<IUser> users;
+            IUser user;
 
             foreach (IUser user1 in this.db.Users)
             {
                 Console.WriteLine($"{user1.Name} - {user1.Mail}");
             }
 
-            this.db.transact(() =>
+            user = this.db.Users.create(u =>
             {
-                IUser user;
-
-                user = this.db.Users.create(u =>
-                {
-                    u.Name = "pepe";
-                    u.Mail = "pepe@tronco.es";
-                    u.SignDate = DateTime.Now;
-                });
-
-                user.Mail = "pepe@gmail.com";
-                this.db.Users.update(user);
-
-                this.db.Users.delete(user);
-
-                return true;
+                u.Name = "pepe";
+                u.Mail = "pepe@tronco.es";
+                u.SignDate = DateTime.Now;
             });
+
+            user.Mail = "pepe@gmail.com";
+            this.db.Users.update(user);
+
+            this.db.Users.delete(user);
 
             users = this.db.Users.whereMailContains("Frank");
             foreach (IUser filteredUser in users)
@@ -79,26 +73,21 @@ namespace QTFK.Data.Tests
         [TestMethod]
         public void currencyTestMethod1()
         {
-            this.db.transact(() =>
+            ICurrency euroCurrency, dollardCurrency;
+            ICurrencyConversion eurUsd;
+
+            this.db.CurrencyExchanges.deleteAll();
+            this.db.Currencies.deleteAll();
+
+            euroCurrency = this.db.Currencies.create(euro => euro.Name = "Euro");
+            dollardCurrency = this.db.Currencies.create(dollard => dollard.Name = "US Dollard");
+
+            eurUsd = this.db.CurrencyExchanges.create(x =>
             {
-                ICurrency euroCurrency, dollardCurrency;
-                ICurrencyConversion eurUsd;
-
-                this.db.CurrencyExchanges.deleteAll();
-                this.db.Currencies.deleteAll();
-
-                euroCurrency = this.db.Currencies.create(euro => euro.Name = "Euro");
-                dollardCurrency = this.db.Currencies.create(dollard => dollard.Name = "US Dollard");
-
-                eurUsd = this.db.CurrencyExchanges.create(x =>
-                {
-                    x.Date = DateTime.Now;
-                    x.From = euroCurrency;
-                    x.To = dollardCurrency;
-                    x.Value = 1.16m;
-                });
-
-                return true;
+                x.Date = DateTime.Now;
+                x.From = euroCurrency;
+                x.To = dollardCurrency;
+                x.Value = 1.16m;
             });
 
             foreach (ICurrencyConversion exchange in this.db.Currencies

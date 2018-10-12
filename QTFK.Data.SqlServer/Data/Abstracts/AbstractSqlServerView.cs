@@ -16,7 +16,6 @@ namespace QTFK.Data.Abstracts
             IEnumerator<TEntity> enumerator;
 
             enumerator = storage
-                .getTransaction()
                 .read(query)
                 .Select<IRecord, TEntity>(entityMapFunction)
                 .GetEnumerator();
@@ -52,9 +51,7 @@ namespace QTFK.Data.Abstracts
                 Query query;
 
                 query = prv_getSelectCountQuery();
-                rowsCount = this.storage
-                    .getTransaction()
-                    .readSingle<int>(query);
+                rowsCount = this.storage.readSingle<int>(query);
 
                 return rowsCount;
             }

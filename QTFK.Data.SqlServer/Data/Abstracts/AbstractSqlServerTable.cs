@@ -9,7 +9,7 @@ namespace QTFK.Data.Abstracts
         where TStorage : ISqlServerStorage
     {
         protected abstract Query prv_getInsertQuery(TEntity entity);
-        protected abstract bool prv_getSelectQueryIfEntityHasAutoKeyColumn(IStorageTransaction transaction, TEntity entity, out Query selectQuery);
+        protected abstract bool prv_getSelectQueryIfEntityHasAutoKeyColumn(TEntity entity, out Query selectQuery);
         protected abstract Query prv_getDeleteQuery(TEntity item);
         protected abstract Query prv_getDeleteAllQuery();
         protected abstract Query prv_getUpdateQuery(TEntity item);
@@ -28,27 +28,24 @@ namespace QTFK.Data.Abstracts
 
             if (submit)
             {
-                IStorageTransaction transaction;
                 Query query;
                 int insertResult;
                 bool hasAutoKey;
 
-                transaction = this.storage.getTransaction();
                 query = prv_getInsertQuery(entity);
-                insertResult = transaction.write(query);
+                insertResult = this.storage.write(query);
                 Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
 
                 //newId = transaction.readSingle<int>("SELECT SCOPE_IDENTITY()");
-                hasAutoKey = prv_getSelectQueryIfEntityHasAutoKeyColumn(transaction, entity, out query);
+                hasAutoKey = prv_getSelectQueryIfEntityHasAutoKeyColumn(entity, out query);
 
                 if (hasAutoKey)
                 {
-                    entity = transaction
+                    entity = this.storage
                         .read(query)
                         .Select<IRecord, TEntity>(prv_mapEntity)
                         .Single<TEntity>();
                 }
-                transaction.commit();
             }
             else
                 entity = null;
@@ -61,26 +58,19 @@ namespace QTFK.Data.Abstracts
         {
             Query query;
             int deletedItems;
-            IStorageTransaction transaction;
 
-            transaction = this.storage.getTransaction();
             query = prv_getDeleteQuery(item);
-            deletedItems = transaction.write(query);
+            deletedItems = this.storage.write(query);
             Asserts.check(deletedItems == 1, $"Expected only one affected row after delete statement execution.");
-
-            transaction.commit();
         }
 
         public int deleteAll()
         {
             Query query;
             int deletedItems;
-            IStorageTransaction transaction;
 
-            transaction = this.storage.getTransaction();
             query = prv_getDeleteAllQuery();
-            deletedItems = transaction.write(query);
-            transaction.commit();
+            deletedItems = this.storage.write(query);
 
             return deletedItems;
         }
@@ -89,14 +79,10 @@ namespace QTFK.Data.Abstracts
         {
             Query query;
             int updatedItems;
-            IStorageTransaction transaction;
 
-            transaction = this.storage.getTransaction();
             query = prv_getUpdateQuery(item);
-            updatedItems = transaction.write(query);
+            updatedItems = this.storage.write(query);
             Asserts.check(updatedItems == 1, $"Expected only one affected row after delete statement execution.");
-
-            transaction.commit();
         }
     }
 }

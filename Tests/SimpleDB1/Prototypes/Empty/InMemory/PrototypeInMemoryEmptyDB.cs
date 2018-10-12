@@ -24,11 +24,5 @@ namespace SimpleDB1.Prototypes.Empty.InMemory
         }
 
         public IEngineFeatures EngineFeatures { get; }
-
-        public void transact(Func<bool> transactionBlock)
-        {
-            throw new NotSupportedException();
-        }
-
     }
 }

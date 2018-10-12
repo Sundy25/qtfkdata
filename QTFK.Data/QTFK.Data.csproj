@@ -86,7 +86,6 @@
     <Compile Include="Data\Storage\Query.cs" />
     <Compile Include="Data\Storage\IRecord.cs" />
     <Compile Include="Data\Storage\IStorage.cs" />
-    <Compile Include="Data\Storage\IStorageTransaction.cs" />
     <Compile Include="Data\IView.cs" />
     <Compile Include="Data\ITable.cs" />
     <Compile Include="Data\Concretes\PageCollection.cs" />
