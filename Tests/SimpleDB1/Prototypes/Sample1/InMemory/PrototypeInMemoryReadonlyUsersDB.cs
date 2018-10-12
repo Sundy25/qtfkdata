@@ -98,5 +98,9 @@ namespace SimpleDB1.Prototypes.Sample1.InMemory
 
         public IEngineFeatures EngineFeatures { get; }
         public IView<IUser> Users { get; }
+
+        public void save()
+        {
+        }
     }
 }

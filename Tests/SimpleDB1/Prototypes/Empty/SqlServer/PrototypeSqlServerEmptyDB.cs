@@ -1,6 +1,5 @@
-﻿using System;
-using QTFK.Data;
-using QTFK.Services;
+﻿using QTFK.Data;
+using QTFK.Data.Storage;
 using QTFK.Services.DBIO;
 using SimpleDB1.DataBases.Empty;
 
@@ -19,14 +18,19 @@ namespace SimpleDB1.Prototypes.Empty.SqlServer
             public bool SupportsStoredProcedures { get; }
         }
 
-        private readonly ISqlServerDBIO dbio;
+        private readonly ISqlServerStorage storage;
 
-        public PrototypeSqlServerEmptyDB(ISqlServerDBIO dbio)
+        public PrototypeSqlServerEmptyDB(ISqlServerStorage storage)
         {
             this.EngineFeatures = new PrvEngineFeatures();
-            this.dbio = dbio;
+            this.storage = storage;
         }
 
         public IEngineFeatures EngineFeatures { get; }
+
+        public void save()
+        {
+            this.storage.commit();
+        }
     }
 }

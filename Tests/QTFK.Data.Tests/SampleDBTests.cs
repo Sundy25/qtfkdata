@@ -43,12 +43,6 @@ namespace QTFK.Data.Tests
 
         }
 
-        [TestCleanup]
-        public void TestCleanup()
-        {
-            this.driver.commit();
-        }
-
         [TestMethod]
         public void TestEmptyDB()
         {
@@ -94,6 +88,8 @@ namespace QTFK.Data.Tests
             Assert.AreEqual(1, page.Count);
             usersArray = page.ToArray();
             Assert.AreEqual(1, usersArray.Length);
+
+            db.save();
         }
 
         [TestMethod]

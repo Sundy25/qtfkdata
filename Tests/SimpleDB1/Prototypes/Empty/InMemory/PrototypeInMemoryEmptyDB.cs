@@ -24,5 +24,9 @@ namespace SimpleDB1.Prototypes.Empty.InMemory
         }
 
         public IEngineFeatures EngineFeatures { get; }
+
+        public void save()
+        {
+        }
     }
 }

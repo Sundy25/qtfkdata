@@ -93,5 +93,10 @@ FROM [user]
 
         public IView<IUser> Users { get; }
         public IEngineFeatures EngineFeatures { get; }
+
+        public void save()
+        {
+            this.storage.commit();
+        }
     }
 }

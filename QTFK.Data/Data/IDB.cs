@@ -3,5 +3,6 @@
     public interface IDB
     {
         IEngineFeatures EngineFeatures { get; }
+        void save();
     }
 }
