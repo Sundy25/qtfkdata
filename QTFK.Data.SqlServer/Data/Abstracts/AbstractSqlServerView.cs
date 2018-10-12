@@ -12,7 +12,7 @@ namespace QTFK.Data.Abstracts
         where TEntity : IEntity
         where TStorage : ISqlServerStorage
     {
-        private static IEnumerator<TEntity> prv_getEnumerator(TStorage storage, string query, Func<IRecord, TEntity> entityMapFunction)
+        private static IEnumerator<TEntity> prv_getEnumerator(TStorage storage, Query query, Func<IRecord, TEntity> entityMapFunction)
         {
             IEnumerator<TEntity> enumerator;
 
@@ -28,16 +28,16 @@ namespace QTFK.Data.Abstracts
 
         private IEnumerator<TEntity> prv_getEnumerator()
         {
-            string query;
+            Query query;
 
             query = prv_getSelectQuery();
             return prv_getEnumerator(this.storage, query, prv_mapEntity);
         }
 
-        protected abstract string prv_getSelectCountQuery();
-        protected abstract string prv_getSelectQuery();
+        protected abstract Query prv_getSelectCountQuery();
+        protected abstract Query prv_getSelectQuery();
         protected abstract TEntity prv_mapEntity(IRecord record);
-        protected abstract string prv_getPageSelectQuery(int offset, int pageSize);
+        protected abstract Query prv_getPageSelectQuery(int offset, int pageSize);
 
         public AbstractSqlServerView(TStorage storage)
         {
@@ -49,7 +49,7 @@ namespace QTFK.Data.Abstracts
             get
             {
                 int rowsCount;
-                string query;
+                Query query;
 
                 query = prv_getSelectCountQuery();
                 rowsCount = this.storage.readSingle<int>(query);
@@ -73,7 +73,7 @@ namespace QTFK.Data.Abstracts
             for (int i = 0; i < pagesCount; i++)
             {
                 int offset;
-                string query;
+                Query query;
 
                 offset = (pageSize * i) + 1;
                 query = prv_getPageSelectQuery(offset, pageSize);

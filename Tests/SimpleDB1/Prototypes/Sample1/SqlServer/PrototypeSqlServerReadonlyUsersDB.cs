@@ -30,31 +30,35 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 
         private class PrvUsersView : AbstractSqlServerView<IUser, ISqlServerStorage>
         {
-            protected override string prv_getPageSelectQuery(int offset, int pageSize)
+            protected override Query prv_getPageSelectQuery(int offset, int pageSize)
             {
-                string subQuery, superQuery;
+                Query outerQuery;
+                string innerQuery;
 
-                subQuery = $@"
+                innerQuery = $@"
 SELECT  [id], [name], [birthDate], [isEnabled] 
         , ROW_NUMBER() OVER ( ORDER BY [name] ASC ) AS [__row]
 FROM [user]
 ";
 
-                superQuery = $@"
+                outerQuery = $@"
 SELECT *
-FROM ({subQuery}) as __s
-WHERE {offset} <= [__row] AND [__row] < {offset + pageSize} 
+FROM ({innerQuery}) as __s
+WHERE @lowerRow <= [__row] AND [__row] < @upperRow 
 ";
 
-                return superQuery;
+                outerQuery.Parameters.Add("@lowerRow", offset);
+                outerQuery.Parameters.Add("@upperRow", offset + pageSize);
+
+                return outerQuery;
             }
 
-            protected override string prv_getSelectCountQuery()
+            protected override Query prv_getSelectCountQuery()
             {
                 return "SELECT COUNT(id) FROM [user]";
             }
 
-            protected override string prv_getSelectQuery()
+            protected override Query prv_getSelectQuery()
             {
                 return $@"
 SELECT [id], [name], [birthDate], [isEnabled] 
