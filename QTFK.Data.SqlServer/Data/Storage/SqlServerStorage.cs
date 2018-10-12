@@ -80,7 +80,7 @@ namespace QTFK.Data.Storage
 
         }
 
-        private class PrvTransaction : IStorageTransaction
+        private class PrvTransaction : IStorageTransaction, IDisposable
         {
             private IDbTransaction transaction;
 
@@ -210,7 +210,7 @@ namespace QTFK.Data.Storage
                 this.transaction.Dispose();
 
 
-            if (this.connection.State != System.Data.ConnectionState.Closed)
+            if (this.connection.State != ConnectionState.Closed)
             {
                 this.connection.Close();
                 this.connection.Dispose();

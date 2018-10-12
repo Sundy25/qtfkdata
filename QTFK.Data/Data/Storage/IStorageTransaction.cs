@@ -3,7 +3,7 @@ using System.Collections.Generic;
 
 namespace QTFK.Data.Storage
 {
-    public interface IStorageTransaction : IDisposable
+    public interface IStorageTransaction
     {
         IEnumerable<IRecord> read(Query query);
         T readSingle<T>(Query query) where T : struct;

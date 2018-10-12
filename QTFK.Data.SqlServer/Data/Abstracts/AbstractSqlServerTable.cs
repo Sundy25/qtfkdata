@@ -26,37 +26,32 @@ namespace QTFK.Data.Abstracts
             entity = new TEntity();
             submit = item(entity);
 
-            if(submit)
+            if (submit)
             {
+                IStorageTransaction transaction;
+                Query query;
+                int insertResult;
+                bool hasAutoKey;
 
-                using (IStorageTransaction transaction = this.storage.getTransaction())
+                transaction = this.storage.getTransaction();
+                query = prv_getInsertQuery(entity);
+                insertResult = transaction.write(query);
+                Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
+
+                //newId = transaction.readSingle<int>("SELECT SCOPE_IDENTITY()");
+                hasAutoKey = prv_getSelectQueryIfEntityHasAutoKeyColumn(transaction, entity, out query);
+
+                if (hasAutoKey)
                 {
-                    Query query;
-                    int insertResult;
-                    bool hasAutoKey;
-
-                    query = prv_getInsertQuery(entity);
-
-                    insertResult = transaction.write(query);
-                    Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
-
-                    //newId = transaction.readSingle<int>("SELECT SCOPE_IDENTITY()");
-                    hasAutoKey = prv_getSelectQueryIfEntityHasAutoKeyColumn(transaction, entity, out query);
-
-                    if(hasAutoKey)
-                    {
-                        entity = transaction
-                            .read(query)
-                            .Select<IRecord, TEntity>(prv_mapEntity)
-                            .Single<TEntity>();
-                    }
-                    transaction.commit();
+                    entity = transaction
+                        .read(query)
+                        .Select<IRecord, TEntity>(prv_mapEntity)
+                        .Single<TEntity>();
                 }
+                transaction.commit();
             }
             else
-            {
                 entity = null;
-            }
 
             return entity;
         }
@@ -64,30 +59,28 @@ namespace QTFK.Data.Abstracts
 
         public void delete(TEntity item)
         {
-            using (IStorageTransaction transaction = this.storage.getTransaction())
-            {
-                Query query;
-                int deletedItems;
+            Query query;
+            int deletedItems;
+            IStorageTransaction transaction;
 
-                query = prv_getDeleteQuery(item);
-                deletedItems = transaction.write(query);
-                Asserts.check(deletedItems == 1, $"Expected only one affected row after delete statement execution.");
+            transaction = this.storage.getTransaction();
+            query = prv_getDeleteQuery(item);
+            deletedItems = transaction.write(query);
+            Asserts.check(deletedItems == 1, $"Expected only one affected row after delete statement execution.");
 
-                transaction.commit();
-            }
+            transaction.commit();
         }
 
         public int deleteAll()
         {
             Query query;
             int deletedItems;
+            IStorageTransaction transaction;
 
-            using (IStorageTransaction transaction = this.storage.getTransaction())
-            {
-                query = prv_getDeleteAllQuery();
-                deletedItems = transaction.write(query);
-                transaction.commit();
-            }
+            transaction = this.storage.getTransaction();
+            query = prv_getDeleteAllQuery();
+            deletedItems = transaction.write(query);
+            transaction.commit();
 
             return deletedItems;
         }
@@ -96,15 +89,14 @@ namespace QTFK.Data.Abstracts
         {
             Query query;
             int updatedItems;
+            IStorageTransaction transaction;
 
-            using (IStorageTransaction transaction = this.storage.getTransaction())
-            {
-                query = prv_getUpdateQuery(item);
-                updatedItems = transaction.write(query);
-                Asserts.check(updatedItems == 1, $"Expected only one affected row after delete statement execution.");
+            transaction = this.storage.getTransaction();
+            query = prv_getUpdateQuery(item);
+            updatedItems = transaction.write(query);
+            Asserts.check(updatedItems == 1, $"Expected only one affected row after delete statement execution.");
 
-                transaction.commit();
-            }
+            transaction.commit();
         }
     }
 }

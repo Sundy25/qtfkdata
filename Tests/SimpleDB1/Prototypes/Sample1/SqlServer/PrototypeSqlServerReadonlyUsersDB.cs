@@ -96,17 +96,18 @@ FROM [user]
 
         public void transact(Func<bool> transactionBlock)
         {
-            using (IStorageTransaction transaction = this.storage.getTransaction())
-            {
-                bool commit;
+            throw new NotSupportedException();
+            //using (IStorageTransaction transaction = this.storage.getTransaction())
+            //{
+            //    bool commit;
 
-                commit = transactionBlock();
+            //    commit = transactionBlock();
 
-                if (commit)
-                    transaction.commit();
-                else
-                    transaction.rollback();
-            }
+            //    if (commit)
+            //        transaction.commit();
+            //    else
+            //        transaction.rollback();
+            //}
         }
 
     }
