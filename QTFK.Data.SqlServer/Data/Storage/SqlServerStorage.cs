@@ -83,7 +83,6 @@ namespace QTFK.Data.Storage
         private class PrvTransaction : IStorageTransaction
         {
             private IDbTransaction transaction;
-            private bool disposed;
 
             private void prv_rollback()
             {
@@ -95,6 +94,7 @@ namespace QTFK.Data.Storage
             public PrvTransaction(IDbTransaction transaction)
             {
                 this.transaction = transaction;
+                this.Disposed = false;
             }
 
             public void commit()
@@ -111,12 +111,14 @@ namespace QTFK.Data.Storage
 
             public void Dispose()
             {
-                Asserts.check(this.disposed == false, $"This transaction has been disposed.");
+                Asserts.check(this.Disposed == false, $"This transaction has been disposed.");
                 if (this.transaction != null)
                     prv_rollback();
 
-                this.disposed = true;
+                this.Disposed = true;
             }
+
+            public bool Disposed { get; private set; }
 
             public IEnumerable<IRecord> read(Query query)
             {
@@ -139,7 +141,7 @@ namespace QTFK.Data.Storage
                 Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
 
                 value = default(T);
-                
+
                 using (IDbCommand command = this.transaction.Connection.CreateCommand())
                 {
                     command.Transaction = this.transaction;
@@ -173,33 +175,47 @@ namespace QTFK.Data.Storage
 
         private bool disposed;
         private SqlConnection connection;
+        private PrvTransaction transaction;
 
         public SqlServerStorage(string connectionString)
         {
             Asserts.isFilled(connectionString, "Argument 'connectionString' cannot be empty");
             this.connection = new SqlConnection(connectionString);
+            this.transaction = null;
         }
 
-        public IStorageTransaction beginTransaction()
+        public IStorageTransaction getTransaction()
         {
-            SqlTransaction transaction;
+            if (this.transaction == null || this.transaction.Disposed)
+            {
+                SqlTransaction sqlTransaction;
 
-            if (this.connection.State == ConnectionState.Closed)
-                this.connection.Open();
+                this.transaction = null;
 
-            transaction = this.connection.BeginTransaction($"Transaction{DateTime.UtcNow.Ticks}");
+                if (this.connection.State == ConnectionState.Closed)
+                    this.connection.Open();
 
-            return new PrvTransaction(transaction);
+                sqlTransaction = this.connection.BeginTransaction($"Transaction{DateTime.UtcNow.Ticks}");
+                this.transaction = new PrvTransaction(sqlTransaction);
+            }
+
+            return this.transaction;
         }
 
         public void Dispose()
         {
             Asserts.check(this.disposed == false, "Object has been already disposed.");
+
+            if (this.transaction != null && this.transaction.Disposed == false)
+                this.transaction.Dispose();
+
+
             if (this.connection.State != System.Data.ConnectionState.Closed)
             {
                 this.connection.Close();
                 this.connection.Dispose();
             }
+            this.transaction = null;
             this.connection = null;
             this.disposed = true;
         }

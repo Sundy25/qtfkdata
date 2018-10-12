@@ -65,7 +65,6 @@
     <Compile Include="Data\Attributes\ForeignAttribute.cs" />
     <Compile Include="Data\Attributes\IdAttribute.cs" />
     <Compile Include="Data\Extensions\DbExtensions.cs" />
-    <Compile Include="Data\Extensions\Storages\StorageExtensions.cs" />
     <Compile Include="Data\Factory\Metadata\IClassMetaData.cs" />
     <Compile Include="Data\Factory\Metadata\IViewMetaData.cs" />
     <Compile Include="Data\IEngineFeatures.cs" />

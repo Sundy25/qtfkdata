@@ -4,7 +4,6 @@ using System.Collections.Generic;
 using QTFK.Data.Concretes;
 using QTFK.Data.Storage;
 using System.Linq;
-using QTFK.Data.Extensions.Storages;
 
 namespace QTFK.Data.Abstracts
 {
@@ -17,6 +16,7 @@ namespace QTFK.Data.Abstracts
             IEnumerator<TEntity> enumerator;
 
             enumerator = storage
+                .getTransaction()
                 .read(query)
                 .Select<IRecord, TEntity>(entityMapFunction)
                 .GetEnumerator();
@@ -52,7 +52,9 @@ namespace QTFK.Data.Abstracts
                 Query query;
 
                 query = prv_getSelectCountQuery();
-                rowsCount = this.storage.readSingle<int>(query);
+                rowsCount = this.storage
+                    .getTransaction()
+                    .readSingle<int>(query);
 
                 return rowsCount;
             }

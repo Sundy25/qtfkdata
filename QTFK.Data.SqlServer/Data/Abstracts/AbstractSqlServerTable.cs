@@ -29,7 +29,7 @@ namespace QTFK.Data.Abstracts
             if(submit)
             {
 
-                using (IStorageTransaction transaction = this.storage.beginTransaction())
+                using (IStorageTransaction transaction = this.storage.getTransaction())
                 {
                     Query query;
                     int insertResult;
@@ -64,7 +64,7 @@ namespace QTFK.Data.Abstracts
 
         public void delete(TEntity item)
         {
-            using (IStorageTransaction transaction = this.storage.beginTransaction())
+            using (IStorageTransaction transaction = this.storage.getTransaction())
             {
                 Query query;
                 int deletedItems;
@@ -82,7 +82,7 @@ namespace QTFK.Data.Abstracts
             Query query;
             int deletedItems;
 
-            using (IStorageTransaction transaction = this.storage.beginTransaction())
+            using (IStorageTransaction transaction = this.storage.getTransaction())
             {
                 query = prv_getDeleteAllQuery();
                 deletedItems = transaction.write(query);
@@ -97,7 +97,7 @@ namespace QTFK.Data.Abstracts
             Query query;
             int updatedItems;
 
-            using (IStorageTransaction transaction = this.storage.beginTransaction())
+            using (IStorageTransaction transaction = this.storage.getTransaction())
             {
                 query = prv_getUpdateQuery(item);
                 updatedItems = transaction.write(query);

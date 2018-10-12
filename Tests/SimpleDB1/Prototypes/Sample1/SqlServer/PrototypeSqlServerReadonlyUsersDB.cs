@@ -96,7 +96,7 @@ FROM [user]
 
         public void transact(Func<bool> transactionBlock)
         {
-            using (IStorageTransaction transaction = this.storage.beginTransaction())
+            using (IStorageTransaction transaction = this.storage.getTransaction())
             {
                 bool commit;
 
