@@ -101,16 +101,17 @@ FROM [user]
 
             protected override bool prv_getSelectQueryIfEntityHasAutoKeyColumn(IUser item, out Query selectQuery)
             {
-                int newId;
                 Query query;
 
-                newId = this.storage.readSingle<int>("SELECT SCOPE_IDENTITY()");
                 query = $@"
+DECLARE @id INT
+
+SELECT @id = SCOPE_IDENTITY()
+
 SELECT [id], [name], [birthDate], [isEnabled] 
 FROM [user]
 WHERE [user].[id] = @id
 ";
-                query.Parameters.Add("@id", newId);
                 selectQuery = query;
                 return true;
             }

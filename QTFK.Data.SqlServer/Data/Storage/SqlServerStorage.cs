@@ -160,10 +160,13 @@ namespace QTFK.Data.Storage
 
             using (IDbCommand command = this.transaction.Connection.CreateCommand())
             {
+                object executionResult;
+
                 command.Transaction = this.transaction;
                 command.CommandText = query.Instruction;
                 command.addParameters(query.Parameters);
-                value = (T)command.ExecuteScalar();
+                executionResult = command.ExecuteScalar();
+                value = (T)executionResult;
             }
 
             return value;
