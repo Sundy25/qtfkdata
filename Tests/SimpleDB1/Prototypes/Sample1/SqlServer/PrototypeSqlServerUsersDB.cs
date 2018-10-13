@@ -50,6 +50,14 @@ WHERE [user].[id] = @id
                 query = $@"
 INSERT INTO [user] ([name], [birthDate], [isEnabled])
 VALUES (@name, @birthDate, @isEnabled)
+
+DECLARE @id INT
+
+SELECT @id = SCOPE_IDENTITY()
+
+SELECT [id], [name], [birthDate], [isEnabled] 
+FROM [user]
+WHERE [user].[id] = @id
 ";
                 query.Parameters.Add("@name", item.Name);
                 query.Parameters.Add("@birthDate", item.BirthDate);
@@ -99,23 +107,6 @@ FROM [user]
 ";
             }
 
-            protected override bool prv_getSelectQueryIfEntityHasAutoKeyColumn(IUser item, out Query selectQuery)
-            {
-                Query query;
-
-                query = $@"
-DECLARE @id INT
-
-SELECT @id = SCOPE_IDENTITY()
-
-SELECT [id], [name], [birthDate], [isEnabled] 
-FROM [user]
-WHERE [user].[id] = @id
-";
-                selectQuery = query;
-                return true;
-            }
-
             protected override Query prv_getUpdateQuery(IUser item)
             {
                 Query query;
@@ -123,11 +114,9 @@ WHERE [user].[id] = @id
                 query = $@"
 UPDATE [user] 
 SET 
-(
     [name] = @name
     , [birthDate] = @birthDate
     , [isEnabled] = @isEnabled
-)
 WHERE [user].[id] = @id
 ";
 
@@ -148,6 +137,11 @@ WHERE [user].[id] = @id
                     BirthDate = record.get<DateTime>("birthDate"),
                     IsEnabled = record.get<bool>("isEnabled"),
                 };
+            }
+
+            protected override bool prv_needsReloadAfterInsert()
+            {
+                return true;
             }
         }
 

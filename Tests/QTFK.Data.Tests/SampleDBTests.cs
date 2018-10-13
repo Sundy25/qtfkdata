@@ -117,10 +117,10 @@ namespace QTFK.Data.Tests
             Assert.AreEqual("Pepe1", user.Name);
             Assert.IsTrue(user.IsEnabled);
 
-            emptyUser = db.Users.create();
+            emptyUser = db.Users.create(u => u.BirthDate = new DateTime(2015,10,21));
             Assert.IsTrue(emptyUser.Id != 0);
             Assert.AreNotEqual(emptyUser.Id, user.Id);
-            Assert.AreEqual(new DateTime(), emptyUser.BirthDate);
+            Assert.AreEqual(new DateTime(2015, 10, 21), emptyUser.BirthDate);
             Assert.AreEqual(null, emptyUser.Name);
             Assert.IsFalse(emptyUser.IsEnabled);
 

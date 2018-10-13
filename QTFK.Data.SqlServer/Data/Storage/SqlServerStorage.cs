@@ -112,9 +112,15 @@ namespace QTFK.Data.Storage
 
             if (this.connection.State != ConnectionState.Closed)
             {
-                this.connection.Close();
-                this.connection.Dispose();
+                try
+                {
+                    this.connection.Close();
+                }
+                catch (InvalidOperationException)
+                {
+                }
             }
+            this.connection.Dispose();
             this.connection = null;
             this.disposed = true;
         }

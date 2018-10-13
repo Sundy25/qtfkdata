@@ -9,7 +9,7 @@ namespace QTFK.Data.Abstracts
         where TStorage : ISqlServerStorage
     {
         protected abstract Query prv_getInsertQuery(TEntity item);
-        protected abstract bool prv_getSelectQueryIfEntityHasAutoKeyColumn(TEntity item, out Query selectQuery);
+        protected abstract bool prv_needsReloadAfterInsert();
         protected abstract Query prv_getDeleteQuery(TEntity item);
         protected abstract Query prv_getDeleteAllQuery();
         protected abstract Query prv_getUpdateQuery(TEntity item);
@@ -30,21 +30,24 @@ namespace QTFK.Data.Abstracts
             if (submit)
             {
                 Query query;
-                int insertResult;
-                bool hasAutoKey;
+                bool needsReload;
 
+                needsReload = prv_needsReloadAfterInsert();
                 query = prv_getInsertQuery(entity);
-                insertResult = this.storage.write(query);
-                Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
 
-                hasAutoKey = prv_getSelectQueryIfEntityHasAutoKeyColumn(entity, out query);
-
-                if (hasAutoKey)
+                if (needsReload)
                 {
                     entity = this.storage
                         .read(query)
                         .Select<IRecord, TEntity>(prv_mapEntity)
                         .Single<TEntity>();
+                }
+                else
+                {
+                    int insertResult;
+
+                    insertResult = this.storage.write(query);
+                    Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
                 }
             }
             else
