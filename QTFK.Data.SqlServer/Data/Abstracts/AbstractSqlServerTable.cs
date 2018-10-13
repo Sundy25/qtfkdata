@@ -8,8 +8,8 @@ namespace QTFK.Data.Abstracts
         where TEntity : class, IEntity
         where TStorage : ISqlServerStorage
     {
-        protected abstract Query prv_getInsertQuery(TEntity entity);
-        protected abstract bool prv_getSelectQueryIfEntityHasAutoKeyColumn(TEntity entity, out Query selectQuery);
+        protected abstract Query prv_getInsertQuery(TEntity item);
+        protected abstract bool prv_getSelectQueryIfEntityHasAutoKeyColumn(TEntity item, out Query selectQuery);
         protected abstract Query prv_getDeleteQuery(TEntity item);
         protected abstract Query prv_getDeleteAllQuery();
         protected abstract Query prv_getUpdateQuery(TEntity item);
@@ -37,7 +37,6 @@ namespace QTFK.Data.Abstracts
                 insertResult = this.storage.write(query);
                 Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
 
-                //newId = transaction.readSingle<int>("SELECT SCOPE_IDENTITY()");
                 hasAutoKey = prv_getSelectQueryIfEntityHasAutoKeyColumn(entity, out query);
 
                 if (hasAutoKey)

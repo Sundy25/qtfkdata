@@ -27,52 +27,126 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 
             protected override Query prv_getDeleteAllQuery()
             {
-                throw new NotImplementedException();
+                return "DELETE FROM [user]";
             }
 
             protected override Query prv_getDeleteQuery(IUser item)
             {
-                throw new NotImplementedException();
+                Query query;
+
+                query = $@"
+DELETE FROM [user]
+WHERE [user].[id] = @id
+";
+                query.Parameters.Add("@id", item.Id);
+
+                return query;
             }
 
-            protected override Query prv_getInsertQuery(IUser entity)
+            protected override Query prv_getInsertQuery(IUser item)
             {
-                throw new NotImplementedException();
+                Query query;
+
+                query = $@"
+INSERT INTO [user] ([name], [birthDate], [isEnabled])
+VALUES (@name, @birthDate, @isEnabled)
+";
+                query.Parameters.Add("@name", item.Name);
+                query.Parameters.Add("@birthDate", item.BirthDate);
+                query.Parameters.Add("@isEnabled", item.IsEnabled);
+
+                return query;
             }
 
             protected override IUser prv_getNewEntity()
             {
-                throw new NotImplementedException();
+                return new PrvUser();
             }
 
             protected override Query prv_getPageSelectQuery(int offset, int pageSize)
             {
-                throw new NotImplementedException();
+                Query outerQuery;
+                string innerQuery;
+
+                innerQuery = $@"
+SELECT  [id], [name], [birthDate], [isEnabled] 
+        , ROW_NUMBER() OVER ( ORDER BY [name] ASC ) AS [__row]
+FROM [user]
+";
+
+                outerQuery = $@"
+SELECT *
+FROM ({innerQuery}) as __s
+WHERE @lowerRow <= [__row] AND [__row] < @upperRow 
+";
+
+                outerQuery.Parameters.Add("@lowerRow", offset);
+                outerQuery.Parameters.Add("@upperRow", offset + pageSize);
+
+                return outerQuery;
             }
 
             protected override Query prv_getSelectCountQuery()
             {
-                throw new NotImplementedException();
+                return "SELECT COUNT(id) FROM [user]";
             }
 
             protected override Query prv_getSelectQuery()
             {
-                throw new NotImplementedException();
+                return $@"
+SELECT [id], [name], [birthDate], [isEnabled] 
+FROM [user]
+";
             }
 
-            protected override bool prv_getSelectQueryIfEntityHasAutoKeyColumn(IUser entity, out Query selectQuery)
+            protected override bool prv_getSelectQueryIfEntityHasAutoKeyColumn(IUser item, out Query selectQuery)
             {
-                throw new NotImplementedException();
+                int newId;
+                Query query;
+
+                newId = this.storage.readSingle<int>("SELECT SCOPE_IDENTITY()");
+                query = $@"
+SELECT [id], [name], [birthDate], [isEnabled] 
+FROM [user]
+WHERE [user].[id] = @id
+";
+                query.Parameters.Add("@id", newId);
+                selectQuery = query;
+                return true;
             }
 
             protected override Query prv_getUpdateQuery(IUser item)
             {
-                throw new NotImplementedException();
+                Query query;
+
+                query = $@"
+UPDATE [user] 
+SET 
+(
+    [name] = @name
+    , [birthDate] = @birthDate
+    , [isEnabled] = @isEnabled
+)
+WHERE [user].[id] = @id
+";
+
+                query.Parameters.Add("@id", item.Id);
+                query.Parameters.Add("@name", item.Name);
+                query.Parameters.Add("@birthDate", item.BirthDate);
+                query.Parameters.Add("@isEnabled", item.IsEnabled);
+
+                return query;
             }
 
             protected override IUser prv_mapEntity(IRecord record)
             {
-                throw new NotImplementedException();
+                return new PrvUser
+                {
+                    Id = record.get<int>("id"),
+                    Name = record.get<string>("name"),
+                    BirthDate = record.get<DateTime>("birthDate"),
+                    IsEnabled = record.get<bool>("isEnabled"),
+                };
             }
         }
 

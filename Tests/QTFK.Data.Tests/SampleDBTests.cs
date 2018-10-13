@@ -94,26 +94,27 @@ namespace QTFK.Data.Tests
         public void TestWriteUsersDB()
         {
             IUsersDB db;
-            IUser user, emptyUser;
+            IUser user, emptyUser, updatedUser;
             IUser[] allUsers;
             int deletedUsers;
 
-            db = prv_createDb<IUsersDB>();
-            Assert.AreEqual(0, db.Users.Count);
+            //db = prv_createDb<IUsersDB>();
+            db = new PrototypeSqlServerUsersDB(this.driver);
+            Assert.AreEqual(5, db.Users.Count);
 
             allUsers = db.Users.ToArray();
-            Assert.AreEqual(0, allUsers.Length);
+            Assert.AreEqual(5, allUsers.Length);
 
             user = db.Users.create(u =>
             {
                 u.BirthDate = new DateTime(1955, 11, 12);
                 u.IsEnabled = true;
-                u.Name = "Pepe";
+                u.Name = "Pepe1";
             });
 
             Assert.IsTrue(user.Id != 0);
             Assert.AreEqual(new DateTime(1955, 11, 12), user.BirthDate);
-            Assert.AreEqual("Pepe", user.Name);
+            Assert.AreEqual("Pepe1", user.Name);
             Assert.IsTrue(user.IsEnabled);
 
             emptyUser = db.Users.create();
@@ -124,16 +125,32 @@ namespace QTFK.Data.Tests
             Assert.IsFalse(emptyUser.IsEnabled);
 
             allUsers = db.Users.ToArray();
-            Assert.AreEqual(1, allUsers.Length);
+            Assert.AreEqual(7, allUsers.Length);
 
-            user = allUsers[0];
+            user = allUsers.Single(u => u.Name == "Pepe1");
             Assert.IsTrue(user.Id != 0);
             Assert.AreEqual(new DateTime(1955, 11, 12), user.BirthDate);
-            Assert.AreEqual("Pepe", user.Name);
+            Assert.AreEqual("Pepe1", user.Name);
             Assert.IsTrue(user.IsEnabled);
 
+
+            user.IsEnabled = false;
+            user.BirthDate = user.BirthDate.AddYears(10);
+            db.Users.update(user);
+            updatedUser = db.Users.Single(u => u.Name == "Pepe1");
+            Assert.AreEqual(user.Id, updatedUser.Id);
+            Assert.AreEqual(updatedUser.BirthDate, new DateTime(1965, 11, 12));
+            Assert.AreEqual(updatedUser.IsEnabled, false);
+            Assert.AreNotSame(user, updatedUser);
+
+            db.Users.delete(updatedUser);
+            allUsers = db.Users.ToArray();
+            Assert.AreEqual(6, allUsers.Length);
+            user = db.Users.SingleOrDefault(u => u.Name == "Pepe1");
+            Assert.IsNull(user);
+
             deletedUsers = db.Users.deleteAll();
-            Assert.AreEqual(1, deletedUsers);
+            Assert.AreEqual(6, deletedUsers);
 
             allUsers = db.Users.ToArray();
             Assert.AreEqual(0, allUsers.Length);
