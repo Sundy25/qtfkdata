@@ -11,23 +11,9 @@ namespace QTFK.Data.Factory
 
     public class InMemoryDbBuilder : IDbBuilder
     {
-        private class PrvEngineFeatures : IEngineFeatures
-        {
-            public PrvEngineFeatures()
-            {
-                this.SupportsTransactions = false;
-                this.SupportsStoredProcedures = false;
-            }
-
-            public bool SupportsTransactions { get; }
-            public bool SupportsStoredProcedures { get; }
-        }
-
         private static string prv_createClassBody<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : class, IDB
         {
-            string body, engineFeaturesTypeFullName, views;
-
-            engineFeaturesTypeFullName = typeof(IEngineFeatures).FullName;
+            string body, views;
 
             views = prv_createViewProperties(dbMetadata);
 
@@ -39,26 +25,10 @@ namespace {dbMetadata.Namespace}
 
     public class {dbMetadata.Name} : {typeof(TDB).FullName}
     {{
-        private readonly {engineFeaturesTypeFullName} engineFeatures;
-
-        public {dbMetadata.Name}({engineFeaturesTypeFullName} engineFeatures)
+        public {dbMetadata.Name}()
         {{
-            this.engineFeatures = engineFeatures;
         }}
         
-        public {engineFeaturesTypeFullName} EngineFeatures
-        {{ 
-            get
-            {{
-                return this.engineFeatures;
-            }}
-        }}
-
-        public void transact(Func<bool> transactionBlock)
-        {{
-            throw new {typeof(NotSupportedException).FullName}(""Transactions are not supported by InMemoryDbBuilder"");
-        }}
-
         {views}
     }}
 }}
@@ -131,7 +101,6 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
             string dbClassBody;
             string[] assemblies;
             Assembly newAssembly;
-            PrvEngineFeatures engineFeatures;
             object[] contructorParameters;
             ICollection<string> sources;
 
@@ -179,8 +148,7 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
             {
                 throw;
             }
-            engineFeatures = new PrvEngineFeatures();
-            contructorParameters = new object[] { engineFeatures };
+            contructorParameters = new object[] { };
             instance = newAssembly.createAssignableInstance<TDB>(contructorParameters);
 
             return instance;

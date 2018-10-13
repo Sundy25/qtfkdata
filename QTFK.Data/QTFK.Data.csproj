@@ -67,7 +67,6 @@
     <Compile Include="Data\Extensions\DbExtensions.cs" />
     <Compile Include="Data\Factory\Metadata\IClassMetaData.cs" />
     <Compile Include="Data\Factory\Metadata\IViewMetaData.cs" />
-    <Compile Include="Data\IEngineFeatures.cs" />
     <Compile Include="Data\IEntity.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\Factory\Metadata\IColumnMetaData.cs" />

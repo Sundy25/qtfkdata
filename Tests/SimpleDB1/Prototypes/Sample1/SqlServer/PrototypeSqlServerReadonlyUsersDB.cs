@@ -8,18 +8,6 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 {
     public class PrototypeSqlServerReadonlyUsersDB : IReadonlyUsersDB
     {
-        private class PrvEngineFeatures : IEngineFeatures
-        {
-            public PrvEngineFeatures()
-            {
-                this.SupportsStoredProcedures = true;
-                this.SupportsTransactions = true;
-            }
-
-            public bool SupportsTransactions { get; }
-            public bool SupportsStoredProcedures { get; }
-        }
-
         private class PrvUser : IUser
         {
             public int Id { get; set; }
@@ -86,13 +74,11 @@ FROM [user]
 
         public PrototypeSqlServerReadonlyUsersDB(ISqlServerStorage storage)
         {
-            this.EngineFeatures = new PrvEngineFeatures();
             this.storage = storage;
             this.Users = new PrvUsersView(storage);
         }
 
         public IView<IUser> Users { get; }
-        public IEngineFeatures EngineFeatures { get; }
 
         public void save()
         {

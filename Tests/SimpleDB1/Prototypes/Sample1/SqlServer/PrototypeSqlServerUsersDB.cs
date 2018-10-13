@@ -11,18 +11,6 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 {
     public class PrototypeSqlServerUsersDB : IUsersDB
     {
-        private class PrvEngineFeatures : IEngineFeatures
-        {
-            public PrvEngineFeatures()
-            {
-                this.SupportsStoredProcedures = false;
-                this.SupportsTransactions = true;
-            }
-
-            public bool SupportsTransactions { get; }
-            public bool SupportsStoredProcedures { get; }
-        }
-
         private class PrvUser : IUser
         {
             public int Id { get; set; }
@@ -92,13 +80,11 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 
         public PrototypeSqlServerUsersDB(ISqlServerStorage storage)
         {
-            this.EngineFeatures = new PrvEngineFeatures();
             this.storage = storage;
             this.Users = new PrvUsers(this.storage);
         }
 
         public ITable<IUser> Users { get; }
-        public IEngineFeatures EngineFeatures { get; }
 
         public void save()
         {

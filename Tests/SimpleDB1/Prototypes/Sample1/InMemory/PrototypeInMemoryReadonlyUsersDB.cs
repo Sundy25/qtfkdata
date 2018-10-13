@@ -11,18 +11,6 @@ namespace SimpleDB1.Prototypes.Sample1.InMemory
 {
     public class PrototypeInMemoryReadonlyUsersDB : IReadonlyUsersDB
     {
-        private class PrvEngineFeatures : IEngineFeatures
-        {
-            public PrvEngineFeatures()
-            {
-                this.SupportsStoredProcedures = false;
-                this.SupportsTransactions = false;
-            }
-
-            public bool SupportsTransactions { get; }
-            public bool SupportsStoredProcedures { get; }
-        }
-
         private class PrvUsersView : IView<IUser>
         {
             private readonly IList<IUser> users;
@@ -92,11 +80,9 @@ namespace SimpleDB1.Prototypes.Sample1.InMemory
 
         public PrototypeInMemoryReadonlyUsersDB()
         {
-            this.EngineFeatures = new PrvEngineFeatures();
             this.Users = new PrvUsersView();
         }
 
-        public IEngineFeatures EngineFeatures { get; }
         public IView<IUser> Users { get; }
 
         public void save()
