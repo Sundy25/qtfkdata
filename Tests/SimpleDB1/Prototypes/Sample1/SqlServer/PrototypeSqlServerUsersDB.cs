@@ -22,10 +22,6 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 
         private class PrvUsers : AbstractSqlServerTable<IUser, ISqlServerStorage>, IUserTable
         {
-            public PrvUsers(ISqlServerStorage storage) : base(storage)
-            {
-            }
-
             protected override Query prv_getDeleteAllQuery()
             {
                 return "DELETE FROM [user]";
@@ -144,6 +140,26 @@ WHERE [user].[id] = @id
             {
                 return true;
             }
+
+            public PrvUsers(ISqlServerStorage storage) : base(storage)
+            {
+            }
+
+            public PrvUsers(ISqlServerStorage storage, Query filterQuery) : base(storage)
+            {
+                throw new NotImplementedException();
+            }
+
+            public IView<IUser> whereNameEquals(string name)
+            {
+                Query filterQuery;
+
+                filterQuery = " WHERE name = @nameWhere ";
+                filterQuery.Parameters.Add("@nameWhere", name);
+
+                return new PrvUsers(this.storage, filterQuery);
+            }
+
         }
 
         private readonly ISqlServerStorage storage;

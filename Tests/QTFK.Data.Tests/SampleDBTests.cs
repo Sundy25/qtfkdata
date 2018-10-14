@@ -156,5 +156,17 @@ namespace QTFK.Data.Tests
             Assert.AreEqual(0, allUsers.Length);
         }
 
+        [TestMethod]
+        public void testCustomTable()
+        {
+            IUsersDB db;
+            IUser user, emptyUser, updatedUser;
+            IUser[] loadedUsers;
+
+            //db = prv_createDb<IUsersDB>();
+            db = new PrototypeSqlServerUsersDB(this.driver);
+
+            loadedUsers = db.Users.whereNameEquals("Pepe").ToArray();
+        }
     }
 }
