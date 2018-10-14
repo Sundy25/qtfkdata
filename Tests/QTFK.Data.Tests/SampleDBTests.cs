@@ -160,13 +160,20 @@ namespace QTFK.Data.Tests
         public void testCustomTable()
         {
             IUsersDB db;
-            IUser user, emptyUser, updatedUser;
+            IUser user;
             IUser[] loadedUsers;
 
             //db = prv_createDb<IUsersDB>();
             db = new PrototypeSqlServerUsersDB(this.driver);
 
             loadedUsers = db.Users.whereNameEquals("Pepe").ToArray();
+            Assert.AreEqual(1, loadedUsers.Length);
+
+            user = loadedUsers[0];
+            Assert.IsTrue(user.Id != 0);
+            Assert.AreEqual(new DateTime(2018, 12, 31), user.BirthDate);
+            Assert.AreEqual("Pepe", user.Name);
+            Assert.AreEqual(false, user.IsEnabled);
         }
     }
 }

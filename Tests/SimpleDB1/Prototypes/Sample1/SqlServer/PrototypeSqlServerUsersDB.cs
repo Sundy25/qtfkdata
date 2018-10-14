@@ -22,6 +22,8 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
 
         private class PrvUsers : AbstractSqlServerTable<IUser, ISqlServerStorage>, IUserTable
         {
+            private readonly Query criteriaQuery;
+
             protected override Query prv_getDeleteAllQuery()
             {
                 return "DELETE FROM [user]";
@@ -68,42 +70,6 @@ WHERE [user].[id] = @id
                 return new PrvUser();
             }
 
-            protected override Query prv_getPageSelectQuery(int offset, int pageSize)
-            {
-                Query outerQuery;
-                string innerQuery;
-
-                innerQuery = $@"
-SELECT  [id], [name], [birthDate], [isEnabled] 
-        , ROW_NUMBER() OVER ( ORDER BY [name] ASC ) AS [__row]
-FROM [user]
-";
-
-                outerQuery = $@"
-SELECT *
-FROM ({innerQuery}) as __s
-WHERE @lowerRow <= [__row] AND [__row] < @upperRow 
-";
-
-                outerQuery.Parameters.Add("@lowerRow", offset);
-                outerQuery.Parameters.Add("@upperRow", offset + pageSize);
-
-                return outerQuery;
-            }
-
-            protected override Query prv_getSelectCountQuery()
-            {
-                return "SELECT COUNT(id) FROM [user]";
-            }
-
-            protected override Query prv_getSelectQuery()
-            {
-                return $@"
-SELECT [id], [name], [birthDate], [isEnabled] 
-FROM [user]
-";
-            }
-
             protected override Query prv_getUpdateQuery(IUser item)
             {
                 Query query;
@@ -125,6 +91,47 @@ WHERE [user].[id] = @id
                 return query;
             }
 
+            protected override bool prv_needsReloadAfterInsert()
+            {
+                return true;
+            }
+
+
+            protected override Query prv_getPageSelectQuery(int offset, int pageSize)
+            {
+                Query outerQuery, innerQuery;
+
+                innerQuery = $@"
+SELECT  [id], [name], [birthDate], [isEnabled] 
+        , ROW_NUMBER() OVER ( ORDER BY [name] ASC ) AS [__row]
+FROM [user] 
+" + this.criteriaQuery;
+
+                outerQuery = new Query(innerQuery, inner => $@"
+SELECT *
+FROM ({inner}) as __s
+WHERE @lowerRow <= [__row] AND [__row] < @upperRow 
+");
+
+                outerQuery.Parameters.Add("@lowerRow", offset);
+                outerQuery.Parameters.Add("@upperRow", offset + pageSize);
+
+                return outerQuery;
+            }
+
+            protected override Query prv_getSelectCountQuery()
+            {
+                return "SELECT COUNT(id) FROM [user]" + this.criteriaQuery;
+            }
+
+            protected override Query prv_getSelectQuery()
+            {
+                return $@"
+SELECT [id], [name], [birthDate], [isEnabled] 
+FROM [user]
+" + this.criteriaQuery;
+            }
+
             protected override IUser prv_mapEntity(IRecord record)
             {
                 return new PrvUser
@@ -136,25 +143,21 @@ WHERE [user].[id] = @id
                 };
             }
 
-            protected override bool prv_needsReloadAfterInsert()
-            {
-                return true;
-            }
-
             public PrvUsers(ISqlServerStorage storage) : base(storage)
             {
+                this.criteriaQuery = Query.Empty;
             }
 
-            public PrvUsers(ISqlServerStorage storage, Query filterQuery) : base(storage)
+            public PrvUsers(ISqlServerStorage storage, Query criteriaQuery) : base(storage)
             {
-                throw new NotImplementedException();
+                this.criteriaQuery = criteriaQuery;
             }
 
             public IView<IUser> whereNameEquals(string name)
             {
                 Query filterQuery;
 
-                filterQuery = " WHERE name = @nameWhere ";
+                filterQuery = " WHERE [name] = @nameWhere ";
                 filterQuery.Parameters.Add("@nameWhere", name);
 
                 return new PrvUsers(this.storage, filterQuery);

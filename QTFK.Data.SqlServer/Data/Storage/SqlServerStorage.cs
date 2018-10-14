@@ -149,7 +149,7 @@ namespace QTFK.Data.Storage
 
             command = this.transaction.Connection.CreateCommand();
             command.Transaction = this.transaction;
-            command.CommandText = query.Instruction;
+            command.CommandText = query.Statement;
             command.addParameters(query.Parameters);
 
             return new PrvReader(command);
@@ -169,7 +169,7 @@ namespace QTFK.Data.Storage
                 object executionResult;
 
                 command.Transaction = this.transaction;
-                command.CommandText = query.Instruction;
+                command.CommandText = query.Statement;
                 command.addParameters(query.Parameters);
                 executionResult = command.ExecuteScalar();
                 value = (T)executionResult;
@@ -190,7 +190,7 @@ namespace QTFK.Data.Storage
             using (IDbCommand command = this.transaction.Connection.CreateCommand())
             {
                 command.Transaction = this.transaction;
-                command.CommandText = query.Instruction;
+                command.CommandText = query.Statement;
                 command.addParameters(query.Parameters);
                 affectedRows = command.ExecuteNonQuery();
             }
