@@ -5,10 +5,10 @@ namespace QTFK.Data.Tests.Services
 {
     public interface IExpensesDB : IDB
     {
-        IUserCrud Users { get; }
+        IUserTable Users { get; }
         ITable<IExpense> Expenses { get; }
         IView<IPayment> Payments { get; }
-        ICategoryCrud Categories { get; }
+        ICategoryTable Categories { get; }
 
         ITable<ICurrencyConversion> CurrencyExchanges { get; }
         ITable<ICurrency> Currencies { get; }
