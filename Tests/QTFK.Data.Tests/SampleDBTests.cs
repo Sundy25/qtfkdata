@@ -166,7 +166,7 @@ namespace QTFK.Data.Tests
             //db = prv_createDb<IUsersDB>();
             db = new PrototypeSqlServerUsersDB(this.driver);
 
-            loadedUsers = db.Users.whereNameEquals("Pepe").ToArray();
+            loadedUsers = db.Users.whereNameIsEqualTo("Pepe").ToArray();
             Assert.AreEqual(1, loadedUsers.Length);
 
             user = loadedUsers[0];

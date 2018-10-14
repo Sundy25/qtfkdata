@@ -96,7 +96,6 @@ WHERE [user].[id] = @id
                 return true;
             }
 
-
             protected override Query prv_getPageSelectQuery(int offset, int pageSize)
             {
                 Query outerQuery, innerQuery;
@@ -153,7 +152,7 @@ FROM [user]
                 this.criteriaQuery = criteriaQuery;
             }
 
-            public IView<IUser> whereNameEquals(string name)
+            public IView<IUser> whereNameIsEqualTo(string name)
             {
                 Query filterQuery;
 
@@ -163,6 +162,19 @@ FROM [user]
                 return new PrvUsers(this.storage, filterQuery);
             }
 
+            public int deleteWhereBirthDateIsLessThan(DateTime birthDate)
+            {
+                Query query;
+                int deletedItems;
+
+                query = " WHERE [birthDate] < @whereBirthDate ";
+                query.Parameters.Add("@whereBirthDate", birthDate);
+                query = prv_getDeleteAllQuery() + query;
+
+                deletedItems = this.storage.write(query);
+
+                return deletedItems;
+            }
         }
 
         private readonly ISqlServerStorage storage;
