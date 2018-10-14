@@ -5,6 +5,6 @@ namespace SimpleDB1.DataBases.Sample1
 {
     public interface IUsersDB : IDB
     {
-        ITable<IUser> Users { get; }
+        IUserTable Users { get; }
     }
 }

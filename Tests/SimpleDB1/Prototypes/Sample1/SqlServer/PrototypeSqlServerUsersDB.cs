@@ -4,6 +4,7 @@ using System.Linq;
 using System.Text;
 using System.Threading.Tasks;
 using QTFK.Data;
+using QTFK.Data.Abstracts;
 using QTFK.Data.Storage;
 using SimpleDB1.DataBases.Sample1;
 
@@ -19,7 +20,7 @@ namespace SimpleDB1.Prototypes.Sample1.SqlServer
             public bool IsEnabled { get; set; }
         }
 
-        private class PrvUsers : QTFK.Data.Abstracts.AbstractSqlServerTable<IUser, ISqlServerStorage>
+        private class PrvUsers : AbstractSqlServerTable<IUser, ISqlServerStorage>, IUserTable
         {
             public PrvUsers(ISqlServerStorage storage) : base(storage)
             {
@@ -153,7 +154,7 @@ WHERE [user].[id] = @id
             this.Users = new PrvUsers(this.storage);
         }
 
-        public ITable<IUser> Users { get; }
+        public IUserTable Users { get; }
 
         public void save()
         {

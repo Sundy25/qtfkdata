@@ -55,6 +55,7 @@
   </ItemGroup>
   <ItemGroup>
     <Compile Include="DataBases\Empty\IEmptyDB.cs" />
+    <Compile Include="DataBases\Sample1\IUserTable.cs" />
     <Compile Include="Prototypes\Empty\InMemory\PrototypeInMemoryEmptyDB.cs" />
     <Compile Include="Prototypes\Empty\SqlServer\PrototypeSqlServerEmptyDB.cs" />
     <Compile Include="DataBases\Sample1\IReadonlyUsersDB.cs" />
