@@ -1,0 +1,20 @@
+@startuml
+digraph world {
+    "*" -> update;
+    "*" -> delete;
+    "*" -> single;
+    update -> single;
+    delete -> single;
+    single -> where;
+    "*" -> where;
+    update -> where;
+    delete -> where;
+    where -> "[Property]";
+    "[Property]" -> "equals, isbetween, isGreater, ...";
+    "equals, isbetween, isGreater, ..." -> "And, Or";
+    "And, Or" -> "[Property]";
+    "equals, isbetween, isGreater, ..." -> "END";
+    
+	{rank=same; "And, Or", "[Property]";}
+}
+@enduml
