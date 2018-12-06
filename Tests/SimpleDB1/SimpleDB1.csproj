@@ -33,16 +33,16 @@
   </PropertyGroup>
   <ItemGroup>
     <Reference Include="QTFK.Core, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\libs\qtfk.1.6.0\QTFK.Core.dll</HintPath>
+      <HintPath>..\..\packages\QTFK.Core.1.6.0\lib\net452\QTFK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.DB, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\libs\qtfk.1.6.0\QTFK.DB.dll</HintPath>
+    <Reference Include="QTFK.DB, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QTFK.DB.1.6.0\lib\net452\QTFK.DB.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Services.DBIO.SQLServer, Version=1.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <SpecificVersion>False</SpecificVersion>
-      <HintPath>..\..\libs\qtfk.1.6.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
+    <Reference Include="QTFK.Logs, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QTFK.Logs.1.6.0\lib\net452\QTFK.Logs.dll</HintPath>
+    </Reference>
+    <Reference Include="QTFK.Reflection, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QTFK.Reflection.1.6.0\lib\net452\QTFK.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -67,15 +67,17 @@
     <Compile Include="Prototypes\Sample1\SqlServer\PrototypeSqlServerUsersDB.cs" />
   </ItemGroup>
   <ItemGroup>
+    <None Include="packages.config" />
+  </ItemGroup>
+  <ItemGroup>
     <ProjectReference Include="..\..\QTFK.Data.SqlServer\QTFK.Data.SqlServer.csproj">
-      <Project>{99D828BF-7C37-474B-A46F-6010E19D2A72}</Project>
+      <Project>{99d828bf-7c37-474b-a46f-6010e19d2a72}</Project>
       <Name>QTFK.Data.SqlServer</Name>
     </ProjectReference>
     <ProjectReference Include="..\..\QTFK.Data\QTFK.Data.csproj">
-      <Project>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</Project>
+      <Project>{a78ecf12-d6e8-4c49-b315-ffb4b3fb11cc}</Project>
       <Name>QTFK.Data</Name>
     </ProjectReference>
   </ItemGroup>
-  <ItemGroup />
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

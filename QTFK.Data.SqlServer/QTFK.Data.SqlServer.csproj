@@ -32,17 +32,17 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
-    <Reference Include="QTFK.Core">
-      <HintPath>..\libs\qtfk.1.6.0\QTFK.Core.dll</HintPath>
+    <Reference Include="QTFK.Core, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QTFK.Core.1.6.0\lib\net452\QTFK.Core.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.DB">
-      <HintPath>..\libs\qtfk.1.6.0\QTFK.DB.dll</HintPath>
+    <Reference Include="QTFK.DB, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QTFK.DB.1.6.0\lib\net452\QTFK.DB.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Logs">
-      <HintPath>..\libs\qtfk.1.6.0\QTFK.Logs.dll</HintPath>
+    <Reference Include="QTFK.Logs, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QTFK.Logs.1.6.0\lib\net452\QTFK.Logs.dll</HintPath>
     </Reference>
-    <Reference Include="QTFK.Services.DBIO.SQLServer">
-      <HintPath>..\libs\qtfk.1.6.0\QTFK.Services.DBIO.SQLServer.dll</HintPath>
+    <Reference Include="QTFK.Reflection, Version=1.6.0.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QTFK.Reflection.1.6.0\lib\net452\QTFK.Reflection.dll</HintPath>
     </Reference>
     <Reference Include="System" />
     <Reference Include="System.Core" />
@@ -66,6 +66,9 @@
       <Project>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</Project>
       <Name>QTFK.Data</Name>
     </ProjectReference>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
