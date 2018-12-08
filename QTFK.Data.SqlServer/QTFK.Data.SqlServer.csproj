@@ -1,16 +1,18 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
-<Project ToolsVersion="14.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+<Project ToolsVersion="15.0" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
   <Import Project="$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props" Condition="Exists('$(MSBuildExtensionsPath)\$(MSBuildToolsVersion)\Microsoft.Common.props')" />
   <PropertyGroup>
     <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
     <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
-    <ProjectGuid>{A78ECF12-D6E8-4C49-B315-FFB4B3FB11CC}</ProjectGuid>
+    <ProjectGuid>{99D828BF-7C37-474B-A46F-6010E19D2A72}</ProjectGuid>
     <OutputType>Library</OutputType>
     <AppDesignerFolder>Properties</AppDesignerFolder>
     <RootNamespace>QTFK</RootNamespace>
-    <AssemblyName>QTFK.Data</AssemblyName>
+    <AssemblyName>QTFK.Data.SqlServer</AssemblyName>
     <TargetFrameworkVersion>v4.5.2</TargetFrameworkVersion>
     <FileAlignment>512</FileAlignment>
+    <Deterministic>true</Deterministic>
+    <TargetFrameworkProfile />
   </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
     <DebugSymbols>true</DebugSymbols>
@@ -33,6 +35,9 @@
     <Reference Include="QTFK.Core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\QTFK.Core.2.2.0\lib\net452\QTFK.Core.dll</HintPath>
     </Reference>
+    <Reference Include="QTFK.Data, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\packages\QTFK.Data.0.0.1\lib\net452\QTFK.Data.dll</HintPath>
+    </Reference>
     <Reference Include="QTFK.DB, Version=1.6.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\packages\QTFK.DB.1.6.1\lib\net452\QTFK.DB.dll</HintPath>
     </Reference>
@@ -52,45 +57,16 @@
     <Reference Include="System.Xml" />
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="Data\Attributes\ColumnAttribute.cs" />
-    <Compile Include="Data\Attributes\DefaulOrder.cs" />
-    <Compile Include="Data\Attributes\ForeignAttribute.cs" />
-    <Compile Include="Data\Attributes\IdAttribute.cs" />
-    <Compile Include="Data\Extensions\DbExtensions.cs" />
-    <Compile Include="Data\Factory\Metadata\IClassMetaData.cs" />
-    <Compile Include="Data\Factory\Metadata\IViewMetaData.cs" />
-    <Compile Include="Data\IEntity.cs" />
+    <Compile Include="Data\Abstracts\AbstractSqlServerTable.cs" />
+    <Compile Include="Data\Abstracts\AbstractSqlServerView.cs" />
+    <Compile Include="Data\Factory\SqlServerDbBuilder.cs" />
+    <Compile Include="Data\Storage\ISqlServerStorage.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="Data\Factory\Metadata\IColumnMetaData.cs" />
-    <Compile Include="Data\Factory\Metadata\IDbMetadata.cs" />
-    <Compile Include="Data\Factory\DefaultMetadataBuilder.cs" />
-    <Compile Include="Data\Factory\IDbBuilder.cs" />
-    <Compile Include="Data\Factory\Metadata\IEntityMetaData.cs" />
-    <Compile Include="Data\Factory\IMetadataBuilder.cs" />
-    <Compile Include="Data\Factory\Metadata\IMetaData.cs" />
-    <Compile Include="Data\Factory\InMemoryDbBuilder.cs" />
-    <Compile Include="Data\Factory\Metadata\IRelationShipMetaData.cs" />
-    <Compile Include="Data\Factory\Metadata\RelationShipKind.cs" />
-    <Compile Include="Data\IDB.cs" />
-    <Compile Include="Data\IPageCollection.cs" />
-    <Compile Include="Data\IPageView.cs" />
-    <Compile Include="Data\Storage\Query.cs" />
-    <Compile Include="Data\Storage\IRecord.cs" />
-    <Compile Include="Data\Storage\IStorage.cs" />
-    <Compile Include="Data\IView.cs" />
-    <Compile Include="Data\ITable.cs" />
-    <Compile Include="Data\Concretes\PageCollection.cs" />
+    <Compile Include="Data\Storage\SqlServerStorage.cs" />
   </ItemGroup>
   <ItemGroup>
     <None Include="packages.config" />
-    <None Include="QTFK.Data.nuspec" />
+    <None Include="QTFK.Data.SqlServer.nuspec" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
-  <!-- To modify your build process, add your task inside one of the targets below and uncomment it. 
-       Other similar extension points exist, see Microsoft.Common.targets.
-  <Target Name="BeforeBuild">
-  </Target>
-  <Target Name="AfterBuild">
-  </Target>
-  -->
 </Project>
