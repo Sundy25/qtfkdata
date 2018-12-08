@@ -14,7 +14,7 @@ namespace QTFK.Data.Factory
 
         public SqlServerDbBuilder(ISqlServerStorage storage, ILogger<LogLevel> logger = null)
         {
-            Asserts.isSomething(storage, $"Contructor parameter '{nameof(storage)}' cannot be null");
+            Asserts.isNotNull(storage);
 
             this.logger = logger ?? NullLogger.Instance;
             this.storage = storage;
@@ -22,8 +22,8 @@ namespace QTFK.Data.Factory
 
         public SqlServerDbBuilder(IStorage storage, ILogger<LogLevel> logger = null)
         {
-            Asserts.isSomething(storage, $"Contructor parameter '{nameof(storage)}' cannot be null");
-            Asserts.check(storage is ISqlServerStorage, $"Contructor parameter '{nameof(storage)}' must implement {typeof(ISqlServerStorage).FullName}.");
+            Asserts.isNotNull(storage);
+            Asserts.isInstanceOf<ISqlServerStorage>(storage);
 
             this.logger = logger ?? NullLogger.Instance;
             this.storage = this.storage as ISqlServerStorage;

@@ -47,7 +47,7 @@ namespace QTFK.Data.Abstracts
                     int insertResult;
 
                     insertResult = this.storage.write(query);
-                    Asserts.check(insertResult == 1, $"Insert statement has returned unexpected inserted rows count: {insertResult}");
+                    Asserts.isTrue(insertResult == 1);
                 }
             }
             else
@@ -63,7 +63,7 @@ namespace QTFK.Data.Abstracts
 
             query = prv_getDeleteQuery(item);
             deletedItems = this.storage.write(query);
-            Asserts.check(deletedItems == 1, $"Expected only one affected row after delete statement execution.");
+            Asserts.isTrue(deletedItems == 1);
         }
 
         public int deleteAll()
@@ -84,7 +84,7 @@ namespace QTFK.Data.Abstracts
 
             query = prv_getUpdateQuery(item);
             updatedItems = this.storage.write(query);
-            Asserts.check(updatedItems == 1, $"Expected only one affected row after delete statement execution.");
+            Asserts.isTrue(updatedItems == 1);
         }
     }
 }

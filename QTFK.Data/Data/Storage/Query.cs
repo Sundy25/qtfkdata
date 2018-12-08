@@ -10,7 +10,7 @@ namespace QTFK.Data.Storage
 
         private void prv_setStatement(string value)
         {
-            Asserts.isFilled(value, $"Value for '{nameof(Statement)}' property cannot be empty.");
+            Asserts.stringIsNotEmpty(value);
             this.statement = value;
         }
 

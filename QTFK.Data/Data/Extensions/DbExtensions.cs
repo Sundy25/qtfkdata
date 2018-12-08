@@ -8,8 +8,8 @@ namespace QTFK.Data.Extensions
         {
             T entity;
 
-            Asserts.isSomething(table, $"Parameter '{table}' cannot be null.");
-            Asserts.isSomething(setterDelegate, $"Parameter '{setterDelegate}' cannot be null.");
+            Asserts.isNotNull(table);
+            Asserts.isNotNull(setterDelegate);
 
             entity = table.create(e =>
             {
@@ -25,7 +25,7 @@ namespace QTFK.Data.Extensions
         {
             T entity;
 
-            Asserts.isSomething(table, $"Parameter '{table}' cannot be null.");
+            Asserts.isNotNull(table);
 
             entity = table.create(e => true);
 

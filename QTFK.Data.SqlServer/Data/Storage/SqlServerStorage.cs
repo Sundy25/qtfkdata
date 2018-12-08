@@ -45,7 +45,7 @@ namespace QTFK.Data.Storage
 
             private IEnumerator<IRecord> prv_getEnumerator()
             {
-                Asserts.check(this.used == false, $"Reader has already been used.");
+                Asserts.isFalse(this.used);
 
                 using (IDataReader reader = this.command.ExecuteReader())
                 {
@@ -89,8 +89,8 @@ namespace QTFK.Data.Storage
 
         private void prv_checkTransaction()
         {
-            Asserts.check(this.disposed == false, "Object disposed.");
-            Asserts.check(this.commited == false, "Transaction already commited.");
+            Asserts.isFalse(this.disposed);
+            Asserts.isFalse(this.commited);
 
             if (this.connection.State == ConnectionState.Closed)
                 this.connection.Open();
@@ -132,7 +132,7 @@ namespace QTFK.Data.Storage
 
         public SqlServerStorage(string connectionString)
         {
-            Asserts.isFilled(connectionString, "Argument 'connectionString' cannot be empty");
+            Asserts.isNotNull(connectionString);
             this.connection = new SqlConnection(connectionString);
             this.transaction = null;
             this.commited = false;
@@ -143,7 +143,7 @@ namespace QTFK.Data.Storage
         {
             IDbCommand command;
 
-            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+            Asserts.isNotNull(query);
 
             prv_checkTransaction();
 
@@ -159,7 +159,7 @@ namespace QTFK.Data.Storage
         {
             T value;
 
-            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+            Asserts.isNotNull(query);
 
             value = default(T);
             prv_checkTransaction();
@@ -182,7 +182,7 @@ namespace QTFK.Data.Storage
         {
             int affectedRows;
 
-            Asserts.isSomething(query, $"'{nameof(query)}' parameter cannot be null.");
+            Asserts.isNotNull(query);
 
             affectedRows = 0;
             prv_checkTransaction();
@@ -200,10 +200,10 @@ namespace QTFK.Data.Storage
 
         public void commit()
         {
-            Asserts.check(this.disposed == false, "Object disposed.");
-            Asserts.check(this.commited == false, "Transaction already commited.");
-            Asserts.check(this.connection.State == ConnectionState.Open, "Connection is not open.");
-            Asserts.isSomething(this.transaction, "Transaction is null!");
+            Asserts.isFalse(this.disposed);
+            Asserts.isFalse(this.commited);
+            Asserts.isTrue(this.connection.State == ConnectionState.Open);
+            Asserts.isNotNull(this.transaction);
 
             this.transaction.Commit();
             this.transaction.Dispose();
@@ -213,7 +213,7 @@ namespace QTFK.Data.Storage
 
         public void Dispose()
         {
-            Asserts.check(this.disposed == false, "Object has been already disposed.");
+            Asserts.isFalse(this.disposed);
 
             prv_dispose();
         }

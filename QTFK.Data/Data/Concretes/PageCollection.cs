@@ -17,8 +17,8 @@ namespace QTFK.Data.Concretes
 
             public PrvPageView(Func<IEnumerator<T>> enumeratorDelegate, int pageSize)
             {
-                Asserts.isSomething(enumeratorDelegate, $"Constructor parameter '{enumeratorDelegate}' cannot be null.");
-                Asserts.check(pageSize >= 0, $"Constructor parameter '{pageSize}' must be greater or equal than zero.");
+                Asserts.isNotNull(enumeratorDelegate);
+                Asserts.isTrue(pageSize >= 0);
 
                 this.enumeratorDelegate = enumeratorDelegate;
                 this.Count = pageSize;
@@ -43,9 +43,9 @@ namespace QTFK.Data.Concretes
 
         public PageCollection(Func<IEnumerator<T>>[] enumeratorCreatorDelegates, int pageSize, int lastPageSize)
         {
-            Asserts.isSomething(enumeratorCreatorDelegates, $"Constructor parameter '{nameof(enumeratorCreatorDelegates)}' cannot be null.");
-            Asserts.check(pageSize >= 0, $"Constructor parameter '{nameof(pageSize)}' must be grater or equal than zero.");
-            Asserts.check(0 <= lastPageSize && lastPageSize <= pageSize, $"Constructor parameter '{nameof(lastPageSize)}' must be less or equal than contructor paramter '{nameof(pageSize)}'.");
+            Asserts.isNotNull(enumeratorCreatorDelegates);
+            Asserts.isTrue(pageSize >= 0);
+            Asserts.isTrue(0 <= lastPageSize && lastPageSize <= pageSize);
 
             this.Count = enumeratorCreatorDelegates.Length;
             this.enumeratorCreatorDelegates = enumeratorCreatorDelegates;
@@ -61,7 +61,7 @@ namespace QTFK.Data.Concretes
                 Func<IEnumerator<T>> enumeratorCreator;
                 int currentPageSize;
 
-                Asserts.check(0 <= index && index < this.Count, $"Index operator value is out of range.");
+                Asserts.isTrue(0 <= index && index < this.Count);
 
                 if (index == this.Count - 1)
                     currentPageSize = this.lastPageSize;
@@ -69,7 +69,7 @@ namespace QTFK.Data.Concretes
                     currentPageSize = this.pageSize;
 
                 enumeratorCreator = this.enumeratorCreatorDelegates[index];
-                Asserts.isSomething(enumeratorCreator, $"Constructor paramater '{nameof(this.enumeratorCreatorDelegates)}[{index}]' cannot be null.");
+                Asserts.isNotNull(enumeratorCreator);
 
                 pageView = new PrvPageView(enumeratorCreator, currentPageSize);
 
