@@ -38,6 +38,12 @@
     <Reference Include="QTFK.Core, Version=2.2.0.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\QTFK.Core.2.2.0\lib\net452\QTFK.Core.dll</HintPath>
     </Reference>
+    <Reference Include="QTFK.Data, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QTFK.Data.0.0.1\lib\net452\QTFK.Data.dll</HintPath>
+    </Reference>
+    <Reference Include="QTFK.Data.SqlServer, Version=0.0.1.0, Culture=neutral, processorArchitecture=MSIL">
+      <HintPath>..\..\packages\QTFK.Data.SqlServer.0.0.1\lib\net452\QTFK.Data.SqlServer.dll</HintPath>
+    </Reference>
     <Reference Include="QTFK.DB, Version=1.6.1.0, Culture=neutral, processorArchitecture=MSIL">
       <HintPath>..\..\packages\QTFK.DB.1.6.1\lib\net452\QTFK.DB.dll</HintPath>
     </Reference>
@@ -80,14 +86,6 @@
     <Compile Include="SampleDBTests.cs" />
   </ItemGroup>
   <ItemGroup>
-    <ProjectReference Include="..\..\QTFK.Data.SqlServer\QTFK.Data.SqlServer.csproj">
-      <Project>{99d828bf-7c37-474b-a46f-6010e19d2a72}</Project>
-      <Name>QTFK.Data.SqlServer</Name>
-    </ProjectReference>
-    <ProjectReference Include="..\..\QTFK.Data\QTFK.Data.csproj">
-      <Project>{a78ecf12-d6e8-4c49-b315-ffb4b3fb11cc}</Project>
-      <Name>QTFK.Data</Name>
-    </ProjectReference>
     <ProjectReference Include="..\SimpleDB1\SimpleDB1.csproj">
       <Project>{f19fa47e-9e0f-472e-9a31-d40b2b2d4f04}</Project>
       <Name>SimpleDB1</Name>
