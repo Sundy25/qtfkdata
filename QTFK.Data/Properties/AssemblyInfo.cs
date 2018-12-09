@@ -8,7 +8,7 @@ using System.Runtime.InteropServices;
 [assembly: AssemblyTitle("QTFK.Data")]
 [assembly: AssemblyDescription("Quick Tools for Funny Koding")]
 [assembly: AssemblyConfiguration("")]
-[assembly: AssemblyCompany("Hossmi")]
+[assembly: AssemblyCompany("Blacksmith Projects")]
 [assembly: AssemblyProduct("QTFK.Data")]
 [assembly: AssemblyCopyright("Copyright ©  2017")]
 [assembly: AssemblyTrademark("")]
