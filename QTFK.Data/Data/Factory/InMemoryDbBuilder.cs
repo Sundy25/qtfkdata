@@ -97,9 +97,7 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
         public TDB createDb<TDB>(IDbMetadata<TDB> dbMetadata) where TDB : class, IDB
         {
             TDB instance;
-            Type dbType;
             string dbClassBody;
-            string[] assemblies;
             Assembly newAssembly;
             object[] contructorParameters;
             ICollection<string> sources;
@@ -119,30 +117,24 @@ public {viewMetaData.InterfaceType.FullName} {viewMetaData.Name}
             sources = new LinkedList<string>();
             prv_buildDb(dbMetadata, sources);
 
-
-
             dbClassBody = prv_createClassBody(dbMetadata);
-
-            dbType = typeof(TDB);
-            assemblies = new string[]
-            {
-                //"Microsoft.CSharp.dll",
-                "System.dll",
-                "System.Core.dll",
-                "System.Data.DataSetExtensions.dll",
-                "System.Data.dll",
-                "System.Net.Http.dll",
-                "System.Xml.dll",
-                "System.Xml.Linq.dll",
-                "QTFK.Data.dll",
-                dbType.Module.Name,
-            };
-
-            
 
             try
             {
-                newAssembly = CompilerWrapper.buildInMemoryAssembly(dbClassBody, assemblies);
+                newAssembly = CompilerWrapper
+                    .build()
+                    //.addReferencedAssembly("Microsoft.CSharp.dll")
+                    .addReferencedAssembly("System.dll")
+                    .addReferencedAssembly("System.Core.dll")
+                    .addReferencedAssembly("System.Data.DataSetExtensions.dll")
+                    .addReferencedAssembly("System.Data.dll")
+                    .addReferencedAssembly("System.Net.Http.dll")
+                    .addReferencedAssembly("System.Xml.dll")
+                    .addReferencedAssembly("System.Xml.Linq.dll")
+                    .addReferencedAssembly("QTFK.Data.dll")
+                    .addReferencedAssembly(typeof(TDB).Module.Name)
+                    .addSource(dbClassBody)
+                    .compile();
             }
             catch (CompilerException)
             {

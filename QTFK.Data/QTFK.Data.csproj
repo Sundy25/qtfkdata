@@ -30,20 +30,22 @@
     <WarningLevel>4</WarningLevel>
   </PropertyGroup>
   <ItemGroup>
+    <Reference Include="NLog, Version=4.0.0.0, Culture=neutral, PublicKeyToken=5120e14c03d0593c, processorArchitecture=MSIL">
+      <HintPath>..\packages\NLog.4.5.11\lib\net45\NLog.dll</HintPath>
+    </Reference>
     <Reference Include="QTFK.Core, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QTFK.Core.3.0.0\lib\net452\QTFK.Core.dll</HintPath>
+      <HintPath>..\packages\QTFK.Core.3.5.0\lib\net452\QTFK.Core.dll</HintPath>
     </Reference>
     <Reference Include="QTFK.DB, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QTFK.DB.1.6.3\lib\net452\QTFK.DB.dll</HintPath>
-    </Reference>
-    <Reference Include="QTFK.Logs, Version=0.0.0.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QTFK.Logs.1.6.3\lib\net452\QTFK.Logs.dll</HintPath>
-    </Reference>
-    <Reference Include="QTFK.Reflection, Version=1.6.3.0, Culture=neutral, processorArchitecture=MSIL">
-      <HintPath>..\packages\QTFK.Reflection.1.6.3\lib\net452\QTFK.Reflection.dll</HintPath>
+      <HintPath>..\packages\QTFK.DB.1.7.0\lib\net452\QTFK.DB.dll</HintPath>
     </Reference>
     <Reference Include="System" />
+    <Reference Include="System.Configuration" />
     <Reference Include="System.Core" />
+    <Reference Include="System.IO.Compression" />
+    <Reference Include="System.Runtime.Serialization" />
+    <Reference Include="System.ServiceModel" />
+    <Reference Include="System.Transactions" />
     <Reference Include="System.Xml.Linq" />
     <Reference Include="System.Data.DataSetExtensions" />
     <Reference Include="Microsoft.CSharp" />
@@ -57,9 +59,11 @@
     <Compile Include="Data\Attributes\ForeignAttribute.cs" />
     <Compile Include="Data\Attributes\IdAttribute.cs" />
     <Compile Include="Data\Extensions\DbExtensions.cs" />
+    <Compile Include="Data\Extensions\Queries\QueryExtensions.cs" />
     <Compile Include="Data\Factory\Metadata\IClassMetaData.cs" />
     <Compile Include="Data\Factory\Metadata\IViewMetaData.cs" />
     <Compile Include="Data\IEntity.cs" />
+    <Compile Include="Data\Storage\IQuery.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Data\Factory\Metadata\IColumnMetaData.cs" />
     <Compile Include="Data\Factory\Metadata\IDbMetadata.cs" />
